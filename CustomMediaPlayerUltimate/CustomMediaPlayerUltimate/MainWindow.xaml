@@ -1,0 +1,138 @@
+﻿<Window x:Class="CustomMediaPlayerUltimate.MainWindow"
+        xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+        xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+        xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+        xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+        xmlns:local="clr-namespace:CustomMediaPlayerUltimate"
+        mc:Ignorable="d"
+        Title="HOMP - Highly Optimized Music Player" Width="1280" Height="720" WindowStartupLocation="CenterScreen" Icon="/Images/icon.ico" Loaded="OnWindowLoaded" Closing="OnWindowClosing" KeyUp="OnWindowKeyUp">
+
+    <DockPanel LastChildFill="True" Background="#252525">
+        <Grid DockPanel.Dock="Top" Margin="10">
+            <Grid.ColumnDefinitions>
+                <ColumnDefinition Width="Auto"/>
+                <ColumnDefinition Width="Auto"/>
+                <ColumnDefinition Width="Auto"/>
+                <ColumnDefinition Width="Auto"/>
+                <ColumnDefinition Width="Auto"/>
+                <ColumnDefinition Width="*"/>
+                <ColumnDefinition Width="Auto"/>
+                <ColumnDefinition Width="Auto"/>
+            </Grid.ColumnDefinitions>
+            <Button Style="{StaticResource CustomButton}" Content="All songs" Grid.Column="0" Click="SwitchToAllSongsView"/>
+            <Separator Opacity="0" Width="10" Grid.Column="1"/>
+            <Button Style="{StaticResource CustomButton}" Content="Playlists" Grid.Column="2" Click="SwitchToPlaylistsView"/>
+            <Separator Opacity="0" Width="10" Grid.Column="3"/>
+            <Button Style="{StaticResource CustomButton}" Content="Search results" Grid.Column="4" Click="SwitchToSearchResultsView"/>
+            
+            <Label Grid.Column="6" Foreground="WhiteSmoke">Search for a song:</Label>
+            <TextBox x:Name="SearchInputTextBox" Style="{StaticResource CustomTextBox}" Width="200" Grid.Column="7" ToolTip="Search a song..." KeyUp="SearchInputTextBoxKeyUp"/>
+        </Grid>
+
+        <Grid DockPanel.Dock="Bottom" Background="#303030" Height="60" MaxHeight="60" MinHeight="60">
+            <Grid.ColumnDefinitions>
+                <ColumnDefinition Width="*"/>
+                <ColumnDefinition Width="Auto"/>
+            </Grid.ColumnDefinitions>
+            <StackPanel Grid.Column="0" Orientation="Horizontal" Margin="10,5,10,5">
+                <Grid>
+                    <Grid.RowDefinitions>
+                        <RowDefinition Height="Auto"/>
+                        <RowDefinition Height="Auto"/>
+                    </Grid.RowDefinitions>
+                    <Slider x:Name="ProgressSlider" Grid.Row="0" Width="300" IsSnapToTickEnabled="True" PreviewMouseLeftButtonDown="ProgressSliderMouseDown" PreviewMouseLeftButtonUp="ProgressSliderMouseUp" PreviewMouseMove="ProgressSliderMouseMove"/>
+                    <Label x:Name="ProgressLabel" Grid.Row="1" Foreground="WhiteSmoke">00:00 / 00:00</Label>
+                </Grid>
+                <Separator Width="10" Opacity="0"/>
+                <ToggleButton x:Name="LoopToggleButton" Style="{StaticResource CustomToggleButton}" Width="45" Height="45" Click="LoopToggleButtonClick">
+                    <ToggleButton.Content>
+                        <Image Source="/Images/repeat.png"/>
+                    </ToggleButton.Content>
+                </ToggleButton>
+                <Separator Width="5" Opacity="0"/>
+                <Button x:Name="BackwardButton" Style="{StaticResource CustomButton}" Width="45" Height="45" Click="BackwardButtonClick">
+                    <Button.Content>
+                        <Image Source="/Images/backward.png"/>
+                    </Button.Content>
+                </Button>
+                <Separator Width="5" Opacity="0"/>
+                <Button x:Name="PlayPauseButton" Style="{StaticResource CustomButton}" Width="45" Height="45" Click="PlayPauseButtonClick">
+                    <Button.Content>
+                        <Image x:Name="PlayPauseButtonImage" Source="/Images/play.png"/>
+                    </Button.Content>
+                </Button>
+                <Separator Width="5" Opacity="0"/>
+                <Button x:Name="ForwardButton" Style="{StaticResource CustomButton}" Width="45" Height="45" Click="ForwardButtonClick">
+                    <Button.Content>
+                        <Image Source="/Images/forward.png"/>
+                    </Button.Content>
+                </Button>
+                <Separator Width="5" Opacity="0"/>
+                <ToggleButton x:Name="ShuffleToggleButton" Style="{StaticResource CustomToggleButton}" Width="45" Height="45" Click="ShuffleToggleButtonClick">
+                    <ToggleButton.Content>
+                        <Image Source="/Images/shuffle.png"/>
+                    </ToggleButton.Content>
+                </ToggleButton>
+                <Separator Width="10" Opacity="0"/>
+                <StackPanel Orientation="Vertical" VerticalAlignment="Center">
+                    <Label x:Name="CurrentSongTitleLabel" Content="No songs playing." Foreground="WhiteSmoke" FontWeight="Medium" FontSize="16"/>
+                    <Label x:Name="CurrentSongArtistAlbumLabel" Content="Artist - Album" Foreground="WhiteSmoke"/>
+                </StackPanel>
+            </StackPanel>
+            <Grid Grid.Column="1" Margin="10,5,10,5">
+                <Grid.RowDefinitions>
+                    <RowDefinition Height="Auto"/>
+                    <RowDefinition Height="Auto"/>
+                </Grid.RowDefinitions>
+                <Slider x:Name="VolumeSlider" Width="150" Grid.Row="0" Maximum="100" IsSnapToTickEnabled="True" PreviewMouseLeftButtonDown="VolumeSliderMouseDown" PreviewMouseLeftButtonUp="VolumeSliderMouseUp" PreviewMouseMove="VolumeSliderMouseMove" PreviewMouseWheel="VolumeSliderMouseWheel"/>
+                <Label x:Name="VolumeLabel" Grid.Row="1" Foreground="WhiteSmoke">Volume: 100%</Label>
+            </Grid>
+        </Grid>
+
+        <Grid x:Name="ContainerGrid" Margin="10">
+            <Grid.ColumnDefinitions>
+                <ColumnDefinition Width="*"/>
+                <ColumnDefinition Width="400"/>
+            </Grid.ColumnDefinitions>
+            <Grid x:Name="AllSongsGrid" Grid.Column="0">
+                <Grid.RowDefinitions>
+                    <RowDefinition Height="Auto"/>
+                    <RowDefinition Height="*"/>
+                </Grid.RowDefinitions>
+                <StackPanel Orientation="Horizontal" Grid.Row="0">
+                    <Button x:Name="AddLyricsToSongButton" Style="{StaticResource CustomButton}" Content="Add lyrics for selected..." Click="AddLyricsToSongButtonClick"/>
+                </StackPanel>
+                <ListView x:Name="AllSongsListView" Grid.Row="1" SelectionMode="Single" Background="#252525" Foreground="WhiteSmoke" BorderThickness="0" MouseDoubleClick="AllSongsListViewDoubleClick"/>
+            </Grid>
+            <Grid x:Name="PlaylistsGrid" Grid.Column="0" Visibility="Collapsed">
+                <Grid.ColumnDefinitions>
+                    <ColumnDefinition Width="400"/>
+                    <ColumnDefinition Width="*"/>
+                </Grid.ColumnDefinitions>
+                <Grid.RowDefinitions>
+                    <RowDefinition Height="Auto"/>
+                    <RowDefinition Height="*"/>
+                </Grid.RowDefinitions>
+                <StackPanel Orientation="Horizontal" Grid.Column="0" Grid.Row="0">
+                    <Button x:Name="NewPlaylistButton" Style="{StaticResource CustomButton}" Content="New playlist..." Click="NewPlaylistButtonClick"/>
+                    <Separator Width="10" Opacity="0"/>
+                    <Button x:Name="RenamePlaylistButton" Style="{StaticResource CustomButton}" Content="Rename selected..." Click="RenamePlaylistButtonClick"/>
+                    <Separator Width="10" Opacity="0"/>
+                    <Button x:Name="DeletePlaylistButton" Style="{StaticResource CustomButton}" Content="Delete selected" Click="DeletePlaylistButtonClick"/>
+                </StackPanel>
+                <StackPanel Orientation="Horizontal" Grid.Column="1" Grid.Row="0">
+                    <Button x:Name="AddSongsToPlaylistButton" Style="{StaticResource CustomButton}" Content="Add songs..." Click="AddSongsToPlaylistButtonClick"/>
+                    <Separator Width="10" Opacity="0"/>
+                    <Button x:Name="RemoveSongsFromPlaylistButton" Style="{StaticResource CustomButton}" Content="Remove selected" Click="RemoveSongsFromPlaylistButtonClick"/>
+                </StackPanel>
+                <ListView x:Name="PlaylistsListView" Grid.Column="0" Grid.Row="1" SelectionMode="Single" Background="#252525" Foreground="WhiteSmoke" BorderThickness="0" MouseUp="LoadPlaylistSongsInView"/>
+                <ListView x:Name="PlaylistsSongsListView" Grid.Column="1" Grid.Row="1" Background="#252525" Foreground="WhiteSmoke" BorderThickness="0" MouseDoubleClick="PlaylistsSongsListViewDoubleClick"/>
+            </Grid>
+            <Grid x:Name="SearchResultsGrid" Grid.Column="0" Visibility="Collapsed">
+                <ListView x:Name="SearchResultSongsListView" Background="#252525" Foreground="WhiteSmoke" BorderThickness="0"/>
+            </Grid>
+            <RichTextBox x:Name="SongLyricsRichTextBox" Grid.Column="1" Background="#252525" Foreground="WhiteSmoke" BorderThickness="0" IsReadOnly="True"/>
+        </Grid>
+
+    </DockPanel>
+</Window>
