@@ -15,6 +15,10 @@
                 <ColumnDefinition Width="Auto"/>
                 <ColumnDefinition Width="Auto"/>
                 <ColumnDefinition Width="Auto"/>
+                <ColumnDefinition Width="Auto"/>
+                <ColumnDefinition Width="Auto"/>
+                <ColumnDefinition Width="Auto"/>
+                <ColumnDefinition Width="Auto"/>
                 <ColumnDefinition Width="*"/>
                 <ColumnDefinition Width="Auto"/>
                 <ColumnDefinition Width="Auto"/>
@@ -24,9 +28,13 @@
             <Button Style="{StaticResource CustomButton}" Content="Playlists" Grid.Column="2" Click="SwitchToPlaylistsView"/>
             <Separator Opacity="0" Width="10" Grid.Column="3"/>
             <Button Style="{StaticResource CustomButton}" Content="Search results" Grid.Column="4" Click="SwitchToSearchResultsView"/>
+            <Separator Opacity="0" Width="10" Grid.Column="5"/>
+            <Button Style="{StaticResource CustomButton}" Content="Advance highlighting" Grid.Column="6" Click="AdvanceHighlighting"/>
+            <Separator Opacity="0" Width="10" Grid.Column="7"/>
+            <Button Style="{StaticResource CustomButton}" Content="Song length (ticks)" Grid.Column="8" Click="SongLengthTicks"/>
             
-            <Label Grid.Column="6" Foreground="WhiteSmoke">Search for a song:</Label>
-            <TextBox x:Name="SearchInputTextBox" Style="{StaticResource CustomTextBox}" Width="200" Grid.Column="7" ToolTip="Search a song..." KeyUp="SearchInputTextBoxKeyUp"/>
+            <Label Grid.Column="10" Foreground="WhiteSmoke">Search for a song:</Label>
+            <TextBox x:Name="SearchInputTextBox" Style="{StaticResource CustomTextBox}" Width="200" Grid.Column="11" ToolTip="Search a song..." KeyUp="SearchInputTextBoxKeyUp"/>
         </Grid>
 
         <Grid DockPanel.Dock="Bottom" Background="#303030" Height="60" MaxHeight="60" MinHeight="60">

@@ -10,6 +10,7 @@ using System.Windows.Documents;
 using System.Windows.Threading;
 using System.Collections.Generic;
 using System.Windows.Media.Imaging;
+using System.Text.RegularExpressions;
 
 namespace CustomMediaPlayerUltimate
 {
@@ -20,6 +21,11 @@ namespace CustomMediaPlayerUltimate
         public static string PLAYLISTS_PATH = $"{Environment.GetFolderPath(Environment.SpecialFolder.MyMusic)}\\HompPlaylists";
         public static string LYRICS_PATH = $"{Environment.GetFolderPath(Environment.SpecialFolder.MyMusic)}\\Lyrics";
         private const int VOLUME_STEP = 2;
+
+        private SolidColorBrush accentColorBrush = new SolidColorBrush() { Color = Color.FromRgb(0, 80, 80) };
+        private string currentLyrics;
+        private Regex lyricsTimestampsPattern = new Regex("=[0-9]+=");
+        private Dictionary<long, int> lyricsTimestamps = new Dictionary<long, int>();
 
         private MediaPlayer mediaPlayer = new MediaPlayer();
         private DispatcherTimer timer = new DispatcherTimer();
@@ -44,6 +50,7 @@ namespace CustomMediaPlayerUltimate
         private bool isProgressSliderBeingDragged = false;
         private bool isVolumeSliderBeingDragged = false;
         private string? currentSongName;
+        private int last = 0;
 
         private Playlist? currentPlaylist;
         private Playlist? allSongsPlaylist;
@@ -136,6 +143,22 @@ namespace CustomMediaPlayerUltimate
             AllSongsGrid.Visibility = Visibility.Collapsed;
             PlaylistsGrid.Visibility = Visibility.Collapsed;
             SearchResultsGrid.Visibility = Visibility.Visible;
+        }
+
+        public void AdvanceHighlighting(object sender, RoutedEventArgs e)
+        {
+            SongLyricsRichTextBox.Focus();
+
+            TextPointer start = SongLyricsRichTextBox.Document.ContentStart.GetPositionAtOffset(0);
+            TextPointer end = start.GetPositionAtOffset(last);
+            last += 10;
+            SongLyricsRichTextBox.Selection.Select(start, end);
+        }
+
+        public void SongLengthTicks(object sender, RoutedEventArgs e)
+        {
+            if (!IsPlaying) return;
+            MessageBox.Show(mediaPlayer.Position.TotalMilliseconds + " - " + mediaPlayer.NaturalDuration.TimeSpan.TotalMilliseconds.ToString());
         }
 
         public void AllSongsListViewDoubleClick(object sender, RoutedEventArgs e)
@@ -411,6 +434,7 @@ namespace CustomMediaPlayerUltimate
 
         public void LoadLyricsInView()
         {
+            currentLyrics = "";
             if (currentSongName == null) return;
             string lyricsFileName = $"{LYRICS_PATH}\\{currentSongName}.mp3[Lyrics].txt";
             if (!File.Exists(lyricsFileName))
@@ -424,12 +448,41 @@ namespace CustomMediaPlayerUltimate
                 using (StreamReader sr = new StreamReader(lyricsFileName))
                 {
                     string lyrics = sr.ReadToEnd();
+                    MatchCollection a = lyricsTimestampsPattern.Matches(lyrics);
+                    foreach (Match b in a)
+                    {
+                        string val = b.Value.Replace("=", "");
+                        long longVal;
+                        if (!long.TryParse(val, out longVal)) continue;
+                        lyricsTimestamps.Add(longVal, b.Index);
+                    }
+                    lyrics = lyricsTimestampsPattern.Replace(lyrics, "");
+                    currentLyrics = lyrics;
                     SetSongLyricsRichTextBoxText(lyrics);
                 }
             }
             catch
             {
                 SetSongLyricsRichTextBoxText("An error occurred while trying to load lyrics for this song.");
+            }
+        }
+
+        public void UpdateLyrics()
+        {
+            if (lyricsTimestamps.Count == 0) return;
+            long pos = (long)mediaPlayer.Position.TotalMilliseconds;
+            long key = lyricsTimestamps.Keys.FirstOrDefault(0);
+            if (pos >= key)
+            {
+                int position = lyricsTimestamps[key];
+                string highlighted = currentLyrics.Substring(0, position);
+                string rest = currentLyrics.Substring(position);
+
+                SongLyricsRichTextBox.Document.Blocks.Clear();
+                AppendText(SongLyricsRichTextBox, highlighted, accentColorBrush, Brushes.Transparent);
+                AppendText(SongLyricsRichTextBox, rest, Brushes.WhiteSmoke, Brushes.Transparent);
+                
+                lyricsTimestamps.Remove(key);
             }
         }
 
@@ -538,6 +591,8 @@ namespace CustomMediaPlayerUltimate
             }
             if (!mediaPlayer.NaturalDuration.HasTimeSpan) return;
             ProgressLabel.Content = $"{mediaPlayer.Position.Minutes}:{mediaPlayer.Position.Seconds.ToString().PadLeft(2, '0')} / {mediaPlayer.NaturalDuration.TimeSpan.Minutes}:{mediaPlayer.NaturalDuration.TimeSpan.Seconds.ToString().PadLeft(2, '0')}";
+
+            UpdateLyrics();
         }
 
         private void PlaySong(string songFile, Playlist? songPlaylist = null)
@@ -581,6 +636,7 @@ namespace CustomMediaPlayerUltimate
                 }
             }
 
+            lyricsTimestamps.Clear();
             mediaPlayer.Open(new Uri(songPath));
             mediaPlayer.Play();
             mediaPlayer.Volume = VolumeSlider.Value / 100f;
@@ -639,10 +695,8 @@ namespace CustomMediaPlayerUltimate
 
         private void SetSongLyricsRichTextBoxText(string text)
         {
-            FlowDocument doc = new FlowDocument();
-            Run run = new Run(text);
-            doc.Blocks.Add(new Paragraph(run));
-            SongLyricsRichTextBox.Document = doc;
+            SongLyricsRichTextBox.Document.Blocks.Clear();
+            AppendText(SongLyricsRichTextBox, text, Brushes.WhiteSmoke, Brushes.Transparent);
         }
 
         private void SetPlayPauseImage(bool playing)
@@ -689,6 +743,18 @@ namespace CustomMediaPlayerUltimate
             {
                 new SussyWindow().Show();
             }
+        }
+
+        private void AppendText(RichTextBox textBox, string message, SolidColorBrush fontColor, SolidColorBrush backgroundColor)
+        {
+            // If a message contains line breaks, the code bellow will
+            // add an empty blank line for every line break in the message.
+            // To avoid that we have to replace all new lines in the mesage with '\r' symbol.
+            message = Regex.Replace(message, @"(\r\n)|(\n\r)|(\n)", "\r");
+
+            TextRange textRange = new TextRange(textBox.Document.ContentEnd, textBox.Document.ContentEnd) { Text = message };
+            textRange.ApplyPropertyValue(TextElement.ForegroundProperty, fontColor);
+            textRange.ApplyPropertyValue(TextElement.BackgroundProperty, backgroundColor);
         }
     }
 }
