@@ -3,7 +3,7 @@
         xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
         xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
         xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
-        xmlns:local="clr-namespace:CustomMediaPlayerUltimate"
+        xmlns:local="clr-namespace:CustomMediaPlayerUltimate.Elements"
         mc:Ignorable="d"
         Title="HOMP - Highly Optimized Music Player" Width="1280" Height="720" WindowStartupLocation="CenterScreen" Icon="/Images/icon.ico" Loaded="OnWindowLoaded" Closing="OnWindowClosing" KeyUp="OnWindowKeyUp">
 
@@ -89,22 +89,21 @@
             </Grid>
         </Grid>
 
-        <Grid x:Name="ContainerGrid" Margin="10">
+        <Grid x:Name="ContainerGrid" Margin="10,0,10,10">
             <Grid.ColumnDefinitions>
                 <ColumnDefinition Width="*"/>
                 <ColumnDefinition Width="400"/>
             </Grid.ColumnDefinitions>
-            <Grid x:Name="AllSongsGrid" Grid.Column="0">
-                <Grid.RowDefinitions>
-                    <RowDefinition Height="Auto"/>
-                    <RowDefinition Height="*"/>
-                </Grid.RowDefinitions>
-                <StackPanel Orientation="Horizontal" Grid.Row="0">
-                    <Button x:Name="AddLyricsToSongButton" Style="{StaticResource CustomButton}" Content="Add lyrics for selected..." Click="AddLyricsToSongButtonClick"/>
+            <ScrollViewer x:Name="AllSongsView" Grid.Column="0" VerticalScrollBarVisibility="Auto">
+                <StackPanel x:Name="AllSongsListPanel" Orientation="Vertical" Margin="0,0,5,0">
+                    <StackPanel.Resources>
+                        <Style TargetType="{x:Type local:CustomSongElement}">
+                            <Setter Property="Margin" Value="0,5,0,0"/>
+                        </Style>
+                    </StackPanel.Resources>
                 </StackPanel>
-                <ListView x:Name="AllSongsListView" Grid.Row="1" SelectionMode="Single" Background="#252525" Foreground="WhiteSmoke" BorderThickness="0" MouseDoubleClick="AllSongsListViewDoubleClick"/>
-            </Grid>
-            <Grid x:Name="PlaylistsGrid" Grid.Column="0" Visibility="Collapsed">
+            </ScrollViewer>
+            <Grid x:Name="PlaylistsView" Grid.Column="0" Visibility="Collapsed">
                 <Grid.ColumnDefinitions>
                     <ColumnDefinition Width="400"/>
                     <ColumnDefinition Width="*"/>
@@ -128,7 +127,7 @@
                 <ListView x:Name="PlaylistsListView" Grid.Column="0" Grid.Row="1" SelectionMode="Single" Background="#252525" Foreground="WhiteSmoke" BorderThickness="0" MouseUp="LoadPlaylistSongsInView"/>
                 <ListView x:Name="PlaylistsSongsListView" Grid.Column="1" Grid.Row="1" Background="#252525" Foreground="WhiteSmoke" BorderThickness="0" MouseDoubleClick="PlaylistsSongsListViewDoubleClick"/>
             </Grid>
-            <Grid x:Name="SearchResultsGrid" Grid.Column="0" Visibility="Collapsed">
+            <Grid x:Name="SearchResultsView" Grid.Column="0" Visibility="Collapsed">
                 <ListView x:Name="SearchResultSongsListView" Background="#252525" Foreground="WhiteSmoke" BorderThickness="0"/>
             </Grid>
             <RichTextBox x:Name="SongLyricsRichTextBox" Grid.Column="1" Background="#252525" Foreground="WhiteSmoke" BorderThickness="0" IsReadOnly="True"/>

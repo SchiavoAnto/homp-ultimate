@@ -10,7 +10,7 @@
     <Compile Update="InputBox.xaml.cs">
       <SubType>Code</SubType>
     </Compile>
-    <Compile Update="ListItem.xaml.cs">
+    <Compile Update="Elements\CustomSongElement.xaml.cs">
       <SubType>Code</SubType>
     </Compile>
     <Compile Update="SussyWindow.xaml.cs">
@@ -27,7 +27,7 @@
     <Page Update="InputBox.xaml">
       <SubType>Designer</SubType>
     </Page>
-    <Page Update="ListItem.xaml">
+    <Page Update="Elements\CustomSongElement.xaml">
       <SubType>Designer</SubType>
     </Page>
     <Page Update="MainWindow.xaml">

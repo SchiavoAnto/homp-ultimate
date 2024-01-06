@@ -1,5 +1,6 @@
 ﻿using System.IO;
 using System.Windows;
+using CustomMediaPlayerUltimate.Elements;
 
 namespace CustomMediaPlayerUltimate
 {
@@ -24,7 +25,7 @@ namespace CustomMediaPlayerUltimate
                 {
                     string songName = song.Replace($"{MainWindow.MUSIC_PATH}\\", "").Replace(".mp3", "");
                     if (string.IsNullOrEmpty(songName) || string.IsNullOrWhiteSpace(songName)) continue;
-                    ListStackPanel.Children.Add(new ListItem() { Content = songName });
+                    ListStackPanel.Children.Add(new CustomSongElement() { Content = songName });
                 }
             }
             catch
