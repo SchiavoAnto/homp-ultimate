@@ -15,6 +15,10 @@
                 <ColumnDefinition Width="Auto"/>
                 <ColumnDefinition Width="Auto"/>
                 <ColumnDefinition Width="Auto"/>
+                <ColumnDefinition Width="Auto"/>
+                <ColumnDefinition Width="Auto"/>
+                <ColumnDefinition Width="Auto"/>
+                <ColumnDefinition Width="Auto"/>
                 <ColumnDefinition Width="*"/>
                 <ColumnDefinition Width="Auto"/>
                 <ColumnDefinition Width="Auto"/>
@@ -23,10 +27,14 @@
             <Separator Opacity="0" Width="10" Grid.Column="1"/>
             <Button Style="{StaticResource CustomButton}" Content="Playlists" Grid.Column="2" Click="SwitchToPlaylistsView"/>
             <Separator Opacity="0" Width="10" Grid.Column="3"/>
-            <Button Style="{StaticResource CustomButton}" Content="Search results" Grid.Column="4" Click="SwitchToSearchResultsView"/>
+            <Button Style="{StaticResource CustomButton}" Content="Albums" Grid.Column="4" Click="SwitchToAlbumsView"/>
+            <Separator Opacity="0" Width="10" Grid.Column="5"/>
+            <Button Style="{StaticResource CustomButton}" Content="Artists" Grid.Column="6" Click="SwitchToArtistsView"/>
+            <Separator Opacity="0" Width="10" Grid.Column="7"/>
+            <Button Style="{StaticResource CustomButton}" Content="Search results" Grid.Column="8" Click="SwitchToSearchResultsView"/>
             
-            <Label Grid.Column="6" Foreground="WhiteSmoke">Search for a song:</Label>
-            <TextBox x:Name="SearchInputTextBox" Style="{StaticResource CustomTextBox}" Width="200" Grid.Column="7" ToolTip="Search a song..." KeyUp="SearchInputTextBoxKeyUp"/>
+            <Label Grid.Column="10" Foreground="WhiteSmoke">Search for a song:</Label>
+            <TextBox x:Name="SearchInputTextBox" Style="{StaticResource CustomTextBox}" Width="200" Grid.Column="11" ToolTip="Search a song..." KeyUp="SearchInputTextBoxKeyUp"/>
         </Grid>
 
         <Grid DockPanel.Dock="Bottom" Background="#303030" Height="60" MaxHeight="60" MinHeight="60">
@@ -126,6 +134,54 @@
                 </StackPanel>
                 <ListView x:Name="PlaylistsListView" Grid.Column="0" Grid.Row="1" SelectionMode="Single" Background="#252525" Foreground="WhiteSmoke" BorderThickness="0" MouseUp="LoadPlaylistSongsInView"/>
                 <ListView x:Name="PlaylistsSongsListView" Grid.Column="1" Grid.Row="1" Background="#252525" Foreground="WhiteSmoke" BorderThickness="0" MouseDoubleClick="PlaylistsSongsListViewDoubleClick"/>
+            </Grid>
+            <Grid x:Name="AlbumsView" Grid.Column="0" Visibility="Collapsed">
+                <Grid.ColumnDefinitions>
+                    <ColumnDefinition Width="400"/>
+                    <ColumnDefinition Width="*"/>
+                </Grid.ColumnDefinitions>
+                <ScrollViewer Grid.Column="0" VerticalScrollBarVisibility="Auto">
+                    <StackPanel x:Name="AlbumsListPanel" Orientation="Vertical" Margin="0,0,5,0">
+                        <StackPanel.Resources>
+                            <Style TargetType="{x:Type local:CollectionElement}">
+                                <Setter Property="Margin" Value="0,5,0,0"/>
+                            </Style>
+                        </StackPanel.Resources>
+                    </StackPanel>
+                </ScrollViewer>
+                <ScrollViewer Grid.Column="1" VerticalScrollBarVisibility="Auto">
+                    <StackPanel x:Name="AlbumSongsListPanel" Orientation="Vertical" Margin="0,0,5,0">
+                        <StackPanel.Resources>
+                            <Style TargetType="{x:Type local:CustomSongElement}">
+                                <Setter Property="Margin" Value="0,5,0,0"/>
+                            </Style>
+                        </StackPanel.Resources>
+                    </StackPanel>
+                </ScrollViewer>
+            </Grid>
+            <Grid x:Name="ArtistsView" Grid.Column="0" Visibility="Collapsed">
+                <Grid.ColumnDefinitions>
+                    <ColumnDefinition Width="400"/>
+                    <ColumnDefinition Width="*"/>
+                </Grid.ColumnDefinitions>
+                <ScrollViewer Grid.Column="0" VerticalScrollBarVisibility="Auto">
+                    <StackPanel x:Name="ArtistsListPanel" Orientation="Vertical" Margin="0,0,5,0">
+                        <StackPanel.Resources>
+                            <Style TargetType="{x:Type local:CollectionElement}">
+                                <Setter Property="Margin" Value="0,5,0,0"/>
+                            </Style>
+                        </StackPanel.Resources>
+                    </StackPanel>
+                </ScrollViewer>
+                <ScrollViewer Grid.Column="1" VerticalScrollBarVisibility="Auto">
+                    <StackPanel x:Name="ArtistSongsListPanel" Orientation="Vertical" Margin="0,0,5,0">
+                        <StackPanel.Resources>
+                            <Style TargetType="{x:Type local:CustomSongElement}">
+                                <Setter Property="Margin" Value="0,5,0,0"/>
+                            </Style>
+                        </StackPanel.Resources>
+                    </StackPanel>
+                </ScrollViewer>
             </Grid>
             <Grid x:Name="SearchResultsView" Grid.Column="0" Visibility="Collapsed">
                 <ListView x:Name="SearchResultSongsListView" Background="#252525" Foreground="WhiteSmoke" BorderThickness="0"/>

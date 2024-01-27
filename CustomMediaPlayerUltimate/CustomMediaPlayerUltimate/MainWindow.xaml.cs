@@ -45,13 +45,16 @@ public partial class MainWindow : Window
     private bool mediaAvailable = false;
     private bool isProgressSliderBeingDragged = false;
     private bool isVolumeSliderBeingDragged = false;
-    private Song? currentSong = null;
+    public Song? currentSong = null;
+    private CollectionElement? currentlySelectedAlbumElement;
+    private CollectionElement? currentlySelectedArtistElement;
 
     private SongCollection? currentCollection;
     private Playlist allSongsPlaylist;
     private Dictionary<string, Playlist> playlists = new Dictionary<string, Playlist>();
     private Dictionary<string, Album> albums = new Dictionary<string, Album>();
-    private List<Tuple<string, SongCollection>> playedSongs = new List<Tuple<string, SongCollection>>();
+    private Dictionary<string, Playlist> artists = new Dictionary<string, Playlist>();
+    private List<Tuple<Song, SongCollection>> playedSongs = new List<Tuple<Song, SongCollection>>();
 
     public MainWindow()
     {
@@ -70,7 +73,9 @@ public partial class MainWindow : Window
         //Carichiamo tutte le playlist
         LoadAllPlaylists();
         //Carichiamo tutti gli album
-        //LoadAllAlbums();
+        LoadAllAlbums();
+        //Carichiamo tutti gli artisti
+        LoadAllArtists();
         //Carichiamo le impostazioni
         LoadSettings();
 
@@ -126,6 +131,8 @@ public partial class MainWindow : Window
 
     public void SwitchToAllSongsView(object sender, RoutedEventArgs e)
     {
+        AlbumsView.Visibility = Visibility.Collapsed;
+        ArtistsView.Visibility = Visibility.Collapsed;
         PlaylistsView.Visibility = Visibility.Collapsed;
         SearchResultsView.Visibility = Visibility.Collapsed;
         AllSongsView.Visibility = Visibility.Visible;
@@ -134,14 +141,36 @@ public partial class MainWindow : Window
     public void SwitchToPlaylistsView(object sender, RoutedEventArgs e)
     {
         AllSongsView.Visibility = Visibility.Collapsed;
+        AlbumsView.Visibility = Visibility.Collapsed;
+        ArtistsView.Visibility = Visibility.Collapsed;
         SearchResultsView.Visibility = Visibility.Collapsed;
         PlaylistsView.Visibility = Visibility.Visible;
+    }
+
+    public void SwitchToAlbumsView(object sender, RoutedEventArgs e)
+    {
+        AllSongsView.Visibility = Visibility.Collapsed;
+        ArtistsView.Visibility = Visibility.Collapsed;
+        SearchResultsView.Visibility = Visibility.Collapsed;
+        PlaylistsView.Visibility = Visibility.Collapsed;
+        AlbumsView.Visibility = Visibility.Visible;
+    }
+
+    public void SwitchToArtistsView(object sender, RoutedEventArgs e)
+    {
+        AllSongsView.Visibility = Visibility.Collapsed;
+        AlbumsView.Visibility = Visibility.Collapsed;
+        SearchResultsView.Visibility = Visibility.Collapsed;
+        PlaylistsView.Visibility = Visibility.Collapsed;
+        ArtistsView.Visibility = Visibility.Visible;
     }
 
     public void SwitchToSearchResultsView(object sender, RoutedEventArgs e)
     {
         AllSongsView.Visibility = Visibility.Collapsed;
         PlaylistsView.Visibility = Visibility.Collapsed;
+        AlbumsView.Visibility = Visibility.Collapsed;
+        ArtistsView.Visibility = Visibility.Collapsed;
         SearchResultsView.Visibility = Visibility.Visible;
     }
 
@@ -421,10 +450,43 @@ public partial class MainWindow : Window
         if (src is Control && src.GetType() != typeof(ListViewItem)) return;
         if (PlaylistsListView.SelectedItem == null) return;
         SongCollection? playlist = playlists[PlaylistsListView.SelectedItem.ToString()!];
+        if (playlist is null) return;
         PlaylistsSongsListView.Items.Clear();
         foreach (Song song in playlist.Songs.Values)
         {
             PlaylistsSongsListView.Items.Add(song.FilePath);
+        }
+    }
+
+    public void LoadAlbumSongsInView(string albumName)
+    {
+        if (!albums.ContainsKey(albumName)) { MessageBox.Show("Could not load album."); return; }
+        AlbumSongsListPanel.Children.Clear();
+        AlbumSongsListPanel.Children.Add(new Label() { Content = albumName, Foreground = Brushes.WhiteSmoke, FontSize = 18, FontWeight = FontWeights.Bold });
+        foreach (Song song in albums[albumName].Songs.Values)
+        {
+            AlbumSongsListPanel.Children.Add(new CustomSongElement()
+            {
+                Text = song.FileName,
+                Song = song,
+                Collection = albums[albumName]
+            });
+        }
+    }
+
+    public void LoadArtistSongsInView(string artistName)
+    {
+        if (!artists.ContainsKey(artistName)) { MessageBox.Show("Could not load artist's songs."); return; }
+        ArtistSongsListPanel.Children.Clear();
+        ArtistSongsListPanel.Children.Add(new Label() { Content = artistName, Foreground = Brushes.WhiteSmoke, FontSize = 18, FontWeight = FontWeights.Bold });
+        foreach (Song song in artists[artistName].Songs.Values)
+        {
+            ArtistSongsListPanel.Children.Add(new CustomSongElement()
+            {
+                Text = song.FileName,
+                Song = song,
+                Collection = artists[artistName]
+            });
         }
     }
 
@@ -454,6 +516,8 @@ public partial class MainWindow : Window
             string[] songPaths = Directory.GetFiles(MUSIC_PATH, "*.mp3");
             allSongsPlaylist = new Playlist("__HOMP_ALL_SONGS_PLAYLIST__");
             Dictionary<string, string> props = new();
+            AllSongsListPanel.Children.Clear();
+            AllSongsListPanel.Children.Add(new Label() { Content = "All Songs", Foreground = Brushes.WhiteSmoke, FontSize = 18, FontWeight = FontWeights.Bold });
             foreach (string songPath in songPaths)
             {
                 Song song = new Song(songPath);
@@ -469,20 +533,61 @@ public partial class MainWindow : Window
                     if (props is not null)
                     {
                         if (props.TryGetValue("TIT2", out title)) song.Title = title;
-                        if (props.TryGetValue("TPE1", out artistName)) song.Artist = artistName;
+                        if (props.TryGetValue("TPE1", out artistName))
+                        {
+                            if (artists.ContainsKey(artistName))
+                            {
+                                song.Artist = artistName;
+                                artists[artistName].AddSong(song);
+                            }
+                            else
+                            {
+                                artists[artistName] = new Playlist(artistName);
+                                song.Artist = artistName;
+                                artists[artistName].AddSong(song);
+                            }
+                        }
+                        else
+                        {
+                            if (artists.ContainsKey("Unknown Artist"))
+                            {
+                                song.Artist = "Unknown Artist";
+                                artists["Unknown Artist"].AddSong(song);
+                            }
+                            else
+                            {
+                                artists["Unknown Artist"] = new Playlist("Unknown Artist");
+                                song.Artist = "Unknown Artist";
+                                artists["Unknown Artist"].AddSong(song);
+                            }
+                        }
                         if (props.TryGetValue("YEAR", out year)) song.Year = year;
                         if (props.TryGetValue("TALB", out albumName))
                         {
                             if (albums.ContainsKey(albumName))
                             {
-                                albums[albumName].AddSong(song);
                                 song.Album = albums[albumName];
+                                albums[albumName].AddSong(song);
                             }
                             else
                             {
-                                Album album = new Album(albumName);
-                                albums[albumName] = album;
+                                albums[albumName] = new Album(albumName);
                                 song.Album = albums[albumName];
+                                albums[albumName].AddSong(song);
+                            }
+                        }
+                        else
+                        {
+                            if (albums.ContainsKey("Unknown Album"))
+                            {
+                                song.Album = albums["Unknown Album"];
+                                albums["Unknown Album"].AddSong(song);
+                            }
+                            else
+                            {
+                                albums["Unknown Album"] = new Album("Unknown Album");
+                                song.Album = albums["Unknown Album"];
+                                albums["Unknown Album"].AddSong(song);
                             }
                         }
                     }
@@ -550,6 +655,42 @@ public partial class MainWindow : Window
         }
     }
 
+    private void LoadAllAlbums()
+    {
+        AlbumsListPanel.Children.Clear();
+        AlbumsListPanel.Children.Add(new Label() { Content = "Albums", Foreground = Brushes.WhiteSmoke, FontSize = 18, FontWeight = FontWeights.Bold });
+        foreach (KeyValuePair<string, Album> kvp in albums.OrderBy((kvp) => kvp.Key))
+        {
+            AlbumsListPanel.Children.Add(new CollectionElement((self) =>
+            {
+                if (currentlySelectedAlbumElement is not null) currentlySelectedAlbumElement.Focused = false;
+                LoadAlbumSongsInView(kvp.Key);
+                currentlySelectedAlbumElement = self;
+            })
+            {
+                Text = kvp.Key
+            });
+        }
+    }
+
+    private void LoadAllArtists()
+    {
+        ArtistsListPanel.Children.Clear();
+        ArtistsListPanel.Children.Add(new Label() { Content = "Artists", Foreground = Brushes.WhiteSmoke, FontSize = 18, FontWeight = FontWeights.Bold });
+        foreach (KeyValuePair<string, Playlist> kvp in artists.OrderBy((kvp) => kvp.Key))
+        {
+            ArtistsListPanel.Children.Add(new CollectionElement((self) =>
+            {
+                if (currentlySelectedArtistElement is not null) currentlySelectedArtistElement.Focused = false;
+                LoadArtistSongsInView(kvp.Key);
+                currentlySelectedArtistElement = self;
+            })
+            {
+                Text = kvp.Key
+            });
+        }
+    }
+
     private void LoadSettings()
     {
         VolumeSlider.Value = Properties.Settings.Default.PlayerVolume;
@@ -578,7 +719,11 @@ public partial class MainWindow : Window
         mediaPlayer.Close();
         mediaPlayer.Stop();
 
-        if (!File.Exists(songFile)) return;
+        if (!File.Exists(songFile))
+        {
+            MessageBox.Show($"Song file does not exist: {songFile}");
+            return;
+        }
 
         Song song = songPlaylist.Songs[songFile];
         if (song.Title != string.Empty)
@@ -592,11 +737,7 @@ public partial class MainWindow : Window
         CurrentSongArtistAlbumLabel.Content = song.Artist;
         if (!song.Album.Equals(Album.Empty))
         {
-            CurrentSongArtistAlbumLabel.Content += " - " + song.Artist;
-        }
-        else
-        {
-            CurrentSongArtistAlbumLabel.Content = "Generic artist - Generic album";
+            CurrentSongArtistAlbumLabel.Content += " - " + song.Album.Name;
         }
 
         mediaPlayer.Open(new Uri(songFile));
@@ -605,7 +746,7 @@ public partial class MainWindow : Window
         currentCollection = songPlaylist;
         currentSong = song;
         ProgressSlider.Value = 0;
-        playedSongs.Add(new Tuple<string, SongCollection>(song.FileName, currentCollection));
+        playedSongs.Add(new Tuple<Song, SongCollection>(song, currentCollection));
 
         LoadLyricsInView();
     }
@@ -613,9 +754,9 @@ public partial class MainWindow : Window
     private void PreviousSongInPlaylist()
     {
         if (playedSongs.Count < 2) return;
-        Tuple<string, SongCollection> previousEntry = playedSongs[playedSongs.Count - 2];
+        Tuple<Song, SongCollection> previousEntry = playedSongs[playedSongs.Count - 2];
         playedSongs.RemoveAt(playedSongs.Count - 2);
-        PlaySong(previousEntry.Item1, previousEntry.Item2);
+        PlaySong(previousEntry.Item1.FilePath, previousEntry.Item2);
     }
 
     private void NextSongInPlaylist()

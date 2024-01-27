@@ -61,7 +61,7 @@ internal class Utils
 
                     // Decode the frame and add it to the dictionary
                     string frameValue = DecodeFrame(frameID, frameData);
-                    tags[frameID] = frameValue;
+                    tags[frameID] = frameValue.Replace("\0", "");
 
                     // Move to the next frame
                     offset += 10 + frameSize;

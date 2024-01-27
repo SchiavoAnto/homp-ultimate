@@ -6,7 +6,6 @@
              xmlns:local="clr-namespace:CustomMediaPlayerUltimate.Elements"
              mc:Ignorable="d" 
              d:DesignHeight="40" d:DesignWidth="200">
-    
     <Grid x:Name="GridContainer" Style="{StaticResource CustomSongElement}">
         <Grid.ColumnDefinitions>
             <ColumnDefinition Width="*"/>
@@ -25,5 +24,4 @@
             </ContextMenu>
         </Grid.ContextMenu>
     </Grid>
-
 </UserControl>

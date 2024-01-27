@@ -54,6 +54,10 @@ public partial class CustomSongElement : UserControl
                     sw.Close();
                     sw.Dispose();
                 }
+                if (MainWindow.Instance.currentSong.HasValue && MainWindow.Instance.currentSong.Value.FilePath == Song.FilePath)
+                {
+                    MainWindow.Instance.LoadLyricsInView();
+                }
             }
             catch
             {
