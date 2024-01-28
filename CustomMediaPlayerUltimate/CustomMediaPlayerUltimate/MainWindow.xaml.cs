@@ -494,16 +494,37 @@ public partial class MainWindow : Window
     {
         if (e.Key == Key.Enter)
         {
-            IEnumerable<Song> results = new List<Song>();
-            foreach (Song song in allSongsPlaylist.Songs.Values)
+            IEnumerable<Song> results = from song in allSongsPlaylist.Songs.Values
+                                        where song.IsCorrelated(SearchInputTextBox.Text)
+                                        select song;
+            SearchResultSongsListPanel.Children.Clear();
+            StackPanel spanel = new StackPanel() { Orientation = Orientation.Vertical };
+            spanel.Children.Add(new Label()
             {
-                if (!song.Title.ToLower().Contains(SearchInputTextBox.Text.ToLower())) continue;
-                results.Append(song);
-            }
-            SearchResultSongsListView.Items.Clear();
+                Content = $"Search results for '{SearchInputTextBox.Text}'",
+                Foreground = Brushes.WhiteSmoke,
+                FontSize = 18,
+                FontWeight = FontWeights.Bold,
+                Margin = new Thickness(0),
+                Padding = new Thickness(0)
+            });
+            spanel.Children.Add(new Label()
+            {
+                Content = $"{results.Count()} results",
+                Foreground = Brushes.LightGray,
+                FontSize = 14,
+                Margin = new Thickness(0),
+                Padding = new Thickness(0)
+            });
+            SearchResultSongsListPanel.Children.Add(spanel);
             foreach (Song song in results)
             {
-                SearchResultSongsListView.Items.Add(song.FilePath);
+                SearchResultSongsListPanel.Children.Add(new CustomSongElement()
+                {
+                    Text = song.FileName,
+                    Song = song,
+                    Collection = allSongsPlaylist
+                });
             }
             SwitchToSearchResultsView(null!, null!);
         }
@@ -561,7 +582,14 @@ public partial class MainWindow : Window
                                 artists["Unknown Artist"].AddSong(song);
                             }
                         }
-                        if (props.TryGetValue("YEAR", out year)) song.Year = year;
+                        if (props.TryGetValue("TYER", out year))
+                        {
+                            song.Year = year;
+                        }
+                        else
+                        {
+                            if (props.TryGetValue("TDRC", out year)) song.Year = year;
+                        }
                         if (props.TryGetValue("TALB", out albumName))
                         {
                             if (albums.ContainsKey(albumName))
@@ -842,13 +870,5 @@ public partial class MainWindow : Window
     {
         ShuffleToggleButton.IsChecked = !ShuffleToggleButton.IsChecked;
         Properties.Settings.Default.PlayerShuffle = (bool)ShuffleToggleButton.IsChecked!;
-    }
-
-    public void OnWindowKeyUp(object sender, KeyEventArgs e)
-    {
-        if (e.Key == Key.F12)
-        {
-            new SussyWindow().Show();
-        }
     }
 }

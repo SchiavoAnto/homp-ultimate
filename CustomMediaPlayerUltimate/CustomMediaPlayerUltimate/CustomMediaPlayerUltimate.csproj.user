@@ -16,9 +16,6 @@
     <Compile Update="Elements\CustomSongElement.xaml.cs">
       <SubType>Code</SubType>
     </Compile>
-    <Compile Update="SussyWindow.xaml.cs">
-      <SubType>Code</SubType>
-    </Compile>
   </ItemGroup>
   <ItemGroup>
     <Page Update="CommonStyles.xaml">
@@ -37,9 +34,6 @@
       <SubType>Designer</SubType>
     </Page>
     <Page Update="MainWindow.xaml">
-      <SubType>Designer</SubType>
-    </Page>
-    <Page Update="SussyWindow.xaml">
       <SubType>Designer</SubType>
     </Page>
   </ItemGroup>

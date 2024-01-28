@@ -33,4 +33,14 @@ public struct Song
     {
         FilePath = path;
     }
+
+    public bool IsCorrelated(string query)
+    {
+        query = query.ToLower();
+        return FileName.ToLower().Contains(query) ||
+            Title.ToLower().Contains(query) ||
+            Artist.ToLower().Contains(query) ||
+            Album.Name.ToLower().Contains(query) ||
+            Year.Contains(query);
+    }
 }
