@@ -46,6 +46,7 @@ public partial class MainWindow : Window
     private bool isProgressSliderBeingDragged = false;
     private bool isVolumeSliderBeingDragged = false;
     public Song? currentSong = null;
+    private PlaylistElement? currentlySelectedPlaylistElement;
     private CollectionElement? currentlySelectedAlbumElement;
     private CollectionElement? currentlySelectedArtistElement;
 
@@ -174,22 +175,6 @@ public partial class MainWindow : Window
         SearchResultsView.Visibility = Visibility.Visible;
     }
 
-    //public void AllSongsListViewDoubleClick(object sender, RoutedEventArgs e)
-    //{
-    //    DependencyObject src = VisualTreeHelper.GetParent((DependencyObject)e.OriginalSource);
-    //    if (src is Control && src.GetType() != typeof(ListViewItem)) return;
-    //    if (AllSongsListView.SelectedItem == null) return;
-    //    PlaySong($"{AllSongsListView.SelectedItem}", allSongsPlaylist);
-    //}
-
-    public void PlaylistsSongsListViewDoubleClick(object sender, RoutedEventArgs e)
-    {
-        DependencyObject src = VisualTreeHelper.GetParent((DependencyObject)e.OriginalSource);
-        if (src is Control && src.GetType() != typeof(ListViewItem)) return;
-        if (PlaylistsSongsListView.SelectedItem == null) return;
-        PlaySong($"{PlaylistsSongsListView.SelectedItem}", playlists[PlaylistsListView.SelectedItem.ToString()!]);
-    }
-
     public void PlayPauseButtonClick(object sender, RoutedEventArgs e)
     {
         TogglePlayPause();
@@ -281,6 +266,11 @@ public partial class MainWindow : Window
         if (ib.ShowDialog() == true)
         {
             string name = ib.InputTextBox.Text;
+            if (playlists.ContainsKey(name))
+            {
+                MessageBox.Show($"A playlist called '{name}' already exists!");
+                return;
+            }
             string path = $"{PLAYLISTS_PATH}\\{name}.homppl";
             try
             {
@@ -290,8 +280,14 @@ public partial class MainWindow : Window
                     sw.Close();
                     sw.Dispose();
                 }
-                playlists.Add(name, new Playlist());
-                PlaylistsListView.Items.Add(name);
+                playlists.Add(name, new Playlist(name));
+                PlaylistsListPanel.Children.Add(new CollectionElement((self) =>
+                {
+                    LoadPlaylistSongsInView(playlists[name]);
+                })
+                {
+                    Text = name
+                });
             }
             catch
             {
@@ -300,11 +296,10 @@ public partial class MainWindow : Window
         }
     }
 
-    public void RenamePlaylistButtonClick(object sender, RoutedEventArgs e)
+    public void RenamePlaylist(Playlist playlist)
     {
-        if (PlaylistsListView.SelectedItem == null) return;
-        string playlistName = PlaylistsListView.SelectedItem.ToString()!;
-        string oldPath = $"{PLAYLISTS_PATH}\\{playlistName}.homppl";
+        if (playlist.Equals(Playlist.Empty)) return;
+        string oldPath = $"{PLAYLISTS_PATH}\\{playlist.Name}.homppl";
         InputBox ib = new InputBox("Insert playlist name", "Type the new name you want to give to the playlist:");
         if (ib.ShowDialog() == true)
         {
@@ -313,12 +308,8 @@ public partial class MainWindow : Window
             try
             {
                 File.Move(oldPath, newPath);
-                PlaylistsListView.Items.Remove(PlaylistsListView.SelectedItem);
-                PlaylistsListView.Items.Add(newName);
 
-                Playlist pl = playlists[playlistName];
-                playlists.Remove(playlistName);
-                playlists.Add(newName, pl);
+                LoadAllPlaylists();
             }
             catch
             {
@@ -327,18 +318,17 @@ public partial class MainWindow : Window
         }
     }
 
-    public void DeletePlaylistButtonClick(object sender, RoutedEventArgs e)
+    public void DeletePlaylist(Playlist playlist)
     {
-        if (PlaylistsListView.SelectedItem == null) return;
-        string playlistName = PlaylistsListView.SelectedItem.ToString()!;
-        string path = $"{PLAYLISTS_PATH}\\{playlistName}.homppl";
-        if (MessageBox.Show($"Are you sure to delete the playlist \"{playlistName}\"?", "Confirmation", MessageBoxButton.YesNo, MessageBoxImage.Question) == MessageBoxResult.Yes)
+        if (playlist.Equals(Playlist.Empty)) return;
+        string path = $"{PLAYLISTS_PATH}\\{playlist.Name}.homppl";
+        if (MessageBox.Show($"Are you sure to delete the playlist \"{playlist.Name}\"?", "Confirmation", MessageBoxButton.YesNo, MessageBoxImage.Question) == MessageBoxResult.Yes)
         {
             try
             {
                 File.Delete(path);
-                PlaylistsListView.Items.Remove(PlaylistsListView.SelectedItem);
-                PlaylistsSongsListView.Items.Clear();
+
+                LoadAllPlaylists();
             }
             catch
             {
@@ -348,16 +338,15 @@ public partial class MainWindow : Window
     }
 
     //TODO: Replace OpenFileDialog with a custom dialog from where the user can choose songs from the all songs list.
-    public void AddSongsToPlaylistButtonClick(object sender, RoutedEventArgs e)
+    public void AddSongsToPlaylist(Playlist playlist)
     {
-        if (PlaylistsListView.SelectedItem == null) return;
-        string playlistName = PlaylistsListView.SelectedItem.ToString()!;
-        string path = $"{PLAYLISTS_PATH}\\{playlistName}.homppl";
+        if (playlist.Equals(Playlist.Empty)) return;
+        string path = $"{PLAYLISTS_PATH}\\{playlist.Name}.homppl";
 
         OpenFileDialog ofd = new OpenFileDialog();
         ofd.Multiselect = true;
         ofd.InitialDirectory = MUSIC_PATH;
-        ofd.Title = $"Select the songs to add to the playlist \"{playlistName}\"...";
+        ofd.Title = $"Select the songs to add to the playlist \"{playlist.Name}\"...";
         ofd.Filter = "MP3 Files|*.mp3";
         if (ofd.ShowDialog() == true)
         {
@@ -370,12 +359,11 @@ public partial class MainWindow : Window
                     {
                         string actualName = new FileInfo(song).Name.Replace(".mp3", "");
                         sw.Write($"{song}|");
-                        playlists[playlistName].AddSong(actualName);
-                        PlaylistsSongsListView.Items.Add(actualName);
                     }
                     sw.Close();
                     sw.Dispose();
                 }
+                LoadAllPlaylists();
             }
             catch
             {
@@ -386,38 +374,38 @@ public partial class MainWindow : Window
 
     public void RemoveSongsFromPlaylistButtonClick(object sender, RoutedEventArgs e)
     {
-        if (PlaylistsListView.SelectedItem == null) return;
-        string playlistName = PlaylistsListView.SelectedItem.ToString()!;
-        string playlistPath = $"{PLAYLISTS_PATH}\\{playlistName}.homppl";
+        //if (PlaylistsListView.SelectedItem == null) return;
+        //string playlistName = PlaylistsListView.SelectedItem.ToString()!;
+        //string playlistPath = $"{PLAYLISTS_PATH}\\{playlistName}.homppl";
 
-        if (PlaylistsSongsListView.SelectedItem == null) return;
-        string songName = PlaylistsSongsListView.SelectedItem.ToString()!;
-        string songPath = $"{MUSIC_PATH}\\{songName}.mp3";
+        //if (PlaylistsSongsListView.SelectedItem == null) return;
+        //string songName = PlaylistsSongsListView.SelectedItem.ToString()!;
+        //string songPath = $"{MUSIC_PATH}\\{songName}.mp3";
 
-        if (MessageBox.Show($"Are you sure to remove the song \"{songName}\" from the playlist?", "Confirmation", MessageBoxButton.YesNo, MessageBoxImage.Question) == MessageBoxResult.Yes)
-        {
-            try
-            {
-                using (StreamReader sr = new StreamReader(playlistPath))
-                {
-                    string playlistContent = sr.ReadToEnd();
-                    sr.Close();
-                    sr.Dispose();
-                    using (StreamWriter sw = new StreamWriter(playlistPath))
-                    {
-                        sw.Write(playlistContent.Replace($"{songPath}|", ""));
-                        sw.Close();
-                        sw.Dispose();
-                    }
-                }
-                PlaylistsSongsListView.Items.Remove(songName);
-                playlists[playlistName].RemoveSong(songName);
-            }
-            catch
-            {
-                MessageBox.Show("An error occurred while removing the song from the playlist.");
-            }
-        }
+        //if (MessageBox.Show($"Are you sure to remove the song \"{songName}\" from the playlist?", "Confirmation", MessageBoxButton.YesNo, MessageBoxImage.Question) == MessageBoxResult.Yes)
+        //{
+        //    try
+        //    {
+        //        using (StreamReader sr = new StreamReader(playlistPath))
+        //        {
+        //            string playlistContent = sr.ReadToEnd();
+        //            sr.Close();
+        //            sr.Dispose();
+        //            using (StreamWriter sw = new StreamWriter(playlistPath))
+        //            {
+        //                sw.Write(playlistContent.Replace($"{songPath}|", ""));
+        //                sw.Close();
+        //                sw.Dispose();
+        //            }
+        //        }
+        //        PlaylistsSongsListView.Items.Remove(songName);
+        //        playlists[playlistName].RemoveSong(songName);
+        //    }
+        //    catch
+        //    {
+        //        MessageBox.Show("An error occurred while removing the song from the playlist.");
+        //    }
+        //}
     }
 
     public void LoadLyricsInView()
@@ -444,17 +432,19 @@ public partial class MainWindow : Window
         }
     }
 
-    public void LoadPlaylistSongsInView(object sender, RoutedEventArgs e)
+    public void LoadPlaylistSongsInView(Playlist playlist)
     {
-        DependencyObject src = VisualTreeHelper.GetParent((DependencyObject)e.OriginalSource);
-        if (src is Control && src.GetType() != typeof(ListViewItem)) return;
-        if (PlaylistsListView.SelectedItem == null) return;
-        SongCollection? playlist = playlists[PlaylistsListView.SelectedItem.ToString()!];
-        if (playlist is null) return;
-        PlaylistsSongsListView.Items.Clear();
-        foreach (Song song in playlist.Songs.Values)
+        if (playlist.Equals(Playlist.Empty)) return;
+        PlaylistSongsListPanel.Children.Clear();
+        PlaylistSongsListPanel.Children.Add(new Label() { Content = playlist.Name, Foreground = Brushes.WhiteSmoke, FontSize = 18, FontWeight = FontWeights.Bold });
+        foreach (Song song in playlists[playlist.Name].Songs.Values)
         {
-            PlaylistsSongsListView.Items.Add(song.FilePath);
+            PlaylistSongsListPanel.Children.Add(new CustomSongElement()
+            {
+                Text = song.FileName,
+                Song = song,
+                Collection = playlists[playlist.Name]
+            });
         }
     }
 
@@ -547,82 +537,51 @@ public partial class MainWindow : Window
                     song.FileName = songPath.Replace($"{MUSIC_PATH}\\", "").Replace(".mp3", "");
                     props?.Clear();
                     props = Utils.ReadID3v2Tags(songPath);
-                    string? title = null;
-                    string? artistName = null;
-                    string? albumName = null;
-                    string? year = null;
+                    string title = songPath;
+                    string artistName = "Unknown Artist";
+                    string albumName = "Unknown Album";
+                    string year = "";
                     if (props is not null)
                     {
-                        if (props.TryGetValue("TIT2", out title)) song.Title = title;
-                        if (props.TryGetValue("TPE1", out artistName))
+                        // Title
+                        if (props.ContainsKey("TIT2")) title = props["TIT2"];
+                        song.Title = title;
+
+                        // Artist
+                        if (props.ContainsKey("TPE1")) artistName = props["TPE1"];
+                        song.Artist = artistName;
+                        if (!artists.ContainsKey(artistName))
                         {
-                            if (artists.ContainsKey(artistName))
-                            {
-                                song.Artist = artistName;
-                                artists[artistName].AddSong(song);
-                            }
-                            else
-                            {
-                                artists[artistName] = new Playlist(artistName);
-                                song.Artist = artistName;
-                                artists[artistName].AddSong(song);
-                            }
+                            artists[artistName] = new Playlist(artistName);
+                        }
+
+                        // Year
+                        if (props.ContainsKey("TYER"))
+                        {
+                            year = props["TYER"];
                         }
                         else
                         {
-                            if (artists.ContainsKey("Unknown Artist"))
-                            {
-                                song.Artist = "Unknown Artist";
-                                artists["Unknown Artist"].AddSong(song);
-                            }
-                            else
-                            {
-                                artists["Unknown Artist"] = new Playlist("Unknown Artist");
-                                song.Artist = "Unknown Artist";
-                                artists["Unknown Artist"].AddSong(song);
-                            }
+                            if (props.ContainsKey("TDRC")) year = props["TDRC"];
                         }
-                        if (props.TryGetValue("TYER", out year))
+                        song.Year = year;
+
+                        // Album
+                        if (props.ContainsKey("TALB")) albumName = props["TALB"];
+                        if (!albums.ContainsKey(albumName))
                         {
-                            song.Year = year;
+                            albums[albumName] = new Album(albumName);
                         }
-                        else
-                        {
-                            if (props.TryGetValue("TDRC", out year)) song.Year = year;
-                        }
-                        if (props.TryGetValue("TALB", out albumName))
-                        {
-                            if (albums.ContainsKey(albumName))
-                            {
-                                song.Album = albums[albumName];
-                                albums[albumName].AddSong(song);
-                            }
-                            else
-                            {
-                                albums[albumName] = new Album(albumName);
-                                song.Album = albums[albumName];
-                                albums[albumName].AddSong(song);
-                            }
-                        }
-                        else
-                        {
-                            if (albums.ContainsKey("Unknown Album"))
-                            {
-                                song.Album = albums["Unknown Album"];
-                                albums["Unknown Album"].AddSong(song);
-                            }
-                            else
-                            {
-                                albums["Unknown Album"] = new Album("Unknown Album");
-                                song.Album = albums["Unknown Album"];
-                                albums["Unknown Album"].AddSong(song);
-                            }
-                        }
+                        song.Album = albums[albumName];
                     }
+
                     allSongsPlaylist.AddSong(song);
+                    artists[artistName].AddSong(song);
+                    albums[albumName].AddSong(song);
+
                     AllSongsListPanel.Children.Add(new CustomSongElement()
                     {
-                        Text = title is null ? songPath : song.FileName,
+                        Text = song.FileName,
                         Song = song,
                         Collection = allSongsPlaylist,
                         HasErrored = false
@@ -652,28 +611,45 @@ public partial class MainWindow : Window
         try
         {
             string[] allPlaylists = Directory.GetFiles(PLAYLISTS_PATH, "*.homppl");
+            playlists.Clear();
+            PlaylistsListPanel.Children.Clear();
+            PlaylistsListPanel.Children.Add(new Label() { Content = "Playlists", Foreground = Brushes.WhiteSmoke, FontSize = 18, FontWeight = FontWeights.Bold });
             foreach (string p in allPlaylists)
             {
-                Playlist playlist = new Playlist();
                 string playlistName = p.Replace($"{PLAYLISTS_PATH}\\", "").Replace(".homppl", "");
-                PlaylistsListView.Items.Add(playlistName);
+                Playlist playlist = new Playlist(playlistName);
+                string[] songs = new string[] { };
                 using (StreamReader sr = new StreamReader(p))
                 {
-                    string allSongs = sr.ReadToEnd();
+                    string allSongs = sr.ReadToEnd().Trim();
                     if (!string.IsNullOrEmpty(allSongs) && !string.IsNullOrWhiteSpace(allSongs))
                     {
-                        if (allSongs.Contains("|"))
-                        {
-                            string[] songs = allSongs.Split("|");
-                            playlist = new Playlist(playlistName, songs);
-                        }
-                        else
-                        {
-                            string[] songs = new string[] { allSongs };
-                            playlist = new Playlist(playlistName, songs);
-                        }
+                        songs = allSongs.Contains("|") ? allSongs.Split("|") : new string[] { allSongs };
                     }
+                    sr.Close();
                 }
+
+                foreach (string song in songs)
+                {
+                    if (!allSongsPlaylist.Songs.ContainsKey(song)) continue;
+                    playlist.AddSong(allSongsPlaylist.Songs[song]);
+                }
+
+                PlaylistElement playlistElement = new PlaylistElement(
+                    (self) =>
+                    {
+                        if (currentlySelectedPlaylistElement is not null) currentlySelectedPlaylistElement.Focused = false;
+                        LoadPlaylistSongsInView(playlists[playlistName]);
+                        currentlySelectedPlaylistElement = self;
+                    },
+                    () => { AddSongsToPlaylist(playlist); },
+                    () => { RenamePlaylist(playlist); },
+                    () => { DeletePlaylist(playlist); }
+                )
+                {
+                    Text = playlistName,
+                };
+                PlaylistsListPanel.Children.Add(playlistElement);
                 playlists.Add(playlistName, playlist);
             }
         }

@@ -122,18 +122,28 @@
                 </Grid.RowDefinitions>
                 <StackPanel Orientation="Horizontal" Grid.Column="0" Grid.Row="0">
                     <Button x:Name="NewPlaylistButton" Style="{StaticResource CustomButton}" Content="New playlist..." Click="NewPlaylistButtonClick"/>
-                    <Separator Width="10" Opacity="0"/>
-                    <Button x:Name="RenamePlaylistButton" Style="{StaticResource CustomButton}" Content="Rename selected..." Click="RenamePlaylistButtonClick"/>
-                    <Separator Width="10" Opacity="0"/>
-                    <Button x:Name="DeletePlaylistButton" Style="{StaticResource CustomButton}" Content="Delete selected" Click="DeletePlaylistButtonClick"/>
                 </StackPanel>
                 <StackPanel Orientation="Horizontal" Grid.Column="1" Grid.Row="0">
-                    <Button x:Name="AddSongsToPlaylistButton" Style="{StaticResource CustomButton}" Content="Add songs..." Click="AddSongsToPlaylistButtonClick"/>
-                    <Separator Width="10" Opacity="0"/>
                     <Button x:Name="RemoveSongsFromPlaylistButton" Style="{StaticResource CustomButton}" Content="Remove selected" Click="RemoveSongsFromPlaylistButtonClick"/>
                 </StackPanel>
-                <ListView x:Name="PlaylistsListView" Grid.Column="0" Grid.Row="1" SelectionMode="Single" Background="#252525" Foreground="WhiteSmoke" BorderThickness="0" MouseUp="LoadPlaylistSongsInView"/>
-                <ListView x:Name="PlaylistsSongsListView" Grid.Column="1" Grid.Row="1" Background="#252525" Foreground="WhiteSmoke" BorderThickness="0" MouseDoubleClick="PlaylistsSongsListViewDoubleClick"/>
+                <ScrollViewer Grid.Column="0" Grid.Row="1" VerticalScrollBarVisibility="Auto">
+                    <StackPanel x:Name="PlaylistsListPanel" Orientation="Vertical" Margin="0,0,5,0">
+                        <StackPanel.Resources>
+                            <Style TargetType="{x:Type local:PlaylistElement}">
+                                <Setter Property="Margin" Value="0,5,0,0"/>
+                            </Style>
+                        </StackPanel.Resources>
+                    </StackPanel>
+                </ScrollViewer>
+                <ScrollViewer Grid.Column="1" Grid.Row="1" VerticalScrollBarVisibility="Auto">
+                    <StackPanel x:Name="PlaylistSongsListPanel" Orientation="Vertical" Margin="0,0,5,0">
+                        <StackPanel.Resources>
+                            <Style TargetType="{x:Type local:CustomSongElement}">
+                                <Setter Property="Margin" Value="0,5,0,0"/>
+                            </Style>
+                        </StackPanel.Resources>
+                    </StackPanel>
+                </ScrollViewer>
             </Grid>
             <Grid x:Name="AlbumsView" Grid.Column="0" Visibility="Collapsed">
                 <Grid.ColumnDefinitions>
