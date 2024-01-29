@@ -7,7 +7,7 @@ public struct Playlist : SongCollection
     public string Name { get; set; } = string.Empty;
     public Dictionary<string, Song> Songs { get; set; } = new();
 
-    public static readonly Playlist Empty = new Playlist("");
+    public static readonly Playlist Empty = new Playlist();
 
     public Playlist() { }
 
