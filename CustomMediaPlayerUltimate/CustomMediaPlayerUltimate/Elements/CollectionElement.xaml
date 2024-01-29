@@ -12,6 +12,6 @@
             <ColumnDefinition Width="18"/>
         </Grid.ColumnDefinitions>
         <Label x:Name="ItemTextLabel" Grid.Column="0" VerticalAlignment="Center" Foreground="WhiteSmoke"/>
-        <Image x:Name="FocusedIndicatorImage" Grid.Column="1" Source="/Images/play.png" Visibility="Collapsed"/>
+        <Image x:Name="FocusedIndicatorImage" Grid.Column="1" Source="/Images/selected_mark.png" Visibility="Collapsed"/>
     </Grid>
 </UserControl>

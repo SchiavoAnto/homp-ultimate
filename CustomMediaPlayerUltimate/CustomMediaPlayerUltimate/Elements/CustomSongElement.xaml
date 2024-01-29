@@ -19,7 +19,7 @@
         <Grid.ContextMenu>
             <ContextMenu>
                 <ContextMenu.Items>
-                    <MenuItem Header="Add lyrics for song..." Click="AddLyricsMenuItemClick"/>
+                    <MenuItem Header="Add lyrics..." Click="AddLyricsMenuItemClick"/>
                 </ContextMenu.Items>
             </ContextMenu>
         </Grid.ContextMenu>

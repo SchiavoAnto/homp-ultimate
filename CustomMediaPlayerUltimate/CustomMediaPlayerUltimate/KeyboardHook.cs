@@ -7,7 +7,7 @@ namespace CustomMediaPlayerUltimate
 {
     public static class KeyboardHook
     {
-        public static event EventHandler<Key> OnKeyPressed;
+        public static event EventHandler<Key>? OnKeyPressed;
 
         private static IntPtr _hookId = IntPtr.Zero;
 
@@ -26,10 +26,10 @@ namespace CustomMediaPlayerUltimate
         private static IntPtr SetHook(LowLevelKeyboardProc proc)
         {
             using (Process curProcess = Process.GetCurrentProcess())
-            using (ProcessModule curModule = curProcess.MainModule)
+            using (ProcessModule? curModule = curProcess.MainModule)
             {
                 return SetWindowsHookEx(WH_KEYBOARD_LL, proc,
-                    GetModuleHandle(curModule.ModuleName), 0);
+                    GetModuleHandle(curModule!.ModuleName), 0);
             }
         }
 
