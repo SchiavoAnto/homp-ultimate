@@ -296,12 +296,17 @@ public partial class MainWindow : Window
                     sw.Dispose();
                 }
                 playlists.Add(name, new Playlist(name));
-                PlaylistsListPanel.Children.Add(new CollectionElement((self) =>
+                PlaylistsListPanel.Children.Add(new PlaylistElement(
+                    (self) =>
+                    {
+                        LoadPlaylistSongsInView(playlists[name]);
+                    },
+                    () => { AddSongsToPlaylist(playlists[name]); },
+                    () => { RenamePlaylist(playlists[name]); },
+                    () => { DeletePlaylist(playlists[name]); }
+                )
                 {
-                    LoadPlaylistSongsInView(playlists[name]);
-                })
-                {
-                    Text = name
+                    Text = name,
                 });
             }
             catch
