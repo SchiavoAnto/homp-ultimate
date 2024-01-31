@@ -58,5 +58,17 @@ namespace CustomMediaPlayerUltimate.Properties {
                 this["PlayerShuffle"] = value;
             }
         }
+        
+        [global::System.Configuration.UserScopedSettingAttribute()]
+        [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
+        [global::System.Configuration.DefaultSettingValueAttribute("False")]
+        public bool UseSearchResultsAsShuffleSource {
+            get {
+                return ((bool)(this["UseSearchResultsAsShuffleSource"]));
+            }
+            set {
+                this["UseSearchResultsAsShuffleSource"] = value;
+            }
+        }
     }
 }
