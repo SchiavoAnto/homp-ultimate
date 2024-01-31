@@ -19,11 +19,10 @@ The supported shortcuts are:
 - `CTRL-ALT-SHIFT-B`: Previous song in collection  
 - `CTRL-ALT-SHIFT-R`: Toggle Repeat  
 - `CTRL-ALT-SHIFT-S`: Toggle Shuffle  
-- `CTRL-ALT-SHIFT-UP`: Volume up by 2% (will be customizable)  
-- `CTRL-ALT-SHIFT-DOWN`: Volume down by 2% (will be customizable)  
+- `CTRL-ALT-SHIFT-UP`: Volume up by 2% (the amount will be customizable)  
+- `CTRL-ALT-SHIFT-DOWN`: Volume down by 2% (the amount will be customizable)  
 
 These shortcuts work even with HOMP running in the background.  
-They are currently not customizable, but it is a planned feature that will come in the future.  
 
 ## Running HOMP  
 

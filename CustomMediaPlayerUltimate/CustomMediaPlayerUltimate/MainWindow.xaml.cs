@@ -99,31 +99,31 @@ public partial class MainWindow : Window
     {
         if (Keyboard.Modifiers == (ModifierKeys.Control | ModifierKeys.Alt | ModifierKeys.Shift))
         {
-            if (key == Key.P)
+            if (key == (Key)Properties.Settings.Default.PlayPauseShortcutKey)
             {
                 TogglePlayPause();
             }
-            else if (key == Key.Up)
+            else if (key == (Key)Properties.Settings.Default.IncreaseVolumeShortcutKey)
             {
                 IncreaseVolume();
             }
-            else if (key == Key.Down)
+            else if (key == (Key)Properties.Settings.Default.DecreaseVolumeShortcutKey)
             {
                 DecreaseVolume();
             }
-            else if (key == Key.N)
+            else if (key == (Key)Properties.Settings.Default.NextSongShortcutKey)
             {
                 NextSongInPlaylist();
             }
-            else if (key == Key.B)
+            else if (key == (Key)Properties.Settings.Default.PreviousSongShortcutKey)
             {
                 PreviousSongInPlaylist();
             }
-            else if (key == Key.R)
+            else if (key == (Key)Properties.Settings.Default.ToggleLoopShortcutKey)
             {
                 ToggleLoop();
             }
-            else if (key == Key.S)
+            else if (key == (Key)Properties.Settings.Default.ToggleShuffleShortcutKey)
             {
                 ToggleShuffle();
             }
@@ -734,6 +734,14 @@ public partial class MainWindow : Window
         ShuffleToggleButton.IsChecked = Properties.Settings.Default.PlayerShuffle;
 
         SettingsSearchShuffleCheckbox.IsChecked = Properties.Settings.Default.UseSearchResultsAsShuffleSource;
+
+        SettingsPlayPauseShortcutButton.Content = $"{(Key)Properties.Settings.Default.PlayPauseShortcutKey}";
+        SettingsIncreaseVolumeShortcutButton.Content = $"{(Key)Properties.Settings.Default.IncreaseVolumeShortcutKey}";
+        SettingsDecreaseVolumeShortcutButton.Content = $"{(Key)Properties.Settings.Default.DecreaseVolumeShortcutKey}";
+        SettingsNextSongShortcutButton.Content = $"{(Key)Properties.Settings.Default.NextSongShortcutKey}";
+        SettingsPreviousSongShortcutButton.Content = $"{(Key)Properties.Settings.Default.PreviousSongShortcutKey}";
+        SettingsToggleLoopShortcutButton.Content = $"{(Key)Properties.Settings.Default.ToggleLoopShortcutKey}";
+        SettingsToggleShuffleShortcutButton.Content = $"{(Key)Properties.Settings.Default.ToggleShuffleShortcutKey}";
     }
 
     private void Timer_Tick(object sender, EventArgs e)
@@ -889,5 +897,51 @@ public partial class MainWindow : Window
     {
         Properties.Settings.Default.UseSearchResultsAsShuffleSource = false;
         Properties.Settings.Default.Save();
+    }
+
+    private void ChangeShortcut(string settingName, Button button)
+    {
+        InputCaptureBox icb = new InputCaptureBox();
+        if (icb.ShowDialog() == true)
+        {
+            Key key = icb.KeyResult;
+            button.Content = $"{key}";
+            Properties.Settings.Default[settingName] = (short)key;
+        }
+    }
+
+    private void OnSettingsPlayPauseShortcutButtonClick(object sender, RoutedEventArgs e)
+    {
+        ChangeShortcut("PlayPauseShortcutKey", SettingsPlayPauseShortcutButton);
+    }
+
+    private void OnSettingsIncreaseVolumeShortcutButtonClick(object sender, RoutedEventArgs e)
+    {
+        ChangeShortcut("IncreaseVolumeShortcutKey", SettingsIncreaseVolumeShortcutButton);
+    }
+
+    private void OnSettingsDecreaseVolumeShortcutButtonClick(object sender, RoutedEventArgs e)
+    {
+        ChangeShortcut("DecreaseVolumeShortcutKey", SettingsDecreaseVolumeShortcutButton);
+    }
+
+    private void OnSettingsNextSongShortcutButtonClick(object sender, RoutedEventArgs e)
+    {
+        ChangeShortcut("NextSongShortcutKey", SettingsNextSongShortcutButton);
+    }
+
+    private void OnSettingsPreviousSongShortcutButtonClick(object sender, RoutedEventArgs e)
+    {
+        ChangeShortcut("PreviousSongShortcutKey", SettingsPreviousSongShortcutButton);
+    }
+
+    private void OnSettingsToggleLoopShortcutButtonClick(object sender, RoutedEventArgs e)
+    {
+        ChangeShortcut("ToggleLoopShortcutKey", SettingsToggleLoopShortcutButton);
+    }
+
+    private void OnSettingsToggleShuffleShortcutButtonClick(object sender, RoutedEventArgs e)
+    {
+        ChangeShortcut("ToggleShuffleShortcutKey", SettingsToggleShuffleShortcutButton);
     }
 }

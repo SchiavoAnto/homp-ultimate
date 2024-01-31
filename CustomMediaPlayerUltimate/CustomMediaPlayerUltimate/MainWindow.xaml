@@ -210,10 +210,61 @@
             <StackPanel x:Name="SettingsView" Grid.Column="0" Visibility="Collapsed" Orientation="Vertical">
                 <Label Foreground="WhiteSmoke" FontSize="18" FontWeight="Bold">Settings</Label>
                 <Separator Height="10" Background="Transparent"/>
-                <StackPanel Orientation="Vertical" Margin="5,0,0,0">
-                    <StackPanel Orientation="Vertical">
+                <StackPanel Orientation="Vertical">
+                    <StackPanel.Resources>
+                        <Style TargetType="{x:Type StackPanel}">
+                            <Setter Property="Margin" Value="0,10,0,0"/>
+                        </Style>
+                    </StackPanel.Resources>
+                    <StackPanel Orientation="Vertical" Margin="5,-15,0,0">
                         <CheckBox x:Name="SettingsSearchShuffleCheckbox" Foreground="WhiteSmoke" FontSize="13" FontWeight="SemiBold" Checked="OnSettingsSearchShuffleCheckboxChecked" Unchecked="OnSettingsSearchShuffleCheckboxUnchecked">Use search results as shuffle source</CheckBox>
-                        <Label Foreground="LightGray">This option makes it so that Shuffle uses search results as the source of songs instead of all songs. Gets applied for new searches only.</Label>
+                        <Label Foreground="LightGray" Margin="5,0,0,0">This option makes it so that Shuffle uses search results as the source of songs instead of all songs. Gets applied for new searches only.</Label>
+                    </StackPanel>
+                    <StackPanel Orientation="Vertical">
+                        <Label Foreground="WhiteSmoke" FontSize="13" FontWeight="SemiBold">Shortcuts</Label>
+                        <Label Foreground="LightGray" Margin="10,-5,0,5">All shortcuts use CTRL-ALT-SHIFT as modifiers.</Label>
+                        <Grid Margin="10,0,0,0">
+                            <Grid.RowDefinitions>
+                                <RowDefinition Height="Auto"/>
+                                <RowDefinition Height="Auto"/>
+                                <RowDefinition Height="Auto"/>
+                                <RowDefinition Height="Auto"/>
+                                <RowDefinition Height="Auto"/>
+                                <RowDefinition Height="Auto"/>
+                                <RowDefinition Height="Auto"/>
+                                <RowDefinition Height="Auto"/>
+                                <RowDefinition Height="Auto"/>
+                                <RowDefinition Height="Auto"/>
+                                <RowDefinition Height="Auto"/>
+                                <RowDefinition Height="Auto"/>
+                                <RowDefinition Height="Auto"/>
+                            </Grid.RowDefinitions>
+                            <Grid.ColumnDefinitions>
+                                <ColumnDefinition Width="Auto"/>
+                                <ColumnDefinition MinWidth="50" MaxWidth="150"/>
+                                <ColumnDefinition Width="*"/>
+                            </Grid.ColumnDefinitions>
+                            <Label Foreground="WhiteSmoke" Grid.Row="0" Grid.Column="0">Play/Pause (default is P):</Label>
+                            <Button x:Name="SettingsPlayPauseShortcutButton" Style="{StaticResource CustomButton}" MinWidth="50" Grid.Row="0" Grid.Column="1" Click="OnSettingsPlayPauseShortcutButtonClick">P</Button>
+                            <Separator Grid.Row="1" Grid.Column="0" Height="5" Background="Transparent"/>
+                            <Label Foreground="WhiteSmoke" Grid.Row="2" Grid.Column="0">Increase volume (default is Up):</Label>
+                            <Button x:Name="SettingsIncreaseVolumeShortcutButton" Style="{StaticResource CustomButton}" MinWidth="50" Grid.Row="2" Grid.Column="1" Click="OnSettingsIncreaseVolumeShortcutButtonClick">Up</Button>
+                            <Separator Grid.Row="3" Grid.Column="0" Height="5" Background="Transparent"/>
+                            <Label Foreground="WhiteSmoke" Grid.Row="4" Grid.Column="0">Decrease volume (default is Down):</Label>
+                            <Button x:Name="SettingsDecreaseVolumeShortcutButton" Style="{StaticResource CustomButton}" MinWidth="50" Grid.Row="4" Grid.Column="1" Click="OnSettingsDecreaseVolumeShortcutButtonClick">Down</Button>
+                            <Separator Grid.Row="5" Grid.Column="0" Height="5" Background="Transparent"/>
+                            <Label Foreground="WhiteSmoke" Grid.Row="6" Grid.Column="0">Next song (default is N):</Label>
+                            <Button x:Name="SettingsNextSongShortcutButton" Style="{StaticResource CustomButton}" MinWidth="50" Grid.Row="6" Grid.Column="1" Click="OnSettingsNextSongShortcutButtonClick">N</Button>
+                            <Separator Grid.Row="7" Grid.Column="0" Height="5" Background="Transparent"/>
+                            <Label Foreground="WhiteSmoke" Grid.Row="8" Grid.Column="0">Previous song (default is B):</Label>
+                            <Button x:Name="SettingsPreviousSongShortcutButton" Style="{StaticResource CustomButton}" MinWidth="50" Grid.Row="8" Grid.Column="1" Click="OnSettingsPreviousSongShortcutButtonClick">B</Button>
+                            <Separator Grid.Row="9" Grid.Column="0" Height="5" Background="Transparent"/>
+                            <Label Foreground="WhiteSmoke" Grid.Row="10" Grid.Column="0">Toggle loop (default is R):</Label>
+                            <Button x:Name="SettingsToggleLoopShortcutButton" Style="{StaticResource CustomButton}" MinWidth="50" Grid.Row="10" Grid.Column="1" Click="OnSettingsToggleLoopShortcutButtonClick">R</Button>
+                            <Separator Grid.Row="11" Grid.Column="0" Height="5" Background="Transparent"/>
+                            <Label Foreground="WhiteSmoke" Grid.Row="12" Grid.Column="0">Toggle shuffle (default is S):</Label>
+                            <Button x:Name="SettingsToggleShuffleShortcutButton" Style="{StaticResource CustomButton}" MinWidth="50" Grid.Row="12" Grid.Column="1" Click="OnSettingsToggleShuffleShortcutButtonClick">S</Button>
+                        </Grid>
                     </StackPanel>
                 </StackPanel>
             </StackPanel>

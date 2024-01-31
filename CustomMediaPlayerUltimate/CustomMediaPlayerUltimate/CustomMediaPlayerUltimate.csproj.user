@@ -19,6 +19,9 @@
     <Compile Update="Elements\CustomSongElement.xaml.cs">
       <SubType>Code</SubType>
     </Compile>
+    <Compile Update="InputCaptureBox.xaml.cs">
+      <SubType>Code</SubType>
+    </Compile>
   </ItemGroup>
   <ItemGroup>
     <Page Update="CommonStyles.xaml">
@@ -37,6 +40,9 @@
       <SubType>Designer</SubType>
     </Page>
     <Page Update="Elements\CustomSongElement.xaml">
+      <SubType>Designer</SubType>
+    </Page>
+    <Page Update="InputCaptureBox.xaml">
       <SubType>Designer</SubType>
     </Page>
     <Page Update="MainWindow.xaml">

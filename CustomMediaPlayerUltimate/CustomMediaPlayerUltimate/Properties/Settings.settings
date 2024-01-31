@@ -14,5 +14,26 @@
     <Setting Name="UseSearchResultsAsShuffleSource" Type="System.Boolean" Scope="User">
       <Value Profile="(Default)">False</Value>
     </Setting>
+    <Setting Name="PlayPauseShortcutKey" Type="System.Int16" Scope="User">
+      <Value Profile="(Default)">59</Value>
+    </Setting>
+    <Setting Name="IncreaseVolumeShortcutKey" Type="System.Int16" Scope="User">
+      <Value Profile="(Default)">24</Value>
+    </Setting>
+    <Setting Name="DecreaseVolumeShortcutKey" Type="System.Int16" Scope="User">
+      <Value Profile="(Default)">26</Value>
+    </Setting>
+    <Setting Name="NextSongShortcutKey" Type="System.Int16" Scope="User">
+      <Value Profile="(Default)">57</Value>
+    </Setting>
+    <Setting Name="PreviousSongShortcutKey" Type="System.Int16" Scope="User">
+      <Value Profile="(Default)">45</Value>
+    </Setting>
+    <Setting Name="ToggleLoopShortcutKey" Type="System.Int16" Scope="User">
+      <Value Profile="(Default)">61</Value>
+    </Setting>
+    <Setting Name="ToggleShuffleShortcutKey" Type="System.Int16" Scope="User">
+      <Value Profile="(Default)">62</Value>
+    </Setting>
   </Settings>
 </SettingsFile>

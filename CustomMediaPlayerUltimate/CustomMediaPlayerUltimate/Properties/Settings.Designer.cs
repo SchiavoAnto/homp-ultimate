@@ -70,5 +70,89 @@ namespace CustomMediaPlayerUltimate.Properties {
                 this["UseSearchResultsAsShuffleSource"] = value;
             }
         }
+        
+        [global::System.Configuration.UserScopedSettingAttribute()]
+        [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
+        [global::System.Configuration.DefaultSettingValueAttribute("59")]
+        public short PlayPauseShortcutKey {
+            get {
+                return ((short)(this["PlayPauseShortcutKey"]));
+            }
+            set {
+                this["PlayPauseShortcutKey"] = value;
+            }
+        }
+        
+        [global::System.Configuration.UserScopedSettingAttribute()]
+        [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
+        [global::System.Configuration.DefaultSettingValueAttribute("24")]
+        public short IncreaseVolumeShortcutKey {
+            get {
+                return ((short)(this["IncreaseVolumeShortcutKey"]));
+            }
+            set {
+                this["IncreaseVolumeShortcutKey"] = value;
+            }
+        }
+        
+        [global::System.Configuration.UserScopedSettingAttribute()]
+        [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
+        [global::System.Configuration.DefaultSettingValueAttribute("26")]
+        public short DecreaseVolumeShortcutKey {
+            get {
+                return ((short)(this["DecreaseVolumeShortcutKey"]));
+            }
+            set {
+                this["DecreaseVolumeShortcutKey"] = value;
+            }
+        }
+        
+        [global::System.Configuration.UserScopedSettingAttribute()]
+        [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
+        [global::System.Configuration.DefaultSettingValueAttribute("57")]
+        public short NextSongShortcutKey {
+            get {
+                return ((short)(this["NextSongShortcutKey"]));
+            }
+            set {
+                this["NextSongShortcutKey"] = value;
+            }
+        }
+        
+        [global::System.Configuration.UserScopedSettingAttribute()]
+        [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
+        [global::System.Configuration.DefaultSettingValueAttribute("45")]
+        public short PreviousSongShortcutKey {
+            get {
+                return ((short)(this["PreviousSongShortcutKey"]));
+            }
+            set {
+                this["PreviousSongShortcutKey"] = value;
+            }
+        }
+        
+        [global::System.Configuration.UserScopedSettingAttribute()]
+        [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
+        [global::System.Configuration.DefaultSettingValueAttribute("61")]
+        public short ToggleLoopShortcutKey {
+            get {
+                return ((short)(this["ToggleLoopShortcutKey"]));
+            }
+            set {
+                this["ToggleLoopShortcutKey"] = value;
+            }
+        }
+        
+        [global::System.Configuration.UserScopedSettingAttribute()]
+        [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
+        [global::System.Configuration.DefaultSettingValueAttribute("62")]
+        public short ToggleShuffleShortcutKey {
+            get {
+                return ((short)(this["ToggleShuffleShortcutKey"]));
+            }
+            set {
+                this["ToggleShuffleShortcutKey"] = value;
+            }
+        }
     }
 }
