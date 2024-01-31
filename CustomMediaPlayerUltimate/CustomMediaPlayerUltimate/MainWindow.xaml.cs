@@ -136,6 +136,7 @@ public partial class MainWindow : Window
         ArtistsView.Visibility = Visibility.Collapsed;
         PlaylistsView.Visibility = Visibility.Collapsed;
         SearchResultsView.Visibility = Visibility.Collapsed;
+        SettingsView.Visibility = Visibility.Collapsed;
         AllSongsView.Visibility = Visibility.Visible;
     }
 
@@ -145,6 +146,7 @@ public partial class MainWindow : Window
         AlbumsView.Visibility = Visibility.Collapsed;
         ArtistsView.Visibility = Visibility.Collapsed;
         SearchResultsView.Visibility = Visibility.Collapsed;
+        SettingsView.Visibility = Visibility.Collapsed;
         PlaylistsView.Visibility = Visibility.Visible;
     }
 
@@ -154,6 +156,7 @@ public partial class MainWindow : Window
         ArtistsView.Visibility = Visibility.Collapsed;
         SearchResultsView.Visibility = Visibility.Collapsed;
         PlaylistsView.Visibility = Visibility.Collapsed;
+        SettingsView.Visibility = Visibility.Collapsed;
         AlbumsView.Visibility = Visibility.Visible;
     }
 
@@ -163,6 +166,7 @@ public partial class MainWindow : Window
         AlbumsView.Visibility = Visibility.Collapsed;
         SearchResultsView.Visibility = Visibility.Collapsed;
         PlaylistsView.Visibility = Visibility.Collapsed;
+        SettingsView.Visibility = Visibility.Collapsed;
         ArtistsView.Visibility = Visibility.Visible;
     }
 
@@ -172,7 +176,18 @@ public partial class MainWindow : Window
         PlaylistsView.Visibility = Visibility.Collapsed;
         AlbumsView.Visibility = Visibility.Collapsed;
         ArtistsView.Visibility = Visibility.Collapsed;
+        SettingsView.Visibility = Visibility.Collapsed;
         SearchResultsView.Visibility = Visibility.Visible;
+    }
+
+    public void SwitchToSettingsView(object sender, RoutedEventArgs e)
+    {
+        AllSongsView.Visibility = Visibility.Collapsed;
+        PlaylistsView.Visibility = Visibility.Collapsed;
+        AlbumsView.Visibility = Visibility.Collapsed;
+        ArtistsView.Visibility = Visibility.Collapsed;
+        SearchResultsView.Visibility = Visibility.Collapsed;
+        SettingsView.Visibility = Visibility.Visible;
     }
 
     public void PlayPauseButtonClick(object sender, RoutedEventArgs e)
@@ -487,6 +502,15 @@ public partial class MainWindow : Window
             IEnumerable<Song> results = from song in allSongsPlaylist.Songs.Values
                                         where song.IsCorrelated(SearchInputTextBox.Text)
                                         select song;
+            Playlist playlist = allSongsPlaylist;
+            if (Properties.Settings.Default.UseSearchResultsAsShuffleSource)
+            {
+                playlist = new Playlist("__HOMP_SEARCH_RESULTS_PLAYLIST__");
+                foreach (Song song in results)
+                {
+                    playlist.AddSong(song);
+                }
+            }
             SearchResultSongsListPanel.Children.Clear();
             StackPanel spanel = new StackPanel() { Orientation = Orientation.Vertical };
             spanel.Children.Add(new Label()
@@ -513,7 +537,7 @@ public partial class MainWindow : Window
                 {
                     Text = song.FileName,
                     Song = song,
-                    Collection = allSongsPlaylist
+                    Collection = playlist
                 });
             }
             SwitchToSearchResultsView(null!, null!);
@@ -703,6 +727,8 @@ public partial class MainWindow : Window
 
         LoopToggleButton.IsChecked = Properties.Settings.Default.PlayerLoop;
         ShuffleToggleButton.IsChecked = Properties.Settings.Default.PlayerShuffle;
+
+        SettingsSearchShuffleCheckbox.IsChecked = Properties.Settings.Default.UseSearchResultsAsShuffleSource;
     }
 
     private void Timer_Tick(object sender, EventArgs e)
@@ -846,5 +872,17 @@ public partial class MainWindow : Window
     {
         ShuffleToggleButton.IsChecked = !ShuffleToggleButton.IsChecked;
         Properties.Settings.Default.PlayerShuffle = (bool)ShuffleToggleButton.IsChecked!;
+    }
+
+    private void OnSettingsSearchShuffleCheckboxChecked(object sender, RoutedEventArgs e)
+    {
+        Properties.Settings.Default.UseSearchResultsAsShuffleSource = true;
+        Properties.Settings.Default.Save();
+    }
+
+    private void OnSettingsSearchShuffleCheckboxUnchecked(object sender, RoutedEventArgs e)
+    {
+        Properties.Settings.Default.UseSearchResultsAsShuffleSource = false;
+        Properties.Settings.Default.Save();
     }
 }
