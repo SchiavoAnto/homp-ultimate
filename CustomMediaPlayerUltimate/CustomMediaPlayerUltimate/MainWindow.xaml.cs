@@ -452,12 +452,12 @@ public partial class MainWindow : Window
         if (playlist.Equals(Playlist.Empty)) return;
         PlaylistSongsListPanel.Children.Clear();
         PlaylistSongsListPanel.Children.Add(new Label() { Content = playlist.Name, Foreground = Brushes.WhiteSmoke, FontSize = 18, FontWeight = FontWeights.Bold });
-        foreach (Song song in playlists[playlist.Name].Songs.Values)
+        foreach (KeyValuePair<string, Song> songPair in playlists[playlist.Name].Songs.OrderBy((kvp) => kvp.Key))
         {
             PlaylistSongsListPanel.Children.Add(new CustomSongElement()
             {
-                Text = song.FileName,
-                Song = song,
+                Text = songPair.Value.FileName,
+                Song = songPair.Value,
                 Collection = playlists[playlist.Name]
             });
         }
