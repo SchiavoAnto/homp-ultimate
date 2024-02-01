@@ -827,7 +827,7 @@ public partial class MainWindow : Window
         if (currentSong is null) return;
         if ((bool)LoopToggleButton.IsChecked!)
         {
-            PlaySong(currentSong.Value.FileName, currentCollection!);
+            PlaySong(currentSong.Value.FilePath, currentCollection!);
         }
         else if ((bool)ShuffleToggleButton.IsChecked!)
         {
