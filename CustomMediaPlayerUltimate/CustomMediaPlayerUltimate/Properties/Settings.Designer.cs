@@ -154,5 +154,29 @@ namespace CustomMediaPlayerUltimate.Properties {
                 this["ToggleShuffleShortcutKey"] = value;
             }
         }
+        
+        [global::System.Configuration.UserScopedSettingAttribute()]
+        [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
+        [global::System.Configuration.DefaultSettingValueAttribute("False")]
+        public bool PlaybackFadeIn {
+            get {
+                return ((bool)(this["PlaybackFadeIn"]));
+            }
+            set {
+                this["PlaybackFadeIn"] = value;
+            }
+        }
+        
+        [global::System.Configuration.UserScopedSettingAttribute()]
+        [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
+        [global::System.Configuration.DefaultSettingValueAttribute("False")]
+        public bool PlaybackFadeOut {
+            get {
+                return ((bool)(this["PlaybackFadeOut"]));
+            }
+            set {
+                this["PlaybackFadeOut"] = value;
+            }
+        }
     }
 }

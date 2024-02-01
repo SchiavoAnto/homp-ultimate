@@ -12,6 +12,7 @@ using System.Collections.Generic;
 using System.Windows.Media.Imaging;
 using CustomMediaPlayerUltimate.Elements;
 using CustomMediaPlayerUltimate.DataStructures;
+using System.Diagnostics;
 
 namespace CustomMediaPlayerUltimate;
 
@@ -34,6 +35,7 @@ public partial class MainWindow : Window
             isPlaying = value;
             if (value)
             {
+                PlayerFadeIn();
                 SetPlayPauseImage(true);
             }
             else
@@ -42,6 +44,8 @@ public partial class MainWindow : Window
             }
         }
     }
+    private bool isFadingIn = false;
+    private bool isFadingOut = false;
     private bool mediaAvailable = false;
     private bool isProgressSliderBeingDragged = false;
     private bool isVolumeSliderBeingDragged = false;
@@ -742,6 +746,9 @@ public partial class MainWindow : Window
         SettingsPreviousSongShortcutButton.Content = $"{(Key)Properties.Settings.Default.PreviousSongShortcutKey}";
         SettingsToggleLoopShortcutButton.Content = $"{(Key)Properties.Settings.Default.ToggleLoopShortcutKey}";
         SettingsToggleShuffleShortcutButton.Content = $"{(Key)Properties.Settings.Default.ToggleShuffleShortcutKey}";
+
+        SettingsEnableFadeInCheckbox.IsChecked = Properties.Settings.Default.PlaybackFadeIn;
+        SettingsEnableFadeOutCheckbox.IsChecked = Properties.Settings.Default.PlaybackFadeOut;
     }
 
     private void Timer_Tick(object sender, EventArgs e)
@@ -753,6 +760,10 @@ public partial class MainWindow : Window
             ProgressSlider.Value = mediaPlayer.Position.TotalSeconds;
         }
         if (!mediaPlayer.NaturalDuration.HasTimeSpan) return;
+        if (mediaPlayer.Position.TotalMilliseconds >= mediaPlayer.NaturalDuration.TimeSpan.TotalMilliseconds - 1500)
+        {
+            if (!isFadingOut) PlayerFadeOut();
+        }
         ProgressLabel.Content = $"{mediaPlayer.Position.Minutes}:{mediaPlayer.Position.Seconds.ToString().PadLeft(2, '0')} / {mediaPlayer.NaturalDuration.TimeSpan.Minutes}:{mediaPlayer.NaturalDuration.TimeSpan.Seconds.ToString().PadLeft(2, '0')}";
     }
 
@@ -943,5 +954,80 @@ public partial class MainWindow : Window
     private void OnSettingsToggleShuffleShortcutButtonClick(object sender, RoutedEventArgs e)
     {
         ChangeShortcut("ToggleShuffleShortcutKey", SettingsToggleShuffleShortcutButton);
+    }
+
+    private void OnSettingsEnableFadeInCheckboxChecked(object sender, RoutedEventArgs e)
+    {
+        Properties.Settings.Default.PlaybackFadeIn = true;
+    }
+
+    private void OnSettingsEnableFadeInCheckboxUnchecked(object sender, RoutedEventArgs e)
+    {
+        Properties.Settings.Default.PlaybackFadeIn = false;
+    }
+
+    private void OnSettingsEnableFadeOutCheckboxChecked(object sender, RoutedEventArgs e)
+    {
+        Properties.Settings.Default.PlaybackFadeOut = true;
+    }
+
+    private void OnSettingsEnableFadeOutCheckboxUnchecked(object sender, RoutedEventArgs e)
+    {
+        Properties.Settings.Default.PlaybackFadeOut = false;
+    }
+
+    private void PlayerFadeIn()
+    {
+        if (!Properties.Settings.Default.PlaybackFadeIn)
+        {
+            Debug.WriteLine("Skipping fade-in");
+            return;
+        }
+        Debug.WriteLine("Fading in");
+        double finalVolume = Properties.Settings.Default.PlayerVolume / 100d;
+        int numIterations = 100;
+        int iterations = 0;
+        mediaPlayer.Volume = 0d;
+        DispatcherTimer fadeInTimer = new DispatcherTimer() { Interval = TimeSpan.FromMilliseconds(10) };
+        fadeInTimer.Tick += (s, e) =>
+        {
+            if (isFadingOut) return;
+            mediaPlayer.Volume += finalVolume / numIterations;
+            iterations++;
+            if (iterations == numIterations)
+            {
+                fadeInTimer.Stop();
+                isFadingIn = false;
+            }
+        };
+        fadeInTimer.Start();
+        isFadingIn = true;
+    }
+
+    private void PlayerFadeOut()
+    {
+        if (!Properties.Settings.Default.PlaybackFadeOut)
+        {
+            Debug.WriteLine("Skipping fade-out");
+            return;
+        }
+        Debug.WriteLine("Fading out");
+        double startingVolume = mediaPlayer.Volume;
+        int numIterations = 100;
+        int iterations = 0;
+        DispatcherTimer fadeOutTimer = new DispatcherTimer() { Interval = TimeSpan.FromMilliseconds(10) };
+        fadeOutTimer.Tick += (s, e) =>
+        {
+            if (isFadingIn) return;
+            mediaPlayer.Volume -= startingVolume / numIterations;
+            iterations++;
+            if (iterations == numIterations)
+            {
+                fadeOutTimer.Stop();
+                isFadingOut = false;
+            }
+        };
+        fadeOutTimer.Start();
+        isFadingOut = true;
     }
 }

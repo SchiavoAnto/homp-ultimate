@@ -35,5 +35,11 @@
     <Setting Name="ToggleShuffleShortcutKey" Type="System.Int16" Scope="User">
       <Value Profile="(Default)">62</Value>
     </Setting>
+    <Setting Name="PlaybackFadeIn" Type="System.Boolean" Scope="User">
+      <Value Profile="(Default)">False</Value>
+    </Setting>
+    <Setting Name="PlaybackFadeOut" Type="System.Boolean" Scope="User">
+      <Value Profile="(Default)">False</Value>
+    </Setting>
   </Settings>
 </SettingsFile>
