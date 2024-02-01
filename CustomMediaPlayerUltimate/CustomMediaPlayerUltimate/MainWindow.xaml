@@ -211,12 +211,12 @@
                 <Label Foreground="WhiteSmoke" FontSize="18" FontWeight="Bold">Settings</Label>
                 <Separator Height="10" Background="Transparent"/>
                 <StackPanel Orientation="Vertical">
-                    <StackPanel Orientation="Vertical" Margin="5,-15,0,0">
+                    <StackPanel Orientation="Vertical" Margin="5,-5,0,0">
                         <CheckBox x:Name="SettingsSearchShuffleCheckbox" Foreground="WhiteSmoke" FontSize="13" FontWeight="SemiBold" Checked="OnSettingsSearchShuffleCheckboxChecked" Unchecked="OnSettingsSearchShuffleCheckboxUnchecked">Use search results as shuffle source</CheckBox>
                         <Label Foreground="LightGray" Margin="5,0,0,0">This option makes it so that Shuffle uses search results as the source of songs instead of all songs. Gets applied for new searches only.</Label>
                     </StackPanel>
-                    <StackPanel Orientation="Vertical" Margin="5,10,0,0">
-                        <Expander Margin="0">
+                    <StackPanel Orientation="Vertical" Margin="5,-5,0,0">
+                        <Expander Margin="0,10,0,0">
                             <Expander.Header>
                                 <Label Foreground="WhiteSmoke" FontSize="13" FontWeight="SemiBold">Shortcuts</Label>
                             </Expander.Header>
