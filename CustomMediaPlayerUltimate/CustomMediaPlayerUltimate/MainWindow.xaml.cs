@@ -12,7 +12,6 @@ using System.Collections.Generic;
 using System.Windows.Media.Imaging;
 using CustomMediaPlayerUltimate.Elements;
 using CustomMediaPlayerUltimate.DataStructures;
-using System.Diagnostics;
 
 namespace CustomMediaPlayerUltimate;
 
@@ -978,12 +977,7 @@ public partial class MainWindow : Window
 
     private void PlayerFadeIn()
     {
-        if (!Properties.Settings.Default.PlaybackFadeIn)
-        {
-            Debug.WriteLine("Skipping fade-in");
-            return;
-        }
-        Debug.WriteLine("Fading in");
+        if (!Properties.Settings.Default.PlaybackFadeIn) return;
         double finalVolume = Properties.Settings.Default.PlayerVolume / 100d;
         int numIterations = 100;
         int iterations = 0;
@@ -1006,12 +1000,7 @@ public partial class MainWindow : Window
 
     private void PlayerFadeOut()
     {
-        if (!Properties.Settings.Default.PlaybackFadeOut)
-        {
-            Debug.WriteLine("Skipping fade-out");
-            return;
-        }
-        Debug.WriteLine("Fading out");
+        if (!Properties.Settings.Default.PlaybackFadeOut) return;
         double startingVolume = mediaPlayer.Volume;
         int numIterations = 100;
         int iterations = 0;
