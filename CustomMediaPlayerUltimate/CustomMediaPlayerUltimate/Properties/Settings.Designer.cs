@@ -178,5 +178,16 @@ namespace CustomMediaPlayerUltimate.Properties {
                 this["PlaybackFadeOut"] = value;
             }
         }
+        
+        [global::System.Configuration.UserScopedSettingAttribute()]
+        [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
+        public global::System.Collections.Specialized.StringCollection SourceDirectories {
+            get {
+                return ((global::System.Collections.Specialized.StringCollection)(this["SourceDirectories"]));
+            }
+            set {
+                this["SourceDirectories"] = value;
+            }
+        }
     }
 }

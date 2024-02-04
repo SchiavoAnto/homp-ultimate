@@ -10,6 +10,7 @@ using System.Windows.Documents;
 using System.Windows.Threading;
 using System.Collections.Generic;
 using System.Windows.Media.Imaging;
+using System.Collections.Specialized;
 using CustomMediaPlayerUltimate.Elements;
 using CustomMediaPlayerUltimate.DataStructures;
 
@@ -72,6 +73,8 @@ public partial class MainWindow : Window
 
     public void OnWindowLoaded(object sender, RoutedEventArgs e)
     {
+        //Carichiamo le impostazioni
+        LoadSettings();
         //Carichiamo tutte le canzoni
         LoadAllSongs();
         //Carichiamo tutte le playlist
@@ -80,8 +83,6 @@ public partial class MainWindow : Window
         LoadAllAlbums();
         //Carichiamo tutti gli artisti
         LoadAllArtists();
-        //Carichiamo le impostazioni
-        LoadSettings();
 
         mediaPlayer.MediaOpened += MediaPlayer_MediaOpened;
         mediaPlayer.MediaEnded += MediaPlayer_MediaEnded;
@@ -554,86 +555,92 @@ public partial class MainWindow : Window
 
     private void LoadAllSongs()
     {
-        try
+        allSongsPlaylist = new Playlist("__HOMP_ALL_SONGS_PLAYLIST__");
+        AllSongsListPanel.Children.Clear();
+        AllSongsListPanel.Children.Add(new Label() { Content = "All Songs", Foreground = Brushes.WhiteSmoke, FontSize = 18, FontWeight = FontWeights.Bold });
+        Dictionary<string, string> props = new();
+        foreach (string? path in Properties.Settings.Default.SourceDirectories)
         {
-            string[] songPaths = Directory.GetFiles(MUSIC_PATH, "*.mp3");
-            allSongsPlaylist = new Playlist("__HOMP_ALL_SONGS_PLAYLIST__");
-            Dictionary<string, string> props = new();
-            AllSongsListPanel.Children.Clear();
-            AllSongsListPanel.Children.Add(new Label() { Content = "All Songs", Foreground = Brushes.WhiteSmoke, FontSize = 18, FontWeight = FontWeights.Bold });
-            foreach (string songPath in songPaths)
+            //MessageBox.Show($"'{path}'");
+            if (path is null) continue;
+            try
             {
-                Song song = new Song(songPath);
-                try
+                string[] songPaths = Directory.GetFiles(path, "*.mp3");
+                props.Clear();
+                foreach (string songPath in songPaths)
                 {
-                    song.FileName = songPath.Replace($"{MUSIC_PATH}\\", "").Replace(".mp3", "");
-                    props?.Clear();
-                    props = Utils.ReadID3v2Tags(songPath);
-                    string title = songPath;
-                    string artistName = "Unknown Artist";
-                    string albumName = "Unknown Album";
-                    string year = "";
-                    if (props is not null)
+                    Song song = new Song(songPath);
+                    try
                     {
-                        // Title
-                        if (props.ContainsKey("TIT2")) title = props["TIT2"];
-                        song.Title = title;
+                        song.FileName = songPath.Replace($"{path}\\", "").Replace(".mp3", "");
+                        props?.Clear();
+                        props = Utils.ReadID3v2Tags(songPath);
+                        string title = songPath;
+                        string artistName = "Unknown Artist";
+                        string albumName = "Unknown Album";
+                        string year = "";
+                        if (props is not null)
+                        {
+                            // Title
+                            if (props.ContainsKey("TIT2")) title = props["TIT2"];
+                            song.Title = title;
 
-                        // Artist
-                        if (props.ContainsKey("TPE1")) artistName = props["TPE1"];
-                        song.Artist = artistName;
-                        if (!artists.ContainsKey(artistName))
-                        {
-                            artists[artistName] = new Playlist(artistName);
+                            // Artist
+                            if (props.ContainsKey("TPE1")) artistName = props["TPE1"];
+                            song.Artist = artistName;
+                            if (!artists.ContainsKey(artistName))
+                            {
+                                artists[artistName] = new Playlist(artistName);
+                            }
+
+                            // Year
+                            if (props.ContainsKey("TYER"))
+                            {
+                                year = props["TYER"];
+                            }
+                            else
+                            {
+                                if (props.ContainsKey("TDRC")) year = props["TDRC"];
+                            }
+                            song.Year = year;
+
+                            // Album
+                            if (props.ContainsKey("TALB")) albumName = props["TALB"];
+                            if (!albums.ContainsKey(albumName))
+                            {
+                                albums[albumName] = new Album(albumName);
+                            }
+                            song.Album = albums[albumName];
                         }
 
-                        // Year
-                        if (props.ContainsKey("TYER"))
-                        {
-                            year = props["TYER"];
-                        }
-                        else
-                        {
-                            if (props.ContainsKey("TDRC")) year = props["TDRC"];
-                        }
-                        song.Year = year;
+                        allSongsPlaylist.AddSong(song);
+                        artists[artistName].AddSong(song);
+                        albums[albumName].AddSong(song);
 
-                        // Album
-                        if (props.ContainsKey("TALB")) albumName = props["TALB"];
-                        if (!albums.ContainsKey(albumName))
+                        AllSongsListPanel.Children.Add(new CustomSongElement()
                         {
-                            albums[albumName] = new Album(albumName);
-                        }
-                        song.Album = albums[albumName];
+                            Text = song.FileName,
+                            Song = song,
+                            Collection = allSongsPlaylist,
+                            HasErrored = false
+                        });
                     }
-
-                    allSongsPlaylist.AddSong(song);
-                    artists[artistName].AddSong(song);
-                    albums[albumName].AddSong(song);
-
-                    AllSongsListPanel.Children.Add(new CustomSongElement()
+                    catch
                     {
-                        Text = song.FileName,
-                        Song = song,
-                        Collection = allSongsPlaylist,
-                        HasErrored = false
-                    });
-                }
-                catch
-                {
-                    // No need to pass Song and Collection because an errored item
-                    // does not show a playing button.
-                    AllSongsListPanel.Children.Add(new CustomSongElement()
-                    {
-                        Text = song.FileName,
-                        HasErrored = true
-                    });
+                        // No need to pass Song and Collection because an errored item
+                        // does not show a playing button.
+                        AllSongsListPanel.Children.Add(new CustomSongElement()
+                        {
+                            Text = song.FileName,
+                            HasErrored = true
+                        });
+                    }
                 }
             }
-        }
-        catch (Exception ex)
-        {
-            MessageBox.Show("Unable to load songs.\n\n" + ex.Message + "\n" + ex.StackTrace + ex.InnerException?.Message);
+            catch (Exception ex)
+            {
+                MessageBox.Show($"Unable to load songs from directory '{path}'.\n\n" + ex.Message + "\n" + ex.StackTrace + ex.InnerException?.Message);
+            }
         }
     }
 
@@ -748,6 +755,16 @@ public partial class MainWindow : Window
 
         SettingsEnableFadeInCheckbox.IsChecked = Properties.Settings.Default.PlaybackFadeIn;
         SettingsEnableFadeOutCheckbox.IsChecked = Properties.Settings.Default.PlaybackFadeOut;
+
+        if (Properties.Settings.Default.SourceDirectories is null || Properties.Settings.Default.SourceDirectories.Count == 0)
+        {
+            Properties.Settings.Default.SourceDirectories = new StringCollection { MUSIC_PATH };
+        }
+        foreach (string? sourcePath in Properties.Settings.Default.SourceDirectories)
+        {
+            if (sourcePath is null) continue;
+            SettingsSourceDirectoriesListView.Items.Add(sourcePath);
+        }
     }
 
     private void Timer_Tick(object sender, EventArgs e)
@@ -1018,5 +1035,45 @@ public partial class MainWindow : Window
         };
         fadeOutTimer.Start();
         isFadingOut = true;
+    }
+
+    private void OnSettingsSourceDirectoriesAddButtonClick(object sender, RoutedEventArgs e)
+    {
+        using (System.Windows.Forms.FolderBrowserDialog fbd = new()
+        {
+            InitialDirectory = MUSIC_PATH,
+            OkRequiresInteraction = true,
+            ShowNewFolderButton = true,
+            ShowPinnedPlaces = true
+        })
+        {
+            if (fbd.ShowDialog() == System.Windows.Forms.DialogResult.OK)
+            {
+                if (!Directory.Exists(fbd.SelectedPath))
+                {
+                    MessageBox.Show("The selected directory does not exist.");
+                    return;
+                }
+                if (Properties.Settings.Default.SourceDirectories.Contains(fbd.SelectedPath))
+                {
+                    MessageBox.Show("Cannot add the selected directory because it has been already added.");
+                    return;
+                }
+                Properties.Settings.Default.SourceDirectories.Add(fbd.SelectedPath);
+                SettingsSourceDirectoriesListView.Items.Add(fbd.SelectedPath);
+            }
+        }
+    }
+
+    private void OnSettingsSourceDirectoriesRemoveButtonClick(object sender, RoutedEventArgs e)
+    {
+        if (SettingsSourceDirectoriesListView.SelectedItem == null) return;
+        string? dir = SettingsSourceDirectoriesListView.SelectedItem.ToString();
+        if (dir is null) return;
+        if (MessageBox.Show($"Are you sure you want to remove the directory '{dir}' from the sources directories?", "HOMP", MessageBoxButton.YesNo) == MessageBoxResult.Yes)
+        {
+            SettingsSourceDirectoriesListView.Items.Remove(dir);
+            Properties.Settings.Default.SourceDirectories.Remove(dir);
+        }
     }
 }
