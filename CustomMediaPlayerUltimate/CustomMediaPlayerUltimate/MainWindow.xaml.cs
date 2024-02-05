@@ -6,9 +6,9 @@ using Microsoft.Win32;
 using System.Windows.Input;
 using System.Windows.Media;
 using System.Windows.Controls;
-using System.Windows.Documents;
 using System.Windows.Threading;
 using System.Collections.Generic;
+using FuckingAroundInWPF.Elements;
 using System.Windows.Media.Imaging;
 using System.Text.RegularExpressions;
 
@@ -22,10 +22,9 @@ namespace CustomMediaPlayerUltimate
         public static string LYRICS_PATH = $"{Environment.GetFolderPath(Environment.SpecialFolder.MyMusic)}\\Lyrics";
         private const int VOLUME_STEP = 2;
 
-        private SolidColorBrush accentColorBrush = new SolidColorBrush() { Color = Color.FromRgb(0, 80, 80) };
-        private string currentLyrics;
         private Regex lyricsTimestampsPattern = new Regex("=[0-9]+=");
         private Dictionary<long, int> lyricsTimestamps = new Dictionary<long, int>();
+        private LyricsViewer lyricsViewer;
 
         private MediaPlayer mediaPlayer = new MediaPlayer();
         private DispatcherTimer timer = new DispatcherTimer();
@@ -63,6 +62,9 @@ namespace CustomMediaPlayerUltimate
 
             KeyboardHook.OnKeyPressed += HandleHotkey!;
             KeyboardHook.Start();
+
+            lyricsViewer = new LyricsViewer("", VisualTreeHelper.GetDpi(LyricsContainer).PixelsPerDip);
+            LyricsContainer.Content = lyricsViewer;
         }
 
         public void OnWindowLoaded(object sender, RoutedEventArgs e)
@@ -143,16 +145,6 @@ namespace CustomMediaPlayerUltimate
             AllSongsGrid.Visibility = Visibility.Collapsed;
             PlaylistsGrid.Visibility = Visibility.Collapsed;
             SearchResultsGrid.Visibility = Visibility.Visible;
-        }
-
-        public void AdvanceHighlighting(object sender, RoutedEventArgs e)
-        {
-            SongLyricsRichTextBox.Focus();
-
-            TextPointer start = SongLyricsRichTextBox.Document.ContentStart.GetPositionAtOffset(0);
-            TextPointer end = start.GetPositionAtOffset(last);
-            last += 10;
-            SongLyricsRichTextBox.Selection.Select(start, end);
         }
 
         public void SongLengthTicks(object sender, RoutedEventArgs e)
@@ -434,12 +426,11 @@ namespace CustomMediaPlayerUltimate
 
         public void LoadLyricsInView()
         {
-            currentLyrics = "";
             if (currentSongName == null) return;
             string lyricsFileName = $"{LYRICS_PATH}\\{currentSongName}.mp3[Lyrics].txt";
             if (!File.Exists(lyricsFileName))
             {
-                SetSongLyricsRichTextBoxText("No lyrics for this song.");
+                SetSongLyrics("No lyrics for this song.");
                 return;
             }
 
@@ -457,13 +448,12 @@ namespace CustomMediaPlayerUltimate
                         lyricsTimestamps.Add(longVal, b.Index);
                     }
                     lyrics = lyricsTimestampsPattern.Replace(lyrics, "");
-                    currentLyrics = lyrics;
-                    SetSongLyricsRichTextBoxText(lyrics);
+                    SetSongLyrics(lyrics);
                 }
             }
             catch
             {
-                SetSongLyricsRichTextBoxText("An error occurred while trying to load lyrics for this song.");
+                SetSongLyrics("An error occurred while trying to load lyrics for this song.");
             }
         }
 
@@ -474,13 +464,7 @@ namespace CustomMediaPlayerUltimate
             long key = lyricsTimestamps.Keys.FirstOrDefault(0);
             if (pos >= key)
             {
-                int position = lyricsTimestamps[key];
-                string highlighted = currentLyrics.Substring(0, position);
-                string rest = currentLyrics.Substring(position);
-
-                SongLyricsRichTextBox.Document.Blocks.Clear();
-                AppendText(SongLyricsRichTextBox, highlighted, accentColorBrush, Brushes.Transparent);
-                AppendText(SongLyricsRichTextBox, rest, Brushes.WhiteSmoke, Brushes.Transparent);
+                lyricsViewer.AdvanceTo(lyricsTimestamps[key]);
                 
                 lyricsTimestamps.Remove(key);
             }
@@ -693,12 +677,6 @@ namespace CustomMediaPlayerUltimate
             IsPlaying = false;
         }
 
-        private void SetSongLyricsRichTextBoxText(string text)
-        {
-            SongLyricsRichTextBox.Document.Blocks.Clear();
-            AppendText(SongLyricsRichTextBox, text, Brushes.WhiteSmoke, Brushes.Transparent);
-        }
-
         private void SetPlayPauseImage(bool playing)
         {
             BitmapImage image = new BitmapImage();
@@ -745,16 +723,9 @@ namespace CustomMediaPlayerUltimate
             }
         }
 
-        private void AppendText(RichTextBox textBox, string message, SolidColorBrush fontColor, SolidColorBrush backgroundColor)
+        private void SetSongLyrics(string lyrics)
         {
-            // If a message contains line breaks, the code bellow will
-            // add an empty blank line for every line break in the message.
-            // To avoid that we have to replace all new lines in the mesage with '\r' symbol.
-            message = Regex.Replace(message, @"(\r\n)|(\n\r)|(\n)", "\r");
-
-            TextRange textRange = new TextRange(textBox.Document.ContentEnd, textBox.Document.ContentEnd) { Text = message };
-            textRange.ApplyPropertyValue(TextElement.ForegroundProperty, fontColor);
-            textRange.ApplyPropertyValue(TextElement.BackgroundProperty, backgroundColor);
+            lyricsViewer.SetText(lyrics);
         }
     }
 }
