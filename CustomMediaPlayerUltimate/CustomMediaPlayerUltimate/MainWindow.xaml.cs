@@ -5,6 +5,7 @@ using System.Windows;
 using Microsoft.Win32;
 using System.Windows.Input;
 using System.Windows.Media;
+using System.Threading.Tasks;
 using System.Windows.Controls;
 using System.Windows.Documents;
 using System.Windows.Threading;
@@ -71,12 +72,12 @@ public partial class MainWindow : Window
         KeyboardHook.Start();
     }
 
-    public void OnWindowLoaded(object sender, RoutedEventArgs e)
+    public async void OnWindowLoaded(object sender, RoutedEventArgs e)
     {
         //Carichiamo le impostazioni
         LoadSettings();
         //Carichiamo tutte le canzoni
-        LoadAllSongs();
+        await LoadAllSongs();
         //Carichiamo tutte le playlist
         LoadAllPlaylists();
         //Carichiamo tutti gli album
@@ -553,7 +554,7 @@ public partial class MainWindow : Window
         }
     }
 
-    private void LoadAllSongs()
+    private async Task<bool> LoadAllSongs()
     {
         allSongsPlaylist = new Playlist("__HOMP_ALL_SONGS_PLAYLIST__");
         AllSongsListPanel.Children.Clear();
@@ -561,12 +562,10 @@ public partial class MainWindow : Window
         Dictionary<string, string> props = new();
         foreach (string? path in Properties.Settings.Default.SourceDirectories)
         {
-            //MessageBox.Show($"'{path}'");
             if (path is null) continue;
             try
             {
                 string[] songPaths = Directory.GetFiles(path, "*.mp3");
-                props.Clear();
                 foreach (string songPath in songPaths)
                 {
                     Song song = new Song(songPath);
@@ -617,31 +616,40 @@ public partial class MainWindow : Window
                         artists[artistName].AddSong(song);
                         albums[albumName].AddSong(song);
 
-                        AllSongsListPanel.Children.Add(new CustomSongElement()
+                        await Dispatcher.BeginInvoke(() =>
                         {
-                            Text = song.FileName,
-                            Song = song,
-                            Collection = allSongsPlaylist,
-                            HasErrored = false
-                        });
+                            AllSongsListPanel.Children.Add(new CustomSongElement()
+                            {
+                                Text = song.FileName,
+                                Song = song,
+                                Collection = allSongsPlaylist,
+                                HasErrored = false
+                            });
+                        }, DispatcherPriority.Background);
                     }
                     catch
                     {
                         // No need to pass Song and Collection because an errored item
                         // does not show a playing button.
-                        AllSongsListPanel.Children.Add(new CustomSongElement()
+                        await Dispatcher.BeginInvoke(() =>
                         {
-                            Text = song.FileName,
-                            HasErrored = true
-                        });
+                            AllSongsListPanel.Children.Add(new CustomSongElement()
+                            {
+                                Text = song.FileName,
+                                HasErrored = true
+                            });
+                        }, DispatcherPriority.Background);
                     }
                 }
+                return true;
             }
             catch (Exception ex)
             {
                 MessageBox.Show($"Unable to load songs from directory '{path}'.\n\n" + ex.Message + "\n" + ex.StackTrace + ex.InnerException?.Message);
+                return false;
             }
         }
+        return false;
     }
 
     private void LoadAllPlaylists()
