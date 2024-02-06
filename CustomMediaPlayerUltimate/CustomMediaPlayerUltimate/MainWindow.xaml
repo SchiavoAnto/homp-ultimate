@@ -26,15 +26,15 @@
                 <ColumnDefinition Width="Auto"/>
             </Grid.ColumnDefinitions>
             <Button Style="{StaticResource CustomButton}" Content="All songs" Grid.Column="0" Click="SwitchToAllSongsView"/>
-            <Separator Opacity="0" Width="10" Grid.Column="1"/>
+            <Separator Opacity="0" Width="6" Grid.Column="1"/>
             <Button Style="{StaticResource CustomButton}" Content="Playlists" Grid.Column="2" Click="SwitchToPlaylistsView"/>
-            <Separator Opacity="0" Width="10" Grid.Column="3"/>
+            <Separator Opacity="0" Width="6" Grid.Column="3"/>
             <Button Style="{StaticResource CustomButton}" Content="Albums" Grid.Column="4" Click="SwitchToAlbumsView"/>
-            <Separator Opacity="0" Width="10" Grid.Column="5"/>
+            <Separator Opacity="0" Width="6" Grid.Column="5"/>
             <Button Style="{StaticResource CustomButton}" Content="Artists" Grid.Column="6" Click="SwitchToArtistsView"/>
-            <Separator Opacity="0" Width="10" Grid.Column="7"/>
+            <Separator Opacity="0" Width="6" Grid.Column="7"/>
             <Button Style="{StaticResource CustomButton}" Content="Search results" Grid.Column="8" Click="SwitchToSearchResultsView"/>
-            <Separator Opacity="0" Width="10" Grid.Column="9"/>
+            <Separator Opacity="0" Width="6" Grid.Column="9"/>
             <Button Style="{StaticResource CustomButton}" Content="Settings" Grid.Column="10" Click="SwitchToSettingsView"/>
             
             <Label Grid.Column="12" Foreground="WhiteSmoke">Search for a song:</Label>

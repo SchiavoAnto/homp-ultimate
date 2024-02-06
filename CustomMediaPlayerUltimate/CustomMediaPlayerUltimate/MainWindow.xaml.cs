@@ -27,6 +27,7 @@ public partial class MainWindow : Window
 
     private MediaPlayer mediaPlayer = new MediaPlayer();
     private DispatcherTimer timer = new DispatcherTimer();
+    private Random random = new Random();
     private bool isPlaying = false;
     private bool IsPlaying
     {
@@ -60,7 +61,7 @@ public partial class MainWindow : Window
     private Dictionary<string, Playlist> playlists = new Dictionary<string, Playlist>();
     private Dictionary<string, Album> albums = new Dictionary<string, Album>();
     private Dictionary<string, Playlist> artists = new Dictionary<string, Playlist>();
-    private List<Tuple<Song, SongCollection>> playedSongs = new List<Tuple<Song, SongCollection>>();
+    private List<Song> playedSongs = new List<Song>();
 
     public MainWindow()
     {
@@ -791,9 +792,9 @@ public partial class MainWindow : Window
         ProgressLabel.Content = $"{mediaPlayer.Position.Minutes}:{mediaPlayer.Position.Seconds.ToString().PadLeft(2, '0')} / {mediaPlayer.NaturalDuration.TimeSpan.Minutes}:{mediaPlayer.NaturalDuration.TimeSpan.Seconds.ToString().PadLeft(2, '0')}";
     }
 
-    public void PlaySong(string songFile, SongCollection? songPlaylist)
+    public void PlaySong(string songFile, SongCollection? songCollection)
     {
-        if (songPlaylist is null) return;
+        if (songCollection is null) return;
         mediaPlayer.Close();
         mediaPlayer.Stop();
 
@@ -803,7 +804,7 @@ public partial class MainWindow : Window
             return;
         }
 
-        Song song = songPlaylist.Songs[songFile];
+        Song song = songCollection.Songs[songFile];
         if (song.Title != string.Empty)
         {
             CurrentSongTitleLabel.Content = song.Title;
@@ -821,10 +822,18 @@ public partial class MainWindow : Window
         mediaPlayer.Open(new Uri(songFile));
         mediaPlayer.Play();
         mediaPlayer.Volume = VolumeSlider.Value / 100f;
-        currentCollection = songPlaylist;
+        if (currentCollection != songCollection)
+        {
+            currentCollection = songCollection;
+            playedSongs.Clear();
+        }
+        if (playedSongs.Count >= currentCollection.Songs.Count)
+        {
+            playedSongs.Clear();
+        }
         currentSong = song;
         ProgressSlider.Value = 0;
-        playedSongs.Add(new Tuple<Song, SongCollection>(song, currentCollection));
+        playedSongs.Add(song);
 
         LoadLyricsInView();
     }
@@ -832,15 +841,24 @@ public partial class MainWindow : Window
     private void PreviousSongInPlaylist()
     {
         if (playedSongs.Count < 2) return;
-        Tuple<Song, SongCollection> previousEntry = playedSongs[playedSongs.Count - 2];
         playedSongs.RemoveAt(playedSongs.Count - 2);
-        PlaySong(previousEntry.Item1.FilePath, previousEntry.Item2);
+        PlaySong(playedSongs[playedSongs.Count - 2].FilePath, currentCollection);
     }
 
     private void NextSongInPlaylist()
     {
-        int randomNextSongIndex = new Random().Next(currentCollection!.Songs.Count);
-        PlaySong(currentCollection.Songs[currentCollection.Songs.Keys.ElementAt(randomNextSongIndex)].FilePath, currentCollection!);
+        if (currentCollection is null) return;
+        if (playedSongs.Count >= currentCollection.Songs.Count)
+        {
+            playedSongs.Clear();
+        }
+        int randomNextSongIndex;
+        do
+        {
+            randomNextSongIndex = random.Next(currentCollection.Songs.Count);
+        }
+        while (playedSongs.Contains(currentCollection.Songs.Values.ElementAt(randomNextSongIndex)));
+        PlaySong(currentCollection.Songs[currentCollection.Songs.Keys.ElementAt(randomNextSongIndex)].FilePath, currentCollection);
     }
 
     private void MediaPlayer_MediaOpened(object? sender, EventArgs e)
