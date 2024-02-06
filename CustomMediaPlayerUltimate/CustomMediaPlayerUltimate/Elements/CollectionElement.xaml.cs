@@ -8,6 +8,7 @@ namespace CustomMediaPlayerUltimate.Elements;
 public partial class CollectionElement : UserControl
 {
     public Action<CollectionElement> OnClickDelegate;
+    public Action<CollectionElement> OnDoubleClickDelegate;
 
     private string _text = string.Empty;
     public string Text
@@ -39,15 +40,26 @@ public partial class CollectionElement : UserControl
     public static readonly DependencyProperty FocusedPropertyProperty =
         DependencyProperty.Register("FocusedProperty", typeof(bool), typeof(CollectionElement), new PropertyMetadata(false));
 
-    public CollectionElement(Action<CollectionElement> action)
+    public CollectionElement(Action<CollectionElement> onClickDelegate, Action<CollectionElement> onDoubleClickDelegate)
     {
         InitializeComponent();
-        OnClickDelegate = action;
+        OnClickDelegate = onClickDelegate;
+        OnDoubleClickDelegate = onDoubleClickDelegate;
     }
 
     private void ElementMouseUp(object sender, MouseButtonEventArgs e)
     {
+        // Don't proceed if we are already focused.
+        if (Focused) return;
+
+        // If we click, we want to call the click delegate
+        // (which should show this collection's songs in a list) and change state to focused.
         OnClickDelegate.Invoke(this);
         Focused = true;
+    }
+
+    private void ElementMouseDoubleClick(object sender, MouseButtonEventArgs e)
+    {
+        OnDoubleClickDelegate.Invoke(this);
     }
 }

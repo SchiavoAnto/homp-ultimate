@@ -5,7 +5,7 @@
              xmlns:d="http://schemas.microsoft.com/expression/blend/2008" 
              xmlns:local="clr-namespace:CustomMediaPlayerUltimate.Elements"
              mc:Ignorable="d" 
-             d:DesignHeight="40" d:DesignWidth="200" MouseUp="ElementMouseUp">
+             d:DesignHeight="40" d:DesignWidth="200" MouseUp="ElementMouseUp" MouseDoubleClick="ElementMouseDoubleClick">
     <Grid x:Name="GridContainer" Style="{StaticResource CollectionElement}">
         <Grid.ColumnDefinitions>
             <ColumnDefinition Width="*"/>

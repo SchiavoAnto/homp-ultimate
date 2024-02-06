@@ -713,11 +713,16 @@ public partial class MainWindow : Window
         AlbumsListPanel.Children.Add(new Label() { Content = "Albums", Foreground = Brushes.WhiteSmoke, FontSize = 18, FontWeight = FontWeights.Bold });
         foreach (KeyValuePair<string, Album> kvp in albums.OrderBy((kvp) => kvp.Key))
         {
-            AlbumsListPanel.Children.Add(new CollectionElement((self) =>
+            AlbumsListPanel.Children.Add(new CollectionElement(
+            (self) =>
             {
                 if (currentlySelectedAlbumElement is not null) currentlySelectedAlbumElement.Focused = false;
                 LoadAlbumSongsInView(kvp.Key);
                 currentlySelectedAlbumElement = self;
+            },
+            (self) =>
+            {
+                PlayCollection(kvp.Value);
             })
             {
                 Text = kvp.Key
@@ -731,11 +736,16 @@ public partial class MainWindow : Window
         ArtistsListPanel.Children.Add(new Label() { Content = "Artists", Foreground = Brushes.WhiteSmoke, FontSize = 18, FontWeight = FontWeights.Bold });
         foreach (KeyValuePair<string, Playlist> kvp in artists.OrderBy((kvp) => kvp.Key))
         {
-            ArtistsListPanel.Children.Add(new CollectionElement((self) =>
+            ArtistsListPanel.Children.Add(new CollectionElement(
+            (self) =>
             {
                 if (currentlySelectedArtistElement is not null) currentlySelectedArtistElement.Focused = false;
                 LoadArtistSongsInView(kvp.Key);
                 currentlySelectedArtistElement = self;
+            },
+            (self) =>
+            {
+                PlayCollection(kvp.Value);
             })
             {
                 Text = kvp.Key
@@ -1101,5 +1111,11 @@ public partial class MainWindow : Window
             SettingsSourceDirectoriesListView.Items.Remove(dir);
             Properties.Settings.Default.SourceDirectories.Remove(dir);
         }
+    }
+
+    private void PlayCollection(SongCollection collection)
+    {
+        Song startingSong = collection.Songs.Values.ElementAt(random.Next(collection.Songs.Count));
+        PlaySong(startingSong.FilePath, collection);
     }
 }
