@@ -1045,7 +1045,6 @@ public partial class MainWindow : Window
         if (isFadingOut) return;
         double finalVolume = Properties.Settings.Default.PlayerVolume / 100d;
         mediaPlayer.Volume += finalVolume / fadeNumIterations;
-        VolumeLabel.Content = $"fi: {mediaPlayer.Volume}";
         fadeIterations++;
         if (fadeIterations == fadeNumIterations)
         {
@@ -1067,7 +1066,6 @@ public partial class MainWindow : Window
     private void PlayerFadeOutEvent(object? sender, EventArgs e)
     {
         mediaPlayer.Volume -= mediaPlayer.Volume / fadeNumIterations;
-        VolumeLabel.Content = $"fo: {mediaPlayer.Volume}";
         fadeIterations++;
         if (fadeIterations == fadeNumIterations)
         {
