@@ -309,6 +309,10 @@ public partial class MainWindow : Window
                     {
                         LoadPlaylistSongsInView(playlists[name]);
                     },
+                    (self) =>
+                    {
+                        PlayCollection(playlists[name]);
+                    },
                     () => { AddSongsToPlaylist(playlists[name]); },
                     () => { RenamePlaylist(playlists[name]); },
                     () => { DeletePlaylist(playlists[name]); }
@@ -691,6 +695,10 @@ public partial class MainWindow : Window
                         if (currentlySelectedPlaylistElement is not null) currentlySelectedPlaylistElement.Focused = false;
                         LoadPlaylistSongsInView(playlists[playlistName]);
                         currentlySelectedPlaylistElement = self;
+                    },
+                    (self) =>
+                    {
+                        PlayCollection(playlist);
                     },
                     () => { AddSongsToPlaylist(playlist); },
                     () => { RenamePlaylist(playlist); },
