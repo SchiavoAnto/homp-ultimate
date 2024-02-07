@@ -48,7 +48,7 @@
   </ItemGroup>
 
   <ItemGroup>
-    <Compile Update="BigInputBox.xaml.cs">
+    <Compile Update="Elements\BigInputBox.xaml.cs">
       <SubType>Code</SubType>
     </Compile>
     <Compile Update="Properties\Settings.Designer.cs">
@@ -66,7 +66,7 @@
   </ItemGroup>
 
   <ItemGroup>
-    <Page Update="BigInputBox.xaml">
+    <Page Update="Elements\BigInputBox.xaml">
       <SubType>Designer</SubType>
     </Page>
   </ItemGroup>

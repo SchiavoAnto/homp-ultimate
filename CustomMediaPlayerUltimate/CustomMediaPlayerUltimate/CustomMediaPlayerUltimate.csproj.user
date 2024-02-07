@@ -13,13 +13,16 @@
     <Compile Update="Elements\PlaylistElement.xaml.cs">
       <SubType>Code</SubType>
     </Compile>
-    <Compile Update="InputBox.xaml.cs">
+    <Compile Update="Elements\InputBox.xaml.cs">
       <SubType>Code</SubType>
     </Compile>
     <Compile Update="Elements\CustomSongElement.xaml.cs">
       <SubType>Code</SubType>
     </Compile>
-    <Compile Update="InputCaptureBox.xaml.cs">
+    <Compile Update="Elements\InputCaptureBox.xaml.cs">
+      <SubType>Code</SubType>
+    </Compile>
+    <Compile Update="Elements\SongSelectDialog.xaml.cs">
       <SubType>Code</SubType>
     </Compile>
   </ItemGroup>
@@ -27,7 +30,7 @@
     <Page Update="CommonStyles.xaml">
       <SubType>Designer</SubType>
     </Page>
-    <Page Update="BigInputBox.xaml">
+    <Page Update="Elements\BigInputBox.xaml">
       <SubType>Designer</SubType>
     </Page>
     <Page Update="Elements\CollectionElement.xaml">
@@ -36,13 +39,15 @@
     <Page Update="Elements\PlaylistElement.xaml">
       <SubType>Designer</SubType>
     </Page>
-    <Page Update="InputBox.xaml">
+    <Page Update="Elements\InputBox.xaml">
       <SubType>Designer</SubType>
     </Page>
     <Page Update="Elements\CustomSongElement.xaml">
       <SubType>Designer</SubType>
     </Page>
-    <Page Update="InputCaptureBox.xaml">
+    <Page Update="Elements\InputCaptureBox.xaml">
+      <SubType>Designer</SubType>
+    </Page>
       <SubType>Designer</SubType>
     </Page>
     <Page Update="MainWindow.xaml">
