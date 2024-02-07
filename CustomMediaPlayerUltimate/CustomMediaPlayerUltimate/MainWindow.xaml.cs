@@ -566,7 +566,6 @@ public partial class MainWindow : Window
         allSongsPlaylist = new Playlist("__HOMP_ALL_SONGS_PLAYLIST__");
         AllSongsListPanel.Children.Clear();
         AllSongsListPanel.Children.Add(new Label() { Content = "All Songs", Foreground = Brushes.WhiteSmoke, FontSize = 18, FontWeight = FontWeights.Bold });
-        Dictionary<string, string> props = new();
         foreach (string? path in Properties.Settings.Default.SourceDirectories)
         {
             if (path is null) continue;
@@ -575,80 +574,8 @@ public partial class MainWindow : Window
                 string[] songPaths = Directory.GetFiles(path, "*.mp3");
                 foreach (string songPath in songPaths)
                 {
-                    Song song = new Song(songPath);
-                    try
-                    {
-                        song.FileName = songPath.Replace($"{path}\\", "").Replace(".mp3", "");
-                        props?.Clear();
-                        props = Utils.ReadID3v2Tags(songPath);
-                        string title = songPath;
-                        string artistName = "Unknown Artist";
-                        string albumName = "Unknown Album";
-                        string year = "";
-                        if (props is not null)
-                        {
-                            // Title
-                            if (props.ContainsKey("TIT2")) title = props["TIT2"];
-                            song.Title = title;
-
-                            // Artist
-                            if (props.ContainsKey("TPE1")) artistName = props["TPE1"];
-                            song.Artist = artistName;
-                            if (!artists.ContainsKey(artistName))
-                            {
-                                artists[artistName] = new Playlist(artistName);
-                            }
-
-                            // Year
-                            if (props.ContainsKey("TYER"))
-                            {
-                                year = props["TYER"];
-                            }
-                            else
-                            {
-                                if (props.ContainsKey("TDRC")) year = props["TDRC"];
-                            }
-                            song.Year = year;
-
-                            // Album
-                            if (props.ContainsKey("TALB")) albumName = props["TALB"];
-                            if (!albums.ContainsKey(albumName))
-                            {
-                                albums[albumName] = new Album(albumName);
-                            }
-                            song.Album = albums[albumName];
-                        }
-
-                        allSongsPlaylist.AddSong(song);
-                        artists[artistName].AddSong(song);
-                        albums[albumName].AddSong(song);
-
-                        await Dispatcher.BeginInvoke(() =>
-                        {
-                            AllSongsListPanel.Children.Add(new CustomSongElement()
-                            {
-                                Text = song.FileName,
-                                Song = song,
-                                Collection = allSongsPlaylist,
-                                HasErrored = false
-                            });
-                        }, DispatcherPriority.Background);
-                    }
-                    catch
-                    {
-                        // No need to pass Song and Collection because an errored item
-                        // does not show a playing button.
-                        await Dispatcher.BeginInvoke(() =>
-                        {
-                            AllSongsListPanel.Children.Add(new CustomSongElement()
-                            {
-                                Text = song.FileName,
-                                HasErrored = true
-                            });
-                        }, DispatcherPriority.Background);
-                    }
+                    await LoadSong(path, songPath);
                 }
-                return true;
             }
             catch (Exception ex)
             {
@@ -656,7 +583,7 @@ public partial class MainWindow : Window
                 return false;
             }
         }
-        return false;
+        return true;
     }
 
     private void LoadAllPlaylists()
@@ -793,6 +720,87 @@ public partial class MainWindow : Window
         {
             if (sourcePath is null) continue;
             SettingsSourceDirectoriesListView.Items.Add(sourcePath);
+        }
+    }
+
+    private async Task<bool> LoadSong(string dirPath, string songPath)
+    {
+        Song song = new Song(songPath);
+        Dictionary<string, string> props = new();
+        try
+        {
+            song.FileName = songPath.Replace($"{dirPath}\\", "").Replace(".mp3", "");
+            props?.Clear();
+            props = Utils.ReadID3v2Tags(songPath);
+            string title = songPath;
+            string artistName = "Unknown Artist";
+            string albumName = "Unknown Album";
+            string year = "";
+            if (props is not null)
+            {
+                // Title
+                if (props.ContainsKey("TIT2")) title = props["TIT2"];
+                song.Title = title;
+
+                // Artist
+                if (props.ContainsKey("TPE1")) artistName = props["TPE1"];
+                song.Artist = artistName;
+                if (!artists.ContainsKey(artistName))
+                {
+                    artists[artistName] = new Playlist(artistName);
+                }
+
+                // Year
+                if (props.ContainsKey("TYER"))
+                {
+                    year = props["TYER"];
+                }
+                else
+                {
+                    if (props.ContainsKey("TDRC")) year = props["TDRC"];
+                }
+                song.Year = year;
+
+                // Album
+                if (props.ContainsKey("TALB")) albumName = props["TALB"];
+                if (!albums.ContainsKey(albumName))
+                {
+                    albums[albumName] = new Album(albumName);
+                }
+                song.Album = albums[albumName];
+            }
+
+            allSongsPlaylist.AddSong(song);
+            artists[artistName].AddSong(song);
+            albums[albumName].AddSong(song);
+
+            await Dispatcher.BeginInvoke(() =>
+            {
+                AllSongsListPanel.Children.Add(new CustomSongElement()
+                {
+                    Text = song.FileName,
+                    Song = song,
+                    Collection = allSongsPlaylist,
+                    HasErrored = false
+                });
+            }, DispatcherPriority.Background);
+
+            return true;
+        }
+        catch
+        {
+            // No need to pass Song and Collection because an errored item
+            // does not show a playing button.
+            await Dispatcher.BeginInvoke(() =>
+            {
+                AllSongsListPanel.Children.Add(new CustomSongElement()
+                {
+                    Text = song.FileName,
+                    HasErrored = true
+                });
+            }, DispatcherPriority.Background);
+
+            return false;
         }
     }
 
