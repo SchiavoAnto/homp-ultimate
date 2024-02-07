@@ -726,13 +726,14 @@ public partial class MainWindow : Window
     private async Task<bool> LoadSong(string dirPath, string songPath)
     {
         Song song = new Song(songPath);
-        Dictionary<string, string> props = new();
+        Dictionary<string, string>? props = new();
         try
         {
             song.FileName = songPath.Replace($"{dirPath}\\", "").Replace(".mp3", "");
             props?.Clear();
-            props = Utils.ReadID3v2Tags(songPath);
-            string title = songPath;
+            Tuple<bool, Dictionary<string, string>?> tagResult = Utils.ReadID3v2Tags(songPath);
+            if (tagResult.Item1) props = tagResult.Item2;
+            string title = song.FileName;
             string artistName = "Unknown Artist";
             string albumName = "Unknown Album";
             string year = "";

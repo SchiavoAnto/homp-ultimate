@@ -1,4 +1,5 @@
-﻿using System.IO;
+﻿using System;
+using System.IO;
 using System.Text;
 using System.Collections.Generic;
 
@@ -7,69 +8,76 @@ namespace CustomMediaPlayerUltimate;
 internal class Utils
 {
     //Thank you ChatGPT
-    public static Dictionary<string, string> ReadID3v2Tags(string filePath)
+    public static Tuple<bool, Dictionary<string, string>?> ReadID3v2Tags(string filePath)
     {
         // Create a dictionary to store the tags
         Dictionary<string, string> tags = new Dictionary<string, string>();
 
-        // Open the MP3 file
-        using (FileStream stream = new FileStream(filePath, FileMode.Open))
+        try
         {
-            // Read the ID3v2 tag header
-            byte[] header = new byte[10];
-            stream.Read(header, 0, 10);
-
-            // Check if the file has an ID3v2 tag
-            if (Encoding.ASCII.GetString(header, 0, 3) == "ID3")
+            // Open the MP3 file
+            using (FileStream stream = new FileStream(filePath, FileMode.Open))
             {
-                // Get the ID3v2 tag size
-                int size = GetTagSize(header, 6);
+                // Read the ID3v2 tag header
+                byte[] header = new byte[10];
+                stream.Read(header, 0, 10);
 
-                // Read the ID3v2 tag
-                byte[] tagData = new byte[size];
-                stream.Read(tagData, 0, size);
-
-                // Read the ID3v2 frames
-                int offset = 0;
-                while (offset < size)
+                // Check if the file has an ID3v2 tag
+                if (Encoding.ASCII.GetString(header, 0, 3) == "ID3")
                 {
-                    // Read the frame header
-                    byte[] frameHeader = new byte[10];
-                    for (int i = 0; i < 10; i++)
+                    // Get the ID3v2 tag size
+                    int size = GetTagSize(header, 6);
+
+                    // Read the ID3v2 tag
+                    byte[] tagData = new byte[size];
+                    stream.Read(tagData, 0, size);
+
+                    // Read the ID3v2 frames
+                    int offset = 0;
+                    while (offset < size)
                     {
-                        if (offset + i >= size)
+                        // Read the frame header
+                        byte[] frameHeader = new byte[10];
+                        for (int i = 0; i < 10; i++)
                         {
-                            break;
+                            if (offset + i >= size)
+                            {
+                                break;
+                            }
+                            frameHeader[i] = tagData[offset + i];
                         }
-                        frameHeader[i] = tagData[offset + i];
-                    }
 
-                    // Get the frame size and ID
-                    int frameSize = GetTagSize(frameHeader, 4);
-                    string frameID = Encoding.ASCII.GetString(frameHeader, 0, 4);
+                        // Get the frame size and ID
+                        int frameSize = GetTagSize(frameHeader, 4);
+                        string frameID = Encoding.ASCII.GetString(frameHeader, 0, 4);
 
-                    // Read the frame data
-                    byte[] frameData = new byte[frameSize];
-                    for (int i = 0; i < frameSize; i++)
-                    {
-                        if (offset + 10 + i >= size)
+                        // Read the frame data
+                        byte[] frameData = new byte[frameSize];
+                        for (int i = 0; i < frameSize; i++)
                         {
-                            break;
+                            if (offset + 10 + i >= size)
+                            {
+                                break;
+                            }
+                            frameData[i] = tagData[offset + 10 + i];
                         }
-                        frameData[i] = tagData[offset + 10 + i];
+
+                        // Decode the frame and add it to the dictionary
+                        string frameValue = DecodeFrame(frameID, frameData);
+                        tags[frameID] = frameValue.Replace("\0", "");
+
+                        // Move to the next frame
+                        offset += 10 + frameSize;
                     }
-
-                    // Decode the frame and add it to the dictionary
-                    string frameValue = DecodeFrame(frameID, frameData);
-                    tags[frameID] = frameValue.Replace("\0", "");
-
-                    // Move to the next frame
-                    offset += 10 + frameSize;
                 }
             }
+            return new(true, tags);
+        }
+        catch
+        {
+            return new(false, null);
         }
 
-        return tags;
     }
 
     //Thank you ChatGPT
