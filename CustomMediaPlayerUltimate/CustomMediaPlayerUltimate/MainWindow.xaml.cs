@@ -46,7 +46,9 @@ public partial class MainWindow : Window
             }
         }
     }
-    private bool isFadingIn = false;
+    private DispatcherTimer fadeTimer = new DispatcherTimer();
+    private int fadeNumIterations = 100;
+    private int fadeIterations = 0;
     private bool isFadingOut = false;
     private bool mediaAvailable = false;
     private bool isProgressSliderBeingDragged = false;
@@ -69,7 +71,7 @@ public partial class MainWindow : Window
 
         Instance = this;
 
-        KeyboardHook.OnKeyPressed += HandleHotkey!;
+        KeyboardHook.OnKeyPressed += HandleHotkey;
         KeyboardHook.Start();
     }
 
@@ -91,7 +93,7 @@ public partial class MainWindow : Window
         mediaPlayer.MediaFailed += MediaPlayer_MediaFailed;
 
         timer.Interval = TimeSpan.FromMilliseconds(100);
-        timer.Tick += Timer_Tick!;
+        timer.Tick += Timer_Tick;
         timer.Start();
     }
 
@@ -101,7 +103,7 @@ public partial class MainWindow : Window
         KeyboardHook.Stop();
     }
 
-    private void HandleHotkey(object sender, Key key)
+    private void HandleHotkey(object? sender, Key key)
     {
         if (Keyboard.Modifiers == (ModifierKeys.Control | ModifierKeys.Alt | ModifierKeys.Shift))
         {
@@ -786,7 +788,7 @@ public partial class MainWindow : Window
         }
     }
 
-    private void Timer_Tick(object sender, EventArgs e)
+    private void Timer_Tick(object? sender, EventArgs e)
     {
         if (mediaPlayer.Source == null) return;
         if (!mediaAvailable) return;
@@ -873,6 +875,7 @@ public partial class MainWindow : Window
 
     private void MediaPlayer_MediaOpened(object? sender, EventArgs e)
     {
+        if (!mediaPlayer.NaturalDuration.HasTimeSpan) return;
         ProgressSlider.Maximum = mediaPlayer.NaturalDuration.TimeSpan.TotalSeconds;
         ProgressSlider.Value = 0;
         mediaAvailable = true;
@@ -1031,46 +1034,48 @@ public partial class MainWindow : Window
     private void PlayerFadeIn()
     {
         if (!Properties.Settings.Default.PlaybackFadeIn) return;
-        double finalVolume = Properties.Settings.Default.PlayerVolume / 100d;
-        int numIterations = 100;
-        int iterations = 0;
         mediaPlayer.Volume = 0d;
-        DispatcherTimer fadeInTimer = new DispatcherTimer() { Interval = TimeSpan.FromMilliseconds(10) };
-        fadeInTimer.Tick += (s, e) =>
+        fadeTimer.Interval = TimeSpan.FromMilliseconds(10);
+        fadeTimer.Tick += PlayerFadeInEvent;
+        fadeTimer.Start();
+    }
+
+    private void PlayerFadeInEvent(object? sender, EventArgs e)
+    {
+        if (isFadingOut) return;
+        double finalVolume = Properties.Settings.Default.PlayerVolume / 100d;
+        mediaPlayer.Volume += finalVolume / fadeNumIterations;
+        VolumeLabel.Content = $"fi: {mediaPlayer.Volume}";
+        fadeIterations++;
+        if (fadeIterations == fadeNumIterations)
         {
-            if (isFadingOut) return;
-            mediaPlayer.Volume += finalVolume / numIterations;
-            iterations++;
-            if (iterations == numIterations)
-            {
-                fadeInTimer.Stop();
-                isFadingIn = false;
-            }
-        };
-        fadeInTimer.Start();
-        isFadingIn = true;
+            fadeTimer.Stop();
+            fadeTimer.Tick -= PlayerFadeInEvent;
+            fadeIterations = 0;
+        }
     }
 
     private void PlayerFadeOut()
     {
         if (!Properties.Settings.Default.PlaybackFadeOut) return;
-        double startingVolume = mediaPlayer.Volume;
-        int numIterations = 100;
-        int iterations = 0;
-        DispatcherTimer fadeOutTimer = new DispatcherTimer() { Interval = TimeSpan.FromMilliseconds(10) };
-        fadeOutTimer.Tick += (s, e) =>
-        {
-            if (isFadingIn) return;
-            mediaPlayer.Volume -= startingVolume / numIterations;
-            iterations++;
-            if (iterations == numIterations)
-            {
-                fadeOutTimer.Stop();
-                isFadingOut = false;
-            }
-        };
-        fadeOutTimer.Start();
+        fadeTimer.Interval = TimeSpan.FromMilliseconds(10);
+        fadeTimer.Tick += PlayerFadeOutEvent;
         isFadingOut = true;
+        fadeTimer.Start();
+    }
+
+    private void PlayerFadeOutEvent(object? sender, EventArgs e)
+    {
+        mediaPlayer.Volume -= mediaPlayer.Volume / fadeNumIterations;
+        VolumeLabel.Content = $"fo: {mediaPlayer.Volume}";
+        fadeIterations++;
+        if (fadeIterations == fadeNumIterations)
+        {
+            fadeTimer.Stop();
+            fadeTimer.Tick -= PlayerFadeOutEvent;
+            fadeIterations = 0;
+            isFadingOut = false;
+        }
     }
 
     private void OnSettingsSourceDirectoriesAddButtonClick(object sender, RoutedEventArgs e)
