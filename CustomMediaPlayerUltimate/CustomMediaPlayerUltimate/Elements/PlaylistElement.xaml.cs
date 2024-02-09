@@ -10,7 +10,7 @@ public partial class PlaylistElement : UserControl
 {
     public Action<PlaylistElement> OnClickDelegate;
     public Action<PlaylistElement> OnDoubleClickDelegate;
-    public Action OnAddNewSongsCtxClickedDelegate;
+    public Action OnManageSongsCtxClickedDelegate;
     public Action OnRenameCtxClickedDelegate;
     public Action OnDeleteCtxClickedDelegate;
 
@@ -54,12 +54,12 @@ public partial class PlaylistElement : UserControl
     public static readonly DependencyProperty FocusedPropertyProperty =
         DependencyProperty.Register("FocusedProperty", typeof(bool), typeof(PlaylistElement), new PropertyMetadata(false));
 
-    public PlaylistElement(Action<PlaylistElement> onClickDelegate, Action<PlaylistElement> onDoubleClickDelegate, Action onAddNewSongsCtxClickedDelegate, Action onRenameCtxClickedDelegate, Action onDeleteCtxClickedDelegate)
+    public PlaylistElement(Action<PlaylistElement> onClickDelegate, Action<PlaylistElement> onDoubleClickDelegate, Action onManageSongsCtxClickedDelegate, Action onRenameCtxClickedDelegate, Action onDeleteCtxClickedDelegate)
     {
         InitializeComponent();
         OnClickDelegate = onClickDelegate;
         OnDoubleClickDelegate = onDoubleClickDelegate;
-        OnAddNewSongsCtxClickedDelegate = onAddNewSongsCtxClickedDelegate;
+        OnManageSongsCtxClickedDelegate = onManageSongsCtxClickedDelegate;
         OnRenameCtxClickedDelegate = onRenameCtxClickedDelegate;
         OnDeleteCtxClickedDelegate = onDeleteCtxClickedDelegate;
     }
@@ -75,9 +75,9 @@ public partial class PlaylistElement : UserControl
         OnDoubleClickDelegate.Invoke(this);
     }
 
-    private void AddSongsCtxClicked(object sender, RoutedEventArgs e)
+    private void ManageSongsCtxClicked(object sender, RoutedEventArgs e)
     {
-        OnAddNewSongsCtxClickedDelegate.Invoke();
+        OnManageSongsCtxClickedDelegate.Invoke();
     }
 
     private void RenameCtxClicked(object sender, RoutedEventArgs e)

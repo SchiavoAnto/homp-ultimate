@@ -22,6 +22,9 @@
     <Compile Update="Elements\InputCaptureBox.xaml.cs">
       <SubType>Code</SubType>
     </Compile>
+    <Compile Update="Elements\SongsChooserDialog.xaml.cs">
+      <SubType>Code</SubType>
+    </Compile>
   </ItemGroup>
   <ItemGroup>
     <Page Update="CommonStyles.xaml">
@@ -43,6 +46,9 @@
       <SubType>Designer</SubType>
     </Page>
     <Page Update="Elements\InputCaptureBox.xaml">
+      <SubType>Designer</SubType>
+    </Page>
+    <Page Update="Elements\SongsChooserDialog.xaml">
       <SubType>Designer</SubType>
     </Page>
     <Page Update="MainWindow.xaml">

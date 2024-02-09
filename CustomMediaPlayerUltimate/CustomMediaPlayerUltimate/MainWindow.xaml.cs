@@ -313,7 +313,7 @@ public partial class MainWindow : Window
                     {
                         PlayCollection(playlists[name]);
                     },
-                    () => { AddSongsToPlaylist(playlists[name]); },
+                    () => { ManagePlaylistSongs(playlists[name]); },
                     () => { RenamePlaylist(playlists[name]); },
                     () => { DeletePlaylist(playlists[name]); }
                 )
@@ -369,75 +369,29 @@ public partial class MainWindow : Window
         }
     }
 
-    //TODO: Replace OpenFileDialog with a custom dialog from where the user can choose songs from the all songs list.
-    public void AddSongsToPlaylist(Playlist playlist)
+    private void ManagePlaylistSongs(Playlist playlist)
     {
         if (playlist.Equals(Playlist.Empty)) return;
+        SongsChooserDialog scd = new SongsChooserDialog(allSongsPlaylist, playlist);
+        if (scd.ShowDialog() != true) return;
+        var result = scd.Result;
         string path = $"{PLAYLISTS_PATH}\\{playlist.Name}.homppl";
-
-        OpenFileDialog ofd = new OpenFileDialog();
-        ofd.Multiselect = true;
-        ofd.InitialDirectory = MUSIC_PATH;
-        ofd.Title = $"Select the songs to add to the playlist \"{playlist.Name}\"...";
-        ofd.Filter = "MP3 Files|*.mp3";
-        if (ofd.ShowDialog() == true)
+        try
         {
-            string[] selectedSongs = ofd.FileNames;
-            try
+            using (StreamWriter sw = new StreamWriter(path, false))
             {
-                using (StreamWriter sw = new StreamWriter(path, true))
+                foreach (Song song in result)
                 {
-                    foreach (string song in selectedSongs)
-                    {
-                        string actualName = new FileInfo(song).Name.Replace(".mp3", "");
-                        sw.Write($"{song}|");
-                    }
-                    sw.Close();
-                    sw.Dispose();
+                    sw.Write($"{song.FilePath}|");
                 }
-                LoadAllPlaylists();
+                sw.Close();
             }
-            catch
-            {
-                MessageBox.Show("An error occurred while adding the selected songs to the playlist.");
-            }
+            LoadAllPlaylists();
         }
-    }
-
-    public void RemoveSongsFromPlaylistButtonClick(object sender, RoutedEventArgs e)
-    {
-        //if (PlaylistsListView.SelectedItem == null) return;
-        //string playlistName = PlaylistsListView.SelectedItem.ToString()!;
-        //string playlistPath = $"{PLAYLISTS_PATH}\\{playlistName}.homppl";
-
-        //if (PlaylistsSongsListView.SelectedItem == null) return;
-        //string songName = PlaylistsSongsListView.SelectedItem.ToString()!;
-        //string songPath = $"{MUSIC_PATH}\\{songName}.mp3";
-
-        //if (MessageBox.Show($"Are you sure to remove the song \"{songName}\" from the playlist?", "Confirmation", MessageBoxButton.YesNo, MessageBoxImage.Question) == MessageBoxResult.Yes)
-        //{
-        //    try
-        //    {
-        //        using (StreamReader sr = new StreamReader(playlistPath))
-        //        {
-        //            string playlistContent = sr.ReadToEnd();
-        //            sr.Close();
-        //            sr.Dispose();
-        //            using (StreamWriter sw = new StreamWriter(playlistPath))
-        //            {
-        //                sw.Write(playlistContent.Replace($"{songPath}|", ""));
-        //                sw.Close();
-        //                sw.Dispose();
-        //            }
-        //        }
-        //        PlaylistsSongsListView.Items.Remove(songName);
-        //        playlists[playlistName].RemoveSong(songName);
-        //    }
-        //    catch
-        //    {
-        //        MessageBox.Show("An error occurred while removing the song from the playlist.");
-        //    }
-        //}
+        catch
+        {
+            MessageBox.Show("An error occurred while saving changes to the playlist.");
+        }
     }
 
     public void LoadLyricsInView()
@@ -594,6 +548,7 @@ public partial class MainWindow : Window
             string[] allPlaylists = Directory.GetFiles(PLAYLISTS_PATH, "*.homppl");
             playlists.Clear();
             PlaylistsListPanel.Children.Clear();
+            PlaylistSongsListPanel.Children.Clear();
 
             Grid grid = new Grid();
             grid.ColumnDefinitions.Add(new ColumnDefinition() { Width = new GridLength(0, GridUnitType.Auto) });
@@ -642,7 +597,7 @@ public partial class MainWindow : Window
                     {
                         PlayCollection(playlist);
                     },
-                    () => { AddSongsToPlaylist(playlist); },
+                    () => { ManagePlaylistSongs(playlist); },
                     () => { RenamePlaylist(playlist); },
                     () => { DeletePlaylist(playlist); }
                 )
