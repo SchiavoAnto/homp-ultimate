@@ -594,7 +594,22 @@ public partial class MainWindow : Window
             string[] allPlaylists = Directory.GetFiles(PLAYLISTS_PATH, "*.homppl");
             playlists.Clear();
             PlaylistsListPanel.Children.Clear();
-            PlaylistsListPanel.Children.Add(new Label() { Content = "Playlists", Foreground = Brushes.WhiteSmoke, FontSize = 18, FontWeight = FontWeights.Bold });
+
+            Grid grid = new Grid();
+            grid.ColumnDefinitions.Add(new ColumnDefinition() { Width = new GridLength(0, GridUnitType.Auto) });
+            grid.ColumnDefinitions.Add(new ColumnDefinition() { Width = new GridLength(100, GridUnitType.Star) });
+            grid.ColumnDefinitions.Add(new ColumnDefinition() { Width = new GridLength(0, GridUnitType.Auto) });
+
+            Label titleLabel = new Label() { Content = "Playlists", Foreground = Brushes.WhiteSmoke, FontSize = 18, FontWeight = FontWeights.Bold };
+            Grid.SetColumn(titleLabel, 0);
+            grid.Children.Add(titleLabel);
+
+            Button addNewButton = new Button() { Content = "New playlist...", Height = 30d, Style = FindResource("CustomButton") as Style };
+            addNewButton.Click += NewPlaylistButtonClick;
+            Grid.SetColumn(addNewButton, 2);
+            grid.Children.Add(addNewButton);
+
+            PlaylistsListPanel.Children.Add(grid);
             foreach (string p in allPlaylists)
             {
                 string playlistName = p.Replace($"{PLAYLISTS_PATH}\\", "").Replace(".homppl", "");

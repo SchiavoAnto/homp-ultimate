@@ -120,17 +120,7 @@
                     <ColumnDefinition Width="400"/>
                     <ColumnDefinition Width="*"/>
                 </Grid.ColumnDefinitions>
-                <Grid.RowDefinitions>
-                    <RowDefinition Height="Auto"/>
-                    <RowDefinition Height="*"/>
-                </Grid.RowDefinitions>
-                <StackPanel Orientation="Horizontal" Grid.Column="0" Grid.Row="0">
-                    <Button x:Name="NewPlaylistButton" Style="{StaticResource CustomButton}" Content="New playlist..." Click="NewPlaylistButtonClick"/>
-                </StackPanel>
-                <StackPanel Orientation="Horizontal" Grid.Column="1" Grid.Row="0">
-                    <Button x:Name="RemoveSongsFromPlaylistButton" Style="{StaticResource CustomButton}" Content="Remove selected" Click="RemoveSongsFromPlaylistButtonClick"/>
-                </StackPanel>
-                <ScrollViewer Grid.Column="0" Grid.Row="1" VerticalScrollBarVisibility="Auto">
+                <ScrollViewer Grid.Column="0" VerticalScrollBarVisibility="Auto">
                     <StackPanel x:Name="PlaylistsListPanel" Orientation="Vertical" Margin="0,0,5,0">
                         <StackPanel.Resources>
                             <Style TargetType="{x:Type local:PlaylistElement}">
@@ -140,7 +130,7 @@
                         <Label Foreground="WhiteSmoke" FontSize="18" FontWeight="Bold">Loading...</Label>
                     </StackPanel>
                 </ScrollViewer>
-                <ScrollViewer Grid.Column="1" Grid.Row="1" VerticalScrollBarVisibility="Auto">
+                <ScrollViewer Grid.Column="1" VerticalScrollBarVisibility="Auto">
                     <StackPanel x:Name="PlaylistSongsListPanel" Orientation="Vertical" Margin="0,0,5,0">
                         <StackPanel.Resources>
                             <Style TargetType="{x:Type local:CustomSongElement}">
