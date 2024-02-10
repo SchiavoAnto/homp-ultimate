@@ -1,4 +1,5 @@
 ﻿using System.Windows;
+using System.Windows.Input;
 
 namespace CustomMediaPlayerUltimate.Elements;
 
@@ -9,6 +10,8 @@ public partial class BigInputBox : Window
         InitializeComponent();
         Title = title;
         MessageLabel.Content = message;
+
+        InputTextBox.Focus();
     }
 
     private void OkButtonClick(object sender, RoutedEventArgs e)
@@ -21,5 +24,17 @@ public partial class BigInputBox : Window
     {
         DialogResult = false;
         Close();
+    }
+
+    private void WindowKeyUp(object sender, KeyEventArgs e)
+    {
+        if (e.Key == Key.Escape)
+        {
+            CancelButtonClick(null!, null!);
+        }
+        else if (e.Key == Key.Enter)
+        {
+            OkButtonClick(null!, null!);
+        }
     }
 }

@@ -6,7 +6,7 @@
         xmlns:local="clr-namespace:CustomMediaPlayerUltimate.Elements"
         mc:Ignorable="d"
         Title="Input box" Height="145" Width="300"
-        ResizeMode="NoResize" WindowStartupLocation="CenterScreen" Background="#252525">
+        ResizeMode="NoResize" WindowStartupLocation="CenterScreen" Background="#252525" KeyUp="WindowKeyUp">
     <Grid>
         <Grid.RowDefinitions>
             <RowDefinition Height="Auto"/>
