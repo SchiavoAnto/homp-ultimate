@@ -287,10 +287,15 @@ public partial class MainWindow : Window
         InputBox ib = new InputBox("Insert playlist name", "Type the name you want to give to the playlist:");
         if (ib.ShowDialog() == true)
         {
-            string name = ib.InputTextBox.Text;
+            string name = ib.InputTextBox.Text.Trim();
             if (playlists.ContainsKey(name))
             {
                 MessageBox.Show($"A playlist called '{name}' already exists!");
+                return;
+            }
+            if (string.IsNullOrEmpty(name))
+            {
+                MessageBox.Show($"You need to specify a valid name for the playlist.");
                 return;
             }
             string path = $"{PLAYLISTS_PATH}\\{name}.homppl";
