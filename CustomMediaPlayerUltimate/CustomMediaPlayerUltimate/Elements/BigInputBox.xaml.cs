@@ -32,7 +32,7 @@ public partial class BigInputBox : Window
         {
             CancelButtonClick(null!, null!);
         }
-        else if (e.Key == Key.Enter)
+        else if ((e.SystemKey == Key.LeftCtrl || e.SystemKey == Key.RightCtrl) && e.Key == Key.Enter)
         {
             OkButtonClick(null!, null!);
         }
