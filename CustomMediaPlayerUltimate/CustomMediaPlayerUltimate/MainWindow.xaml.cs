@@ -522,6 +522,7 @@ public partial class MainWindow : Window
         foreach (string? path in Properties.Settings.Default.SourceDirectories)
         {
             if (path is null) continue;
+            if (!Directory.Exists(path)) continue;
             try
             {
                 string[] songPaths = Directory.GetFiles(path, "*.mp3");
