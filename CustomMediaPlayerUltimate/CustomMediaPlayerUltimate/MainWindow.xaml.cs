@@ -812,14 +812,11 @@ public partial class MainWindow : Window
         }
 
         Song song = songCollection.Songs[songFile];
-        if (song.Title != string.Empty)
+        CurrentSongTitleLabel.Content = (song.Title == string.Empty) switch
         {
-            CurrentSongTitleLabel.Content = song.Title;
-        }
-        else
-        {
-            CurrentSongTitleLabel.Content = "Generic song";
-        }
+            true => "Generic Song",
+            false => song.Title
+        };
         CurrentSongArtistAlbumLabel.Content = song.Artist;
         if (!song.Album.Equals(Album.Empty))
         {
