@@ -14,6 +14,11 @@ public partial class BigInputBox : Window
         InputTextBox.Focus();
     }
 
+    public void SetText(string text)
+    {
+        InputTextBox.Text = text;
+    }
+
     private void OkButtonClick(object sender, RoutedEventArgs e)
     {
         DialogResult = true;

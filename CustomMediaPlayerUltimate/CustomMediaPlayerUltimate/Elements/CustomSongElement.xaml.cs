@@ -38,10 +38,28 @@ public partial class CustomSongElement : UserControl
         Collection = null!;
     }
 
-    private void AddLyricsMenuItemClick(object sender, RoutedEventArgs e)
+    private void EditLyricsMenuItemClick(object sender, RoutedEventArgs e)
     {
         if (HasErrored) return;
-        BigInputBox bib = new BigInputBox("Insert song lyrics", "Type the lyrics to give to the song:");
+        BigInputBox bib = new BigInputBox("Insert song lyrics", $"Insert here the lyrics for '{Song.FileName}':");
+
+        string lyricsFileName = $"{MainWindow.LYRICS_PATH}\\{Song.FileName}.mp3[Lyrics].txt";
+        if (File.Exists(lyricsFileName))
+        {
+            try
+            {
+                using (StreamReader sr = new StreamReader(lyricsFileName))
+                {
+                    string lyrics = sr.ReadToEnd();
+                    bib.SetText(lyrics);
+                }
+            }
+            catch
+            {
+                bib.SetText("Failed to load existing lyrics.");
+            }
+        }
+
         if (bib.ShowDialog() == true)
         {
             try
