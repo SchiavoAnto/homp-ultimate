@@ -69,6 +69,9 @@ public partial class MainWindow : Window
         InitializeComponent();
 
         Instance = this;
+#if DEBUG
+        Title = $"(DEBUG) {Title}";
+#endif
 
         KeyboardHook.OnKeyPressed += HandleHotkey;
         KeyboardHook.Start();
@@ -844,9 +847,15 @@ public partial class MainWindow : Window
 
     private void PreviousSongInPlaylist()
     {
-        if (playedSongs.Count < 2) return;
-        playedSongs.RemoveAt(playedSongs.Count - 2);
-        PlaySong(playedSongs[playedSongs.Count - 2].FilePath, currentCollection);
+        if (playedSongs.Count < 1) return;
+
+        Song lastSong = playedSongs.Count switch
+        {
+            1 => playedSongs.Last(),
+            _ => playedSongs[playedSongs.Count - 2]
+        };
+        playedSongs.Remove(lastSong);
+        PlaySong(lastSong.FilePath, currentCollection);
     }
 
     private void NextSongInPlaylist()
