@@ -66,6 +66,11 @@ public partial class CustomSongElement : UserControl
         }
     }
 
+    private void PlayAsNextSongMenuItemClick(object sender, RoutedEventArgs e)
+    {
+        MainWindow.Instance.SetPrioritySong(Song);
+    }
+
     private void PlayButtonClick(object sender, RoutedEventArgs e)
     {
         MainWindow.Instance.PlaySong(Song.FilePath, Collection);

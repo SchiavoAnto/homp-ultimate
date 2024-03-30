@@ -53,6 +53,7 @@ public partial class MainWindow : Window
     private bool isProgressSliderBeingDragged = false;
     private bool isVolumeSliderBeingDragged = false;
     public Song? currentSong = null;
+    private Song? prioritySong = null;
     private PlaylistElement? currentlySelectedPlaylistElement;
     private CollectionElement? currentlySelectedAlbumElement;
     private CollectionElement? currentlySelectedArtistElement;
@@ -214,6 +215,11 @@ public partial class MainWindow : Window
         }
         else
         {
+            if (mediaPlayer.Source is null)
+            {
+                currentCollection = allSongsPlaylist;
+                NextSongInPlaylist();
+            }
             mediaPlayer.Play();
             IsPlaying = true;
         }
@@ -889,6 +895,12 @@ public partial class MainWindow : Window
         GC.Collect();
 
         if (currentSong is null) return;
+        if (prioritySong is not null)
+        {
+            PlaySong(prioritySong.Value.FilePath, currentCollection);
+            prioritySong = null;
+            return;
+        }
         if ((bool)LoopToggleButton.IsChecked!)
         {
             PlaySong(currentSong.Value.FilePath, currentCollection!);
@@ -1118,5 +1130,10 @@ public partial class MainWindow : Window
     {
         Song startingSong = collection.Songs.Values.ElementAt(random.Next(collection.Songs.Count));
         PlaySong(startingSong.FilePath, collection);
+    }
+
+    public void SetPrioritySong(Song song)
+    {
+        prioritySong = song;
     }
 }

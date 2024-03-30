@@ -47,14 +47,10 @@
                 <ColumnDefinition Width="Auto"/>
             </Grid.ColumnDefinitions>
             <StackPanel Grid.Column="0" Orientation="Horizontal" Margin="10,5,10,5">
-                <Grid>
-                    <Grid.RowDefinitions>
-                        <RowDefinition Height="Auto"/>
-                        <RowDefinition Height="Auto"/>
-                    </Grid.RowDefinitions>
-                    <Slider x:Name="ProgressSlider" Grid.Row="0" Width="300" IsSnapToTickEnabled="True" PreviewMouseLeftButtonDown="ProgressSliderMouseDown" PreviewMouseLeftButtonUp="ProgressSliderMouseUp" PreviewMouseMove="ProgressSliderMouseMove"/>
-                    <Label x:Name="ProgressLabel" Grid.Row="1" Foreground="WhiteSmoke">00:00 / 00:00</Label>
-                </Grid>
+                <StackPanel Orientation="Vertical" VerticalAlignment="Center">
+                    <Slider x:Name="ProgressSlider" Width="300" IsSnapToTickEnabled="True" PreviewMouseLeftButtonDown="ProgressSliderMouseDown" PreviewMouseLeftButtonUp="ProgressSliderMouseUp" PreviewMouseMove="ProgressSliderMouseMove"/>
+                    <Label x:Name="ProgressLabel" Foreground="WhiteSmoke">00:00 / 00:00</Label>
+                </StackPanel>
                 <Separator Width="10" Opacity="0"/>
                 <ToggleButton x:Name="LoopToggleButton" Style="{StaticResource CustomToggleButton}" Width="45" Height="45" Click="LoopToggleButtonClick">
                     <ToggleButton.Content>
@@ -91,14 +87,10 @@
                     <Label x:Name="CurrentSongArtistAlbumLabel" Content="Artist - Album" Foreground="WhiteSmoke"/>
                 </StackPanel>
             </StackPanel>
-            <Grid Grid.Column="1" Margin="10,5,10,5">
-                <Grid.RowDefinitions>
-                    <RowDefinition Height="Auto"/>
-                    <RowDefinition Height="Auto"/>
-                </Grid.RowDefinitions>
-                <Slider x:Name="VolumeSlider" Width="150" Grid.Row="0" Maximum="100" IsSnapToTickEnabled="True" PreviewMouseLeftButtonDown="VolumeSliderMouseDown" PreviewMouseLeftButtonUp="VolumeSliderMouseUp" PreviewMouseMove="VolumeSliderMouseMove" PreviewMouseWheel="VolumeSliderMouseWheel"/>
-                <Label x:Name="VolumeLabel" Grid.Row="1" Foreground="WhiteSmoke">Volume: 100%</Label>
-            </Grid>
+            <StackPanel Grid.Column="1" Orientation="Vertical" VerticalAlignment="Center" Margin="10,5,10,5">
+                <Slider x:Name="VolumeSlider" Width="150" Maximum="100" IsSnapToTickEnabled="True" PreviewMouseLeftButtonDown="VolumeSliderMouseDown" PreviewMouseLeftButtonUp="VolumeSliderMouseUp" PreviewMouseMove="VolumeSliderMouseMove" PreviewMouseWheel="VolumeSliderMouseWheel"/>
+                <Label x:Name="VolumeLabel" Foreground="WhiteSmoke">Volume: 100%</Label>
+            </StackPanel>
         </Grid>
 
         <Grid x:Name="ContainerGrid" Margin="10,0,10,10">

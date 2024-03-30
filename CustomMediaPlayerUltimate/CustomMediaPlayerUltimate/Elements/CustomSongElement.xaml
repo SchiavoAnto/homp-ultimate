@@ -20,6 +20,7 @@
             <ContextMenu>
                 <ContextMenu.Items>
                     <MenuItem Header="Add lyrics..." Click="AddLyricsMenuItemClick"/>
+                    <MenuItem Header="Play as next song" Click="PlayAsNextSongMenuItemClick"/>
                 </ContextMenu.Items>
             </ContextMenu>
         </Grid.ContextMenu>
