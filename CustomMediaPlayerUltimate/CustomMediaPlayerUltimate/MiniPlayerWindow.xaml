@@ -5,8 +5,8 @@
         xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
         mc:Ignorable="d"
         Title="MiniPlayerWindow" Width="250" Height="55" MaxWidth="250" MaxHeight="55"
-        UseLayoutRounding="True" WindowStyle="None" Topmost="True" AllowsTransparency="True"
-        ShowInTaskbar="False" BorderThickness="0" Background="Transparent" Closing="WindowClosing">
+        WindowStyle="None" Topmost="True" AllowsTransparency="True" ShowInTaskbar="False"
+        BorderThickness="0" Background="Transparent" Closing="WindowClosing" MouseEnter="WindowMouseEnter" MouseLeave="WindowMouseLeave">
     <Window.Resources>
         <Style TargetType="Image">
             <Setter Property="RenderOptions.EdgeMode" Value="Aliased" />

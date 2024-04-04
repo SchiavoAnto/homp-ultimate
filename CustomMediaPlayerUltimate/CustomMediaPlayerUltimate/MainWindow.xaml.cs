@@ -54,6 +54,7 @@ public partial class MainWindow : Window
     private bool mediaAvailable = false;
     private bool isProgressSliderBeingDragged = false;
     private bool isVolumeSliderBeingDragged = false;
+    private bool isSettingsMiniplayerOpacitySliderBeingDragged = false;
     public Song? currentSong = null;
     private Song? prioritySong = null;
     private PlaylistElement? currentlySelectedPlaylistElement;
@@ -707,6 +708,10 @@ public partial class MainWindow : Window
             if (sourcePath is null) continue;
             SettingsSourceDirectoriesListView.Items.Add(sourcePath);
         }
+
+        SettingsMiniplayerAutoOpacityCheckbox.IsChecked = Properties.Settings.Default.MiniplayerAutoOpacity;
+        SettingsMiniplayerOpacitySlider.Value = Properties.Settings.Default.MiniplayerMinimumOpacity;
+        SettingsMiniplayerOpacitySliderLabel.Content = $"{(SettingsMiniplayerOpacitySlider.Value * 100d):0.00}%";
     }
 
     private async Task<bool> LoadSong(string dirPath, string songPath)
@@ -1156,5 +1161,32 @@ public partial class MainWindow : Window
         MiniPlayerWindow.Instance?.SetArtistText(currentSong?.Artist ?? "Song artist");
         MiniPlayerWindow.Instance?.SetPlayPauseImage(IsPlaying);
         Hide();
+    }
+
+    private void OnSettingsMiniplayerAutoOpacityCheckboxChecked(object sender, RoutedEventArgs e)
+    {
+        Properties.Settings.Default.MiniplayerAutoOpacity = true;
+    }
+
+    private void OnSettingsMiniplayerAutoOpacityCheckboxUnchecked(object sender, RoutedEventArgs e)
+    {
+        Properties.Settings.Default.MiniplayerAutoOpacity = false;
+    }
+
+    public void SettingsMiniplayerOpacitySliderMouseMove(object sender, RoutedEventArgs e)
+    {
+        if (!isSettingsMiniplayerOpacitySliderBeingDragged) return;
+        SettingsMiniplayerOpacitySliderLabel.Content = $"{(SettingsMiniplayerOpacitySlider.Value * 100d):0.00}%";
+        Properties.Settings.Default.MiniplayerMinimumOpacity = SettingsMiniplayerOpacitySlider.Value;
+    }
+
+    public void SettingsMiniplayerOpacitySliderMouseDown(object sender, RoutedEventArgs e)
+    {
+        isSettingsMiniplayerOpacitySliderBeingDragged = true;
+    }
+
+    public void SettingsMiniplayerOpacitySliderMouseUp(object sender, RoutedEventArgs e)
+    {
+        isSettingsMiniplayerOpacitySliderBeingDragged = false;
     }
 }

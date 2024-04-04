@@ -14,6 +14,7 @@ public partial class MiniPlayerWindow : Window
 
     private Timer titleTimer = new Timer(10);
     private Timer artistTimer = new Timer(10);
+    private Timer opacityTimer = new Timer(10);
 
     public MiniPlayerWindow()
     {
@@ -59,6 +60,24 @@ public partial class MiniPlayerWindow : Window
                 }
             });
         };
+        opacityTimer.Elapsed += (sender, e) =>
+        {
+            if (opacityTimer.Interval == 5000)
+            {
+                opacityTimer.Interval = 10;
+            }
+            Dispatcher.Invoke(() =>
+            {
+                if (Opacity > Properties.Settings.Default.MiniplayerMinimumOpacity)
+                {
+                    Opacity -= 0.01f;
+                }
+                else
+                {
+                    opacityTimer.Stop();
+                }
+            });
+        };
     }
 
     private void CloseButtonClick(object sender, RoutedEventArgs e)
@@ -84,6 +103,19 @@ public partial class MiniPlayerWindow : Window
     {
         MainWindow.Instance.Show();
         Instance = null;
+    }
+
+    private void WindowMouseEnter(object sender, RoutedEventArgs e)
+    {
+        opacityTimer.Stop();
+        Opacity = 1f;
+    }
+
+    private void WindowMouseLeave(object sender, RoutedEventArgs e)
+    {
+        if (!Properties.Settings.Default.MiniplayerAutoOpacity) return;
+        opacityTimer.Interval = 5000;
+        opacityTimer.Start();
     }
 
     private void PlayPauseButtonClick(object sender, RoutedEventArgs e)

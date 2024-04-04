@@ -5,7 +5,7 @@
         xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
         xmlns:local="clr-namespace:CustomMediaPlayerUltimate.Elements"
         mc:Ignorable="d"
-        Title="HOMP - Highly Optimized Music Player" Width="1280" Height="720" UseLayoutRounding="True"
+        Title="HOMP - Highly Optimized Music Player" Width="1280" Height="720"
         WindowStartupLocation="CenterScreen" Icon="/Images/icon.ico" Loaded="OnWindowLoaded" Closing="OnWindowClosing">
     <Window.Resources>
         <Style TargetType="Image">
@@ -282,6 +282,20 @@
                                 <Button Style="{StaticResource CustomButton}" Click="OnSettingsSourceDirectoriesAddButtonClick">Add directory</Button>
                                 <Separator Width="5" Background="Transparent"/>
                                 <Button Style="{StaticResource CustomButton}" Click="OnSettingsSourceDirectoriesRemoveButtonClick">Remove selected directory</Button>
+                            </StackPanel>
+                        </StackPanel>
+                        <StackPanel Orientation="Vertical" Margin="5,10,0,0" HorizontalAlignment="Left">
+                            <Label Margin="-4,0,0,0" Foreground="WhiteSmoke" FontSize="13" FontWeight="SemiBold">Miniplayer</Label>
+                            <StackPanel Margin="10,5,0,0" Orientation="Vertical" HorizontalAlignment="Left">
+                                <CheckBox x:Name="SettingsMiniplayerAutoOpacityCheckbox" Foreground="WhiteSmoke" Checked="OnSettingsMiniplayerAutoOpacityCheckboxChecked" Unchecked="OnSettingsMiniplayerAutoOpacityCheckboxUnchecked">Automatically lower opacity</CheckBox>
+                                <Label Foreground="LightGray" Margin="5,0,0,0">Enabling this settings makes the miniplayer become more transparent when the mouse cursor is not on it.</Label>
+                            </StackPanel>
+                            <StackPanel Margin="10,5,0,0" Orientation="Vertical">
+                                <Label Margin="-4,0,0,0" Foreground="WhiteSmoke" FontSize="13" FontWeight="SemiBold">Minimum opacity</Label>
+                                <StackPanel Orientation="Horizontal" Margin="5,0,0,0">
+                                    <Slider x:Name="SettingsMiniplayerOpacitySlider" Width="150" IsSnapToTickEnabled="True" Minimum="0.05" Maximum="0.95" TickFrequency="0.05" PreviewMouseLeftButtonDown="SettingsMiniplayerOpacitySliderMouseDown" PreviewMouseLeftButtonUp="SettingsMiniplayerOpacitySliderMouseUp" PreviewMouseMove="SettingsMiniplayerOpacitySliderMouseMove"/>
+                                    <Label x:Name="SettingsMiniplayerOpacitySliderLabel" Foreground="WhiteSmoke">100%</Label>
+                                </StackPanel>
                             </StackPanel>
                         </StackPanel>
                     </StackPanel>
