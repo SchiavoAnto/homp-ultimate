@@ -25,6 +25,9 @@
     <Compile Update="Elements\SongsChooserDialog.xaml.cs">
       <SubType>Code</SubType>
     </Compile>
+    <Compile Update="MiniPlayerWindow.xaml.cs">
+      <SubType>Code</SubType>
+    </Compile>
   </ItemGroup>
   <ItemGroup>
     <Page Update="CommonStyles.xaml">
@@ -52,6 +55,9 @@
       <SubType>Designer</SubType>
     </Page>
     <Page Update="MainWindow.xaml">
+      <SubType>Designer</SubType>
+    </Page>
+    <Page Update="MiniPlayerWindow.xaml">
       <SubType>Designer</SubType>
     </Page>
   </ItemGroup>

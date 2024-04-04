@@ -38,10 +38,12 @@ public partial class MainWindow : Window
             {
                 PlayerFadeIn();
                 SetPlayPauseImage(true);
+                MiniPlayerWindow.Instance?.SetPlayPauseImage(true);
             }
             else
             {
                 SetPlayPauseImage(false);
+                MiniPlayerWindow.Instance?.SetPlayPauseImage(false);
             }
         }
     }
@@ -206,7 +208,7 @@ public partial class MainWindow : Window
         TogglePlayPause();
     }
 
-    private void TogglePlayPause()
+    public void TogglePlayPause()
     {
         if (IsPlaying)
         {
@@ -818,16 +820,26 @@ public partial class MainWindow : Window
         }
 
         Song song = songCollection.Songs[songFile];
-        CurrentSongTitleLabel.Content = (song.Title == string.Empty) switch
+        string title = (song.Title == string.Empty) switch
         {
             true => "Generic Song",
             false => song.Title
         };
-        CurrentSongArtistAlbumLabel.Content = song.Artist;
+        string artist = song.Artist;
+
+        if (MiniPlayerWindow.Instance is not null)
+        {
+            MiniPlayerWindow.Instance.SetTitleText(title);
+            MiniPlayerWindow.Instance.SetArtistText(artist);
+        }
+
         if (!song.Album.Equals(Album.Empty))
         {
-            CurrentSongArtistAlbumLabel.Content += " - " + song.Album.Name;
+            artist += " - " + song.Album.Name;
         }
+        CurrentSongTitleLabel.Content = title;
+        CurrentSongArtistAlbumLabel.Content = artist;
+
 
         mediaPlayer.Open(new Uri(songFile));
         mediaPlayer.Play();
@@ -861,7 +873,7 @@ public partial class MainWindow : Window
         PlaySong(lastSong.FilePath, currentCollection);
     }
 
-    private void NextSongInPlaylist()
+    public void NextSongInPlaylist()
     {
         if (currentCollection is null) return;
         if (playedSongs.Count >= currentCollection.Songs.Count)
@@ -1135,5 +1147,14 @@ public partial class MainWindow : Window
     public void SetPrioritySong(Song song)
     {
         prioritySong = song;
+    }
+
+    private void MiniplayerButtonClick(object sender, RoutedEventArgs e)
+    {
+        new MiniPlayerWindow()?.Show();
+        MiniPlayerWindow.Instance?.SetTitleText(currentSong?.Title ?? "Song title");
+        MiniPlayerWindow.Instance?.SetArtistText(currentSong?.Artist ?? "Song artist");
+        MiniPlayerWindow.Instance?.SetPlayPauseImage(IsPlaying);
+        Hide();
     }
 }
