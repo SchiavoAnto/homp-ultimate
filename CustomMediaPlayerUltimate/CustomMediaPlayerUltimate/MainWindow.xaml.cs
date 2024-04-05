@@ -824,7 +824,7 @@ public partial class MainWindow : Window
             return;
         }
 
-        Song song = songCollection.Songs[songFile];
+        Song song = allSongsPlaylist.Songs[songFile];
         string title = (song.Title == string.Empty) switch
         {
             true => "Generic Song",
@@ -880,6 +880,13 @@ public partial class MainWindow : Window
 
     public void NextSongInPlaylist()
     {
+        if (prioritySong is not null)
+        {
+            PlaySong(prioritySong?.FilePath!, currentCollection ?? allSongsPlaylist);
+            prioritySong = null;
+            return;
+        }
+
         if (currentCollection is null) return;
         if (playedSongs.Count >= currentCollection.Songs.Count)
         {
