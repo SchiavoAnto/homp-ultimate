@@ -213,5 +213,29 @@ namespace CustomMediaPlayerUltimate.Properties {
                 this["MiniplayerMinimumOpacity"] = value;
             }
         }
+        
+        [global::System.Configuration.UserScopedSettingAttribute()]
+        [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
+        [global::System.Configuration.DefaultSettingValueAttribute("-1")]
+        public int MiniplayerLastLocationX {
+            get {
+                return ((int)(this["MiniplayerLastLocationX"]));
+            }
+            set {
+                this["MiniplayerLastLocationX"] = value;
+            }
+        }
+        
+        [global::System.Configuration.UserScopedSettingAttribute()]
+        [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
+        [global::System.Configuration.DefaultSettingValueAttribute("-1")]
+        public int MiniplayerLastLocationY {
+            get {
+                return ((int)(this["MiniplayerLastLocationY"]));
+            }
+            set {
+                this["MiniplayerLastLocationY"] = value;
+            }
+        }
     }
 }

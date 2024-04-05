@@ -21,6 +21,14 @@ public partial class MiniPlayerWindow : Window
         InitializeComponent();
 
         Instance = this;
+        if (Properties.Settings.Default.MiniplayerLastLocationX != -1)
+        {
+            Left = Properties.Settings.Default.MiniplayerLastLocationX;
+        }
+        if (Properties.Settings.Default.MiniplayerLastLocationY != -1)
+        {
+            Top = Properties.Settings.Default.MiniplayerLastLocationY;
+        }
 
         titleTimer.Elapsed += (sender, e) =>
         {
@@ -116,6 +124,12 @@ public partial class MiniPlayerWindow : Window
         if (!Properties.Settings.Default.MiniplayerAutoOpacity) return;
         opacityTimer.Interval = 5000;
         opacityTimer.Start();
+    }
+
+    private void WindowLocationChanged(object sender, EventArgs e)
+    {
+        Properties.Settings.Default.MiniplayerLastLocationX = (int)Left;
+        Properties.Settings.Default.MiniplayerLastLocationY = (int)Top;
     }
 
     private void PlayPauseButtonClick(object sender, RoutedEventArgs e)
