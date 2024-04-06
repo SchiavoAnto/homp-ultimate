@@ -237,5 +237,17 @@ namespace CustomMediaPlayerUltimate.Properties {
                 this["MiniplayerLastLocationY"] = value;
             }
         }
+        
+        [global::System.Configuration.UserScopedSettingAttribute()]
+        [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
+        [global::System.Configuration.DefaultSettingValueAttribute("5000")]
+        public int MiniplayerFadingTimeout {
+            get {
+                return ((int)(this["MiniplayerFadingTimeout"]));
+            }
+            set {
+                this["MiniplayerFadingTimeout"] = value;
+            }
+        }
     }
 }

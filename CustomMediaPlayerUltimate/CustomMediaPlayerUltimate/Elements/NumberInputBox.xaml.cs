@@ -1,7 +1,7 @@
 ﻿using System.Windows;
 using System.Windows.Input;
-using System.Windows.Controls;
 using System.Globalization;
+using System.Windows.Controls;
 
 namespace CustomMediaPlayerUltimate.Elements;
 
@@ -45,6 +45,14 @@ public partial class NumberInputBox : UserControl
     }
     public static readonly DependencyProperty NumberTypeProperty =
         DependencyProperty.Register("NumberType", typeof(NumberInputBoxNumberType), typeof(Control), new PropertyMetadata(NumberInputBoxNumberType.Integer));
+
+    public static readonly RoutedEvent FinishedEditingEvent = EventManager.RegisterRoutedEvent(
+        "FinishedEditing", RoutingStrategy.Bubble, typeof(RoutedEventHandler), typeof(TabItem));
+    public event RoutedEventHandler FinishedEditing
+    {
+        add { AddHandler(FinishedEditingEvent, value); }
+        remove { RemoveHandler(FinishedEditingEvent, value); }
+    }
 
     public NumberInputBox()
     {
@@ -128,15 +136,20 @@ public partial class NumberInputBox : UserControl
 
     private void TextBoxLostFocus(object sender, RoutedEventArgs e)
     {
-        EnsureMinimumValue();
+        EditingEnded();
     }
 
     private void TextBoxKeyUp(object sender, KeyEventArgs e)
     {
         if (e.Key == Key.Enter)
         {
-            EnsureMinimumValue();
+            EditingEnded();
         }
+    }
+
+    private void TextBoxTooltipOpening(object sender, RoutedEventArgs e)
+    {
+        InputTextBoxTooltipLabel.Content = $"{Minimum} - {Maximum}";
     }
 
     private void PlusButtonClick(object sender, RoutedEventArgs e)
@@ -151,6 +164,7 @@ public partial class NumberInputBox : UserControl
             updateDisplayedValue = true;
             NumericValue++;
         }
+        EditingEnded();
     }
 
     private void MinusButtonClick(object sender, RoutedEventArgs e)
@@ -165,6 +179,14 @@ public partial class NumberInputBox : UserControl
             updateDisplayedValue = true;
             NumericValue--;
         }
+        EditingEnded();
+    }
+
+    private void EditingEnded()
+    {
+        EnsureMinimumValue();
+        RoutedEventArgs newEventArgs = new RoutedEventArgs(FinishedEditingEvent);
+        RaiseEvent(newEventArgs);
     }
 
     private void EnsureMinimumValue()

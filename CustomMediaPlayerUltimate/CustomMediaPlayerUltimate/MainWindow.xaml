@@ -291,10 +291,18 @@
                                 <Label Foreground="LightGray" Margin="5,0,0,0">Enabling this settings makes the miniplayer become more transparent when the mouse cursor is not on it.</Label>
                             </StackPanel>
                             <StackPanel Margin="10,5,0,0" Orientation="Vertical">
-                                <Label Margin="-4,0,0,0" Foreground="WhiteSmoke" FontSize="13" FontWeight="SemiBold">Minimum opacity</Label>
+                                <Label Margin="-4,0,0,0" Foreground="WhiteSmoke">Minimum opacity</Label>
                                 <StackPanel Orientation="Horizontal" Margin="5,0,0,0">
                                     <Slider x:Name="SettingsMiniplayerOpacitySlider" Width="150" IsSnapToTickEnabled="True" Minimum="0.05" Maximum="0.95" TickFrequency="0.05" PreviewMouseLeftButtonDown="SettingsMiniplayerOpacitySliderMouseDown" PreviewMouseLeftButtonUp="SettingsMiniplayerOpacitySliderMouseUp" PreviewMouseMove="SettingsMiniplayerOpacitySliderMouseMove"/>
                                     <Label x:Name="SettingsMiniplayerOpacitySliderLabel" Foreground="WhiteSmoke">100%</Label>
+                                </StackPanel>
+                            </StackPanel>
+                            <StackPanel Margin="10,5,0,0" Orientation="Vertical">
+                                <Label Margin="-4,0,0,0" Foreground="WhiteSmoke">Trigger time</Label>
+                                <Label Foreground="LightGray" Margin="5,0,0,0">Changes how much time the cursor needs to be out of the miniplayer for it to start fading.</Label>
+                                <StackPanel Margin="8,0,0,0" Orientation="Horizontal">
+                                    <local:NumberInputBox Width="300" Height="100" x:Name="SettingsMiniplayerOpacityTimeoutNumberInputBox" Minimum="1" Maximum="10000" FinishedEditing="SettingsMiniplayerOpacityTimeoutNumberInputBoxFinishedEditing"/>
+                                    <Label Foreground="WhiteSmoke">milliseconds</Label>
                                 </StackPanel>
                             </StackPanel>
                         </StackPanel>

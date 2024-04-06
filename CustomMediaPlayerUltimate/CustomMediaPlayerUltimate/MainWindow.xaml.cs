@@ -712,6 +712,7 @@ public partial class MainWindow : Window
         SettingsMiniplayerAutoOpacityCheckbox.IsChecked = Properties.Settings.Default.MiniplayerAutoOpacity;
         SettingsMiniplayerOpacitySlider.Value = Properties.Settings.Default.MiniplayerMinimumOpacity;
         SettingsMiniplayerOpacitySliderLabel.Content = $"{(SettingsMiniplayerOpacitySlider.Value * 100d):0.00}%";
+        SettingsMiniplayerOpacityTimeoutNumberInputBox.SetValue(Properties.Settings.Default.MiniplayerFadingTimeout);
     }
 
     private async Task<bool> LoadSong(string dirPath, string songPath)
@@ -1195,5 +1196,10 @@ public partial class MainWindow : Window
     public void SettingsMiniplayerOpacitySliderMouseUp(object sender, RoutedEventArgs e)
     {
         isSettingsMiniplayerOpacitySliderBeingDragged = false;
+    }
+
+    private void SettingsMiniplayerOpacityTimeoutNumberInputBoxFinishedEditing(object sender, RoutedEventArgs e)
+    {
+        Properties.Settings.Default.MiniplayerFadingTimeout = (int)SettingsMiniplayerOpacityTimeoutNumberInputBox.NumericValue;
     }
 }

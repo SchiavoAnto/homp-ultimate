@@ -70,7 +70,7 @@ public partial class MiniPlayerWindow : Window
         };
         opacityTimer.Elapsed += (sender, e) =>
         {
-            if (opacityTimer.Interval == 5000)
+            if (opacityTimer.Interval == Properties.Settings.Default.MiniplayerFadingTimeout)
             {
                 opacityTimer.Interval = 10;
             }
@@ -122,7 +122,7 @@ public partial class MiniPlayerWindow : Window
     private void WindowMouseLeave(object sender, RoutedEventArgs e)
     {
         if (!Properties.Settings.Default.MiniplayerAutoOpacity) return;
-        opacityTimer.Interval = 5000;
+        opacityTimer.Interval = Properties.Settings.Default.MiniplayerFadingTimeout;
         opacityTimer.Start();
     }
 

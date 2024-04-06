@@ -5,10 +5,10 @@
              xmlns:d="http://schemas.microsoft.com/expression/blend/2008" 
              xmlns:local="clr-namespace:CustomMediaPlayerUltimate.Elements"
              mc:Ignorable="d" 
-             d:DesignHeight="114" d:DesignWidth="30">
+             Width="114" Height="30">
     <StackPanel Orientation="Horizontal">
         <Grid>
-            <TextBox x:Name="InputTextBox" Width="100" Height="30" PreviewTextInput="TextBoxPreviewInput" TextChanged="TextBoxTextChanged" DataObject.Pasting="TextBoxPasting" LostFocus="TextBoxLostFocus" KeyUp="TextBoxKeyUp">
+            <TextBox x:Name="InputTextBox" Width="100" Height="30" PreviewTextInput="TextBoxPreviewInput" TextChanged="TextBoxTextChanged" DataObject.Pasting="TextBoxPasting" LostFocus="TextBoxLostFocus" KeyUp="TextBoxKeyUp" ToolTipOpening="TextBoxTooltipOpening">
                 <TextBox.Resources>
                     <Style TargetType="{x:Type Border}">
                         <Setter Property="CornerRadius" Value="5,0,0,5"/>
@@ -25,6 +25,11 @@
                         </Style.Triggers>
                     </Style>
                 </TextBox.Resources>
+                <TextBox.ToolTip>
+                    <ToolTip Background="#303030">
+                        <Label x:Name="InputTextBoxTooltipLabel" Margin="0" Padding="0" Foreground="WhiteSmoke">Insert a value</Label>
+                    </ToolTip>
+                </TextBox.ToolTip>
             </TextBox>
             <Label x:Name="PlaceholderLabel" IsHitTestVisible="False" VerticalContentAlignment="Center" Foreground="LightGray" FontSize="11" Margin="1,0,0,0">Type a number...</Label>
         </Grid>
