@@ -103,7 +103,7 @@ public partial class MainWindow : Window
         timer.Start();
     }
 
-    public void OnWindowClosing(object sender, System.ComponentModel.CancelEventArgs e)
+    private void OnWindowClosing(object sender, System.ComponentModel.CancelEventArgs e)
     {
         Properties.Settings.Default.Save();
         KeyboardHook.Stop();
@@ -144,7 +144,7 @@ public partial class MainWindow : Window
         }
     }
 
-    public void SwitchToAllSongsView(object sender, RoutedEventArgs e)
+    private void SwitchToAllSongsView(object sender, RoutedEventArgs e)
     {
         AlbumsView.Visibility = Visibility.Collapsed;
         ArtistsView.Visibility = Visibility.Collapsed;
@@ -154,7 +154,7 @@ public partial class MainWindow : Window
         AllSongsView.Visibility = Visibility.Visible;
     }
 
-    public void SwitchToPlaylistsView(object sender, RoutedEventArgs e)
+    private void SwitchToPlaylistsView(object sender, RoutedEventArgs e)
     {
         AllSongsView.Visibility = Visibility.Collapsed;
         AlbumsView.Visibility = Visibility.Collapsed;
@@ -164,7 +164,7 @@ public partial class MainWindow : Window
         PlaylistsView.Visibility = Visibility.Visible;
     }
 
-    public void SwitchToAlbumsView(object sender, RoutedEventArgs e)
+    private void SwitchToAlbumsView(object sender, RoutedEventArgs e)
     {
         AllSongsView.Visibility = Visibility.Collapsed;
         ArtistsView.Visibility = Visibility.Collapsed;
@@ -174,7 +174,7 @@ public partial class MainWindow : Window
         AlbumsView.Visibility = Visibility.Visible;
     }
 
-    public void SwitchToArtistsView(object sender, RoutedEventArgs e)
+    private void SwitchToArtistsView(object sender, RoutedEventArgs e)
     {
         AllSongsView.Visibility = Visibility.Collapsed;
         AlbumsView.Visibility = Visibility.Collapsed;
@@ -184,7 +184,7 @@ public partial class MainWindow : Window
         ArtistsView.Visibility = Visibility.Visible;
     }
 
-    public void SwitchToSearchResultsView(object sender, RoutedEventArgs e)
+    private void SwitchToSearchResultsView(object sender, RoutedEventArgs e)
     {
         AllSongsView.Visibility = Visibility.Collapsed;
         PlaylistsView.Visibility = Visibility.Collapsed;
@@ -194,7 +194,7 @@ public partial class MainWindow : Window
         SearchResultsView.Visibility = Visibility.Visible;
     }
 
-    public void SwitchToSettingsView(object sender, RoutedEventArgs e)
+    private void SwitchToSettingsView(object sender, RoutedEventArgs e)
     {
         AllSongsView.Visibility = Visibility.Collapsed;
         PlaylistsView.Visibility = Visibility.Collapsed;
@@ -204,7 +204,7 @@ public partial class MainWindow : Window
         SettingsView.Visibility = Visibility.Visible;
     }
 
-    public void PlayPauseButtonClick(object sender, RoutedEventArgs e)
+    private void PlayPauseButtonClick(object sender, RoutedEventArgs e)
     {
         TogglePlayPause();
     }
@@ -228,23 +228,23 @@ public partial class MainWindow : Window
         }
     }
 
-    public void ProgressSliderMouseMove(object sender, RoutedEventArgs e)
+    private void ProgressSliderMouseMove(object sender, RoutedEventArgs e)
     {
         if (!isProgressSliderBeingDragged) return;
         mediaPlayer.Position = TimeSpan.FromSeconds(ProgressSlider.Value);
     }
 
-    public void ProgressSliderMouseDown(object sender, RoutedEventArgs e)
+    private void ProgressSliderMouseDown(object sender, RoutedEventArgs e)
     {
         isProgressSliderBeingDragged = true;
     }
 
-    public void ProgressSliderMouseUp(object sender, RoutedEventArgs e)
+    private void ProgressSliderMouseUp(object sender, RoutedEventArgs e)
     {
         isProgressSliderBeingDragged = false;
     }
 
-    public void VolumeSliderMouseMove(object sender, RoutedEventArgs e)
+    private void VolumeSliderMouseMove(object sender, RoutedEventArgs e)
     {
         if (!isVolumeSliderBeingDragged) return;
         mediaPlayer.Volume = VolumeSlider.Value / 100f;
@@ -252,17 +252,17 @@ public partial class MainWindow : Window
         VolumeLabel.Content = $"Volume: {VolumeSlider.Value}%";
     }
 
-    public void VolumeSliderMouseDown(object sender, RoutedEventArgs e)
+    private void VolumeSliderMouseDown(object sender, RoutedEventArgs e)
     {
         isVolumeSliderBeingDragged = true;
     }
 
-    public void VolumeSliderMouseUp(object sender, RoutedEventArgs e)
+    private void VolumeSliderMouseUp(object sender, RoutedEventArgs e)
     {
         isVolumeSliderBeingDragged = false;
     }
 
-    public void VolumeSliderMouseWheel(object sender, MouseWheelEventArgs e)
+    private void VolumeSliderMouseWheel(object sender, MouseWheelEventArgs e)
     {
         if (e.Delta > 0)
         {
@@ -274,27 +274,27 @@ public partial class MainWindow : Window
         }
     }
 
-    public void LoopToggleButtonClick(object sender, RoutedEventArgs e)
+    private void LoopToggleButtonClick(object sender, RoutedEventArgs e)
     {
         Properties.Settings.Default.PlayerLoop = (bool)LoopToggleButton.IsChecked!;
     }
 
-    public void ShuffleToggleButtonClick(object sender, RoutedEventArgs e)
+    private void ShuffleToggleButtonClick(object sender, RoutedEventArgs e)
     {
         Properties.Settings.Default.PlayerShuffle = (bool)ShuffleToggleButton.IsChecked!;
     }
 
-    public void BackwardButtonClick(object sender, RoutedEventArgs e)
+    private void BackwardButtonClick(object sender, RoutedEventArgs e)
     {
         PreviousSongInPlaylist();
     }
 
-    public void ForwardButtonClick(object sender, RoutedEventArgs e)
+    private void ForwardButtonClick(object sender, RoutedEventArgs e)
     {
         NextSongInPlaylist();
     }
 
-    public void NewPlaylistButtonClick(object sender, RoutedEventArgs e)
+    private void NewPlaylistButtonClick(object sender, RoutedEventArgs e)
     {
         InputBox ib = new InputBox("Insert playlist name", "Type the name you want to give to the playlist:");
         if (ib.ShowDialog() == true)
@@ -344,7 +344,7 @@ public partial class MainWindow : Window
         }
     }
 
-    public void RenamePlaylist(Playlist playlist)
+    private void RenamePlaylist(Playlist playlist)
     {
         if (playlist.Equals(Playlist.Empty)) return;
         string oldPath = $"{PLAYLISTS_PATH}\\{playlist.Name}.homppl";
@@ -366,7 +366,7 @@ public partial class MainWindow : Window
         }
     }
 
-    public void DeletePlaylist(Playlist playlist)
+    private void DeletePlaylist(Playlist playlist)
     {
         if (playlist.Equals(Playlist.Empty)) return;
         string path = $"{PLAYLISTS_PATH}\\{playlist.Name}.homppl";
@@ -434,7 +434,7 @@ public partial class MainWindow : Window
         }
     }
 
-    public void LoadPlaylistSongsInView(Playlist playlist)
+    private void LoadPlaylistSongsInView(Playlist playlist)
     {
         if (playlist.Equals(Playlist.Empty)) return;
         PlaylistSongsListPanel.Children.Clear();
@@ -450,7 +450,7 @@ public partial class MainWindow : Window
         }
     }
 
-    public void LoadAlbumSongsInView(string albumName)
+    private void LoadAlbumSongsInView(string albumName)
     {
         if (!albums.ContainsKey(albumName)) { MessageBox.Show("Could not load album."); return; }
         AlbumSongsListPanel.Children.Clear();
@@ -466,7 +466,7 @@ public partial class MainWindow : Window
         }
     }
 
-    public void LoadArtistSongsInView(string artistName)
+    private void LoadArtistSongsInView(string artistName)
     {
         if (!artists.ContainsKey(artistName)) { MessageBox.Show("Could not load artist's songs."); return; }
         ArtistSongsListPanel.Children.Clear();
@@ -482,7 +482,7 @@ public partial class MainWindow : Window
         }
     }
 
-    public void SearchInputTextBoxKeyUp(object sender, KeyEventArgs e)
+    private void SearchInputTextBoxKeyUp(object sender, KeyEventArgs e)
     {
         if (e.Key == Key.Enter)
         {
@@ -1181,19 +1181,19 @@ public partial class MainWindow : Window
         Properties.Settings.Default.MiniplayerAutoOpacity = false;
     }
 
-    public void SettingsMiniplayerOpacitySliderMouseMove(object sender, RoutedEventArgs e)
+    private void SettingsMiniplayerOpacitySliderMouseMove(object sender, RoutedEventArgs e)
     {
         if (!isSettingsMiniplayerOpacitySliderBeingDragged) return;
         SettingsMiniplayerOpacitySliderLabel.Content = $"{(SettingsMiniplayerOpacitySlider.Value * 100d):0.00}%";
         Properties.Settings.Default.MiniplayerMinimumOpacity = SettingsMiniplayerOpacitySlider.Value;
     }
 
-    public void SettingsMiniplayerOpacitySliderMouseDown(object sender, RoutedEventArgs e)
+    private void SettingsMiniplayerOpacitySliderMouseDown(object sender, RoutedEventArgs e)
     {
         isSettingsMiniplayerOpacitySliderBeingDragged = true;
     }
 
-    public void SettingsMiniplayerOpacitySliderMouseUp(object sender, RoutedEventArgs e)
+    private void SettingsMiniplayerOpacitySliderMouseUp(object sender, RoutedEventArgs e)
     {
         isSettingsMiniplayerOpacitySliderBeingDragged = false;
     }
