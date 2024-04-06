@@ -134,6 +134,7 @@ public partial class MiniPlayerWindow : Window
 
     private void WindowLoaded(object sender, RoutedEventArgs e)
     {
+        opacityTimer.Interval = Properties.Settings.Default.MiniplayerFadingTimeout;
         opacityTimer.Start();
     }
 
