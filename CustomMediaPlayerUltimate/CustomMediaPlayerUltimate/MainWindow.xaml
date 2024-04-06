@@ -31,20 +31,20 @@
                 <ColumnDefinition Width="Auto"/>
                 <ColumnDefinition Width="Auto"/>
             </Grid.ColumnDefinitions>
-            <Button Style="{StaticResource CustomButton}" Content="All songs" Grid.Column="0" Click="SwitchToAllSongsView"/>
+            <Button Content="All songs" Grid.Column="0" Click="SwitchToAllSongsView"/>
             <Separator Opacity="0" Width="6" Grid.Column="1"/>
-            <Button Style="{StaticResource CustomButton}" Content="Playlists" Grid.Column="2" Click="SwitchToPlaylistsView"/>
+            <Button Content="Playlists" Grid.Column="2" Click="SwitchToPlaylistsView"/>
             <Separator Opacity="0" Width="6" Grid.Column="3"/>
-            <Button Style="{StaticResource CustomButton}" Content="Albums" Grid.Column="4" Click="SwitchToAlbumsView"/>
+            <Button Content="Albums" Grid.Column="4" Click="SwitchToAlbumsView"/>
             <Separator Opacity="0" Width="6" Grid.Column="5"/>
-            <Button Style="{StaticResource CustomButton}" Content="Artists" Grid.Column="6" Click="SwitchToArtistsView"/>
+            <Button Content="Artists" Grid.Column="6" Click="SwitchToArtistsView"/>
             <Separator Opacity="0" Width="6" Grid.Column="7"/>
-            <Button Style="{StaticResource CustomButton}" Content="Search results" Grid.Column="8" Click="SwitchToSearchResultsView"/>
+            <Button Content="Search results" Grid.Column="8" Click="SwitchToSearchResultsView"/>
             <Separator Opacity="0" Width="6" Grid.Column="9"/>
-            <Button Style="{StaticResource CustomButton}" Content="Settings" Grid.Column="10" Click="SwitchToSettingsView"/>
+            <Button Content="Settings" Grid.Column="10" Click="SwitchToSettingsView"/>
             
             <Label Grid.Column="12" Foreground="WhiteSmoke">Search for a song:</Label>
-            <TextBox x:Name="SearchInputTextBox" Style="{StaticResource CustomTextBox}" Width="200" Grid.Column="13" ToolTip="Search a song..." KeyUp="SearchInputTextBoxKeyUp"/>
+            <TextBox x:Name="SearchInputTextBox" Width="200" Grid.Column="13" ToolTip="Search a song..." KeyUp="SearchInputTextBoxKeyUp"/>
         </Grid>
 
         <Grid DockPanel.Dock="Bottom" Background="#303030" Height="60" MaxHeight="60" MinHeight="60">
@@ -58,31 +58,31 @@
                     <Label x:Name="ProgressLabel" Foreground="WhiteSmoke">00:00 / 00:00</Label>
                 </StackPanel>
                 <Separator Width="10" Opacity="0"/>
-                <ToggleButton x:Name="LoopToggleButton" Style="{StaticResource CustomToggleButton}" Width="45" Height="45" Click="LoopToggleButtonClick">
+                <ToggleButton x:Name="LoopToggleButton" Width="45" Height="45" Click="LoopToggleButtonClick">
                     <ToggleButton.Content>
                         <Image Source="/Images/repeat.png"/>
                     </ToggleButton.Content>
                 </ToggleButton>
                 <Separator Width="5" Opacity="0"/>
-                <Button x:Name="BackwardButton" Style="{StaticResource CustomButton}" Width="45" Height="45" Click="BackwardButtonClick">
+                <Button x:Name="BackwardButton" Width="45" Height="45" Click="BackwardButtonClick">
                     <Button.Content>
                         <Image Source="/Images/backward.png"/>
                     </Button.Content>
                 </Button>
                 <Separator Width="5" Opacity="0"/>
-                <Button x:Name="PlayPauseButton" Style="{StaticResource CustomButton}" Width="45" Height="45" Click="PlayPauseButtonClick">
+                <Button x:Name="PlayPauseButton" Width="45" Height="45" Click="PlayPauseButtonClick">
                     <Button.Content>
                         <Image x:Name="PlayPauseButtonImage" Source="/Images/play.png"/>
                     </Button.Content>
                 </Button>
                 <Separator Width="5" Opacity="0"/>
-                <Button x:Name="ForwardButton" Style="{StaticResource CustomButton}" Width="45" Height="45" Click="ForwardButtonClick">
+                <Button x:Name="ForwardButton" Width="45" Height="45" Click="ForwardButtonClick">
                     <Button.Content>
                         <Image Source="/Images/forward.png"/>
                     </Button.Content>
                 </Button>
                 <Separator Width="5" Opacity="0"/>
-                <ToggleButton x:Name="ShuffleToggleButton" Style="{StaticResource CustomToggleButton}" Width="45" Height="45" Click="ShuffleToggleButtonClick">
+                <ToggleButton x:Name="ShuffleToggleButton" Width="45" Height="45" Click="ShuffleToggleButtonClick">
                     <ToggleButton.Content>
                         <Image Source="/Images/shuffle.png"/>
                     </ToggleButton.Content>
@@ -94,7 +94,7 @@
                 </StackPanel>
             </StackPanel>
             <StackPanel Grid.Column="1" Orientation="Horizontal" VerticalAlignment="Center">
-                <Button Style="{StaticResource CustomModernButton}" Width="30" Height="30" Click="MiniplayerButtonClick">
+                <Button Style="{StaticResource ModernButton}" Width="30" Height="30" Click="MiniplayerButtonClick">
                     <Button.Content>
                         <Image Source="/Images/miniplayer.png"/>
                     </Button.Content>
@@ -243,25 +243,25 @@
                                             <ColumnDefinition Width="*"/>
                                         </Grid.ColumnDefinitions>
                                         <Label Foreground="WhiteSmoke" Grid.Row="0" Grid.Column="0">Play/Pause (default is P):</Label>
-                                        <Button x:Name="SettingsPlayPauseShortcutButton" Style="{StaticResource CustomButton}" MinWidth="50" Grid.Row="0" Grid.Column="1" Click="OnSettingsPlayPauseShortcutButtonClick">P</Button>
+                                        <Button x:Name="SettingsPlayPauseShortcutButton" MinWidth="50" Grid.Row="0" Grid.Column="1" Click="OnSettingsPlayPauseShortcutButtonClick">P</Button>
                                         <Separator Grid.Row="1" Grid.Column="0" Height="5" Background="Transparent"/>
                                         <Label Foreground="WhiteSmoke" Grid.Row="2" Grid.Column="0">Increase volume (default is Up):</Label>
-                                        <Button x:Name="SettingsIncreaseVolumeShortcutButton" Style="{StaticResource CustomButton}" MinWidth="50" Grid.Row="2" Grid.Column="1" Click="OnSettingsIncreaseVolumeShortcutButtonClick">Up</Button>
+                                        <Button x:Name="SettingsIncreaseVolumeShortcutButton" MinWidth="50" Grid.Row="2" Grid.Column="1" Click="OnSettingsIncreaseVolumeShortcutButtonClick">Up</Button>
                                         <Separator Grid.Row="3" Grid.Column="0" Height="5" Background="Transparent"/>
                                         <Label Foreground="WhiteSmoke" Grid.Row="4" Grid.Column="0">Decrease volume (default is Down):</Label>
-                                        <Button x:Name="SettingsDecreaseVolumeShortcutButton" Style="{StaticResource CustomButton}" MinWidth="50" Grid.Row="4" Grid.Column="1" Click="OnSettingsDecreaseVolumeShortcutButtonClick">Down</Button>
+                                        <Button x:Name="SettingsDecreaseVolumeShortcutButton" MinWidth="50" Grid.Row="4" Grid.Column="1" Click="OnSettingsDecreaseVolumeShortcutButtonClick">Down</Button>
                                         <Separator Grid.Row="5" Grid.Column="0" Height="5" Background="Transparent"/>
                                         <Label Foreground="WhiteSmoke" Grid.Row="6" Grid.Column="0">Next song (default is N):</Label>
-                                        <Button x:Name="SettingsNextSongShortcutButton" Style="{StaticResource CustomButton}" MinWidth="50" Grid.Row="6" Grid.Column="1" Click="OnSettingsNextSongShortcutButtonClick">N</Button>
+                                        <Button x:Name="SettingsNextSongShortcutButton" MinWidth="50" Grid.Row="6" Grid.Column="1" Click="OnSettingsNextSongShortcutButtonClick">N</Button>
                                         <Separator Grid.Row="7" Grid.Column="0" Height="5" Background="Transparent"/>
                                         <Label Foreground="WhiteSmoke" Grid.Row="8" Grid.Column="0">Previous song (default is B):</Label>
-                                        <Button x:Name="SettingsPreviousSongShortcutButton" Style="{StaticResource CustomButton}" MinWidth="50" Grid.Row="8" Grid.Column="1" Click="OnSettingsPreviousSongShortcutButtonClick">B</Button>
+                                        <Button x:Name="SettingsPreviousSongShortcutButton" MinWidth="50" Grid.Row="8" Grid.Column="1" Click="OnSettingsPreviousSongShortcutButtonClick">B</Button>
                                         <Separator Grid.Row="9" Grid.Column="0" Height="5" Background="Transparent"/>
                                         <Label Foreground="WhiteSmoke" Grid.Row="10" Grid.Column="0">Toggle loop (default is R):</Label>
-                                        <Button x:Name="SettingsToggleLoopShortcutButton" Style="{StaticResource CustomButton}" MinWidth="50" Grid.Row="10" Grid.Column="1" Click="OnSettingsToggleLoopShortcutButtonClick">R</Button>
+                                        <Button x:Name="SettingsToggleLoopShortcutButton" MinWidth="50" Grid.Row="10" Grid.Column="1" Click="OnSettingsToggleLoopShortcutButtonClick">R</Button>
                                         <Separator Grid.Row="11" Grid.Column="0" Height="5" Background="Transparent"/>
                                         <Label Foreground="WhiteSmoke" Grid.Row="12" Grid.Column="0">Toggle shuffle (default is S):</Label>
-                                        <Button x:Name="SettingsToggleShuffleShortcutButton" Style="{StaticResource CustomButton}" MinWidth="50" Grid.Row="12" Grid.Column="1" Click="OnSettingsToggleShuffleShortcutButtonClick">S</Button>
+                                        <Button x:Name="SettingsToggleShuffleShortcutButton" MinWidth="50" Grid.Row="12" Grid.Column="1" Click="OnSettingsToggleShuffleShortcutButtonClick">S</Button>
                                     </Grid>
                                 </StackPanel>
                             </Expander>
@@ -279,9 +279,9 @@
                             <Label Foreground="LightGray" Margin="5,0,0,0">Specify the directories that HOMP will be searching music into. You will need to restart HOMP for changes to take effect.</Label>
                             <ListView x:Name="SettingsSourceDirectoriesListView" Margin="10,0,0,0" MinWidth="100" MaxWidth="500" MinHeight="50" MaxHeight="200" Background="#252525" Foreground="WhiteSmoke" HorizontalAlignment="Left"/>
                             <StackPanel Margin="10,5,0,0" Orientation="Horizontal">
-                                <Button Style="{StaticResource CustomButton}" Click="OnSettingsSourceDirectoriesAddButtonClick">Add directory</Button>
+                                <Button Click="OnSettingsSourceDirectoriesAddButtonClick">Add directory</Button>
                                 <Separator Width="5" Background="Transparent"/>
-                                <Button Style="{StaticResource CustomButton}" Click="OnSettingsSourceDirectoriesRemoveButtonClick">Remove selected directory</Button>
+                                <Button Click="OnSettingsSourceDirectoriesRemoveButtonClick">Remove selected directory</Button>
                             </StackPanel>
                         </StackPanel>
                         <StackPanel Orientation="Vertical" Margin="5,10,0,0" HorizontalAlignment="Left">

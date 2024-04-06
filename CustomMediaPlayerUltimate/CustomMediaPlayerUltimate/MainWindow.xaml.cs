@@ -562,7 +562,7 @@ public partial class MainWindow : Window
             Grid.SetColumn(titleLabel, 0);
             grid.Children.Add(titleLabel);
 
-            Button addNewButton = new Button() { Content = "New playlist...", Height = 30d, Style = FindResource("CustomButton") as Style };
+            Button addNewButton = new Button() { Content = "New playlist...", Height = 30d };
             addNewButton.Click += NewPlaylistButtonClick;
             Grid.SetColumn(addNewButton, 2);
             grid.Children.Add(addNewButton);

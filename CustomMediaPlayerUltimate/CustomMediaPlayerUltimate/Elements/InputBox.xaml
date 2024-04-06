@@ -14,16 +14,16 @@
             <RowDefinition Height="Auto"/>
         </Grid.RowDefinitions>
         <Label x:Name="MessageLabel" Grid.Row="0" Foreground="WhiteSmoke" Content="Insert here your text..."/>
-        <TextBox x:Name="InputTextBox" Grid.Row="1" Style="{StaticResource CustomTextBox}" Margin="5" Background="#252525" Foreground="WhiteSmoke" />
+        <TextBox x:Name="InputTextBox" Grid.Row="1" Margin="5" Background="#252525" Foreground="WhiteSmoke" />
         <Grid Grid.Row="2">
             <Grid.ColumnDefinitions>
                 <ColumnDefinition Width="*"/>
                 <ColumnDefinition Width="Auto"/>
             </Grid.ColumnDefinitions>
             <StackPanel Grid.Column="1" Orientation="Horizontal" Margin="5">
-                <Button x:Name="CancelButton" Style="{StaticResource CustomButton}" Click="CancelButtonClick" Content="Cancel" />
+                <Button x:Name="CancelButton" Click="CancelButtonClick" Content="Cancel" />
                 <Separator Width="5" Opacity="0"/>
-                <Button x:Name="OkButton" Style="{StaticResource CustomButton}" Click="OkButtonClick" Content="OK" />
+                <Button x:Name="OkButton" Click="OkButtonClick" Content="OK" />
             </StackPanel>
         </Grid>
     </Grid>

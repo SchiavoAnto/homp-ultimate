@@ -36,7 +36,31 @@
                     <RowDefinition Height="*"/>
                 </Grid.RowDefinitions>
 
-                <Button Grid.Row="0" Style="{StaticResource CustomCloseButton}" Width="12" Height="12" Padding="0" Margin="0" Click="CloseButtonClick"/>
+                <Button Grid.Row="0" Width="12" Height="12" Padding="0" Margin="0" Click="CloseButtonClick">
+                    <Button.Style>
+                        <Style TargetType="Button">
+                            <Setter Property="Background" Value="#CC0000" />
+                            <Setter Property="Foreground" Value="WhiteSmoke"/>
+                            <Setter Property="Template">
+                                <Setter.Value>
+                                    <ControlTemplate TargetType="Button">
+                                        <Border Background="{TemplateBinding Background}" BorderBrush="#BB0030" BorderThickness="2" Padding="0" Margin="0" CornerRadius="4">
+                                            <ContentPresenter HorizontalAlignment="Center" VerticalAlignment="Center" />
+                                        </Border>
+                                    </ControlTemplate>
+                                </Setter.Value>
+                            </Setter>
+                            <Style.Triggers>
+                                <Trigger Property="IsMouseOver" Value="True">
+                                    <Setter Property="Background" Value="#BB0000" />
+                                </Trigger>
+                                <Trigger Property="IsPressed" Value="True">
+                                    <Setter Property="Background" Value="#AA0000" />
+                                </Trigger>
+                            </Style.Triggers>
+                        </Style>
+                    </Button.Style>
+                </Button>
                 <Separator Grid.Row="1" Opacity="0" Height="2"/>
                 <StackPanel x:Name="WindowGrabber" Grid.Row="2" Orientation="Horizontal" HorizontalAlignment="Center" MouseMove="WindowGrabberMouseMove" MouseUp="WindowGrabberMouseUp">
                     <Rectangle VerticalAlignment="Stretch" Width="1" Margin="2" Stroke="DimGray"/>
@@ -80,13 +104,13 @@
                     <Rectangle Width="1"/>
                 </Border>
             </Grid>
-            <Button Style="{StaticResource CustomModernButton}" Grid.Column="3" Width="25" Height="25" Click="PlayPauseButtonClick">
+            <Button Style="{StaticResource ModernButton}" Grid.Column="3" Width="25" Height="25" Click="PlayPauseButtonClick">
                 <Button.Content>
                     <Image x:Name="PlayPauseButtonImage" Source="/Images/play.png"/>
                 </Button.Content>
             </Button>
             <Separator Grid.Column="4" Opacity="0" Width="2"/>
-            <Button Style="{StaticResource CustomModernButton}" Grid.Column="5" Width="25" Height="25" Click="NextSongButtonClick">
+            <Button Style="{StaticResource ModernButton}" Grid.Column="5" Width="25" Height="25" Click="NextSongButtonClick">
                 <Button.Content>
                     <Image Source="/Images/forward.png"/>
                 </Button.Content>

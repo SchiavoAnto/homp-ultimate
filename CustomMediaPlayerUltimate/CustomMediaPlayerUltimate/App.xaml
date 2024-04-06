@@ -4,10 +4,6 @@
              xmlns:local="clr-namespace:CustomMediaPlayerUltimate"
              StartupUri="MainWindow.xaml">
     <Application.Resources>
-        <ResourceDictionary>
-            <ResourceDictionary.MergedDictionaries>
-                <ResourceDictionary Source="/CommonStyles.xaml" />
-            </ResourceDictionary.MergedDictionaries>
-        </ResourceDictionary>
+        <ResourceDictionary Source="/CommonStyles.xaml" />
     </Application.Resources>
 </Application>

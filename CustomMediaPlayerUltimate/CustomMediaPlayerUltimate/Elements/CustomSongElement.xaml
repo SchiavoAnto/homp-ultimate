@@ -12,7 +12,7 @@
             <ColumnDefinition Width="40"/>
         </Grid.ColumnDefinitions>
         <Label x:Name="ItemTextLabel" Grid.Column="0" VerticalAlignment="Center" Foreground="WhiteSmoke"/>
-        <Button x:Name="PlayButton" Grid.Column="1" Style="{StaticResource CustomButton}" Width="28" Height="28" Margin="2,2,-6,2" Click="PlayButtonClick">
+        <Button x:Name="PlayButton" Grid.Column="1" Width="28" Height="28" Margin="2,2,-6,2" Click="PlayButtonClick">
             <Image Source="/Images/play.png"/>
         </Button>
 

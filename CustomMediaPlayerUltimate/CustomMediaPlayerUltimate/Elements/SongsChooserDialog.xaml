@@ -20,9 +20,9 @@
                 <ColumnDefinition Width="Auto"/>
             </Grid.ColumnDefinitions>
             <StackPanel Grid.Column="1" Orientation="Horizontal" Margin="5">
-                <Button Style="{StaticResource CustomButton}" Click="CancelButtonClick">Cancel</Button>
+                <Button Click="CancelButtonClick">Cancel</Button>
                 <Separator Width="5" Background="Transparent"/>
-                <Button Style="{StaticResource CustomButton}" Click="ConfirmButtonClick">Confirm</Button>
+                <Button Click="ConfirmButtonClick">Confirm</Button>
             </StackPanel>
         </Grid>
     </Grid>
