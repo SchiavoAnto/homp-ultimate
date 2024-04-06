@@ -7,7 +7,7 @@
         Title="MiniPlayerWindow" Width="250" Height="55" MaxWidth="250" MaxHeight="55"
         WindowStyle="None" Topmost="True" AllowsTransparency="True" ShowInTaskbar="False" BorderThickness="0"
         Background="Transparent" Closing="WindowClosing" MouseEnter="WindowMouseEnter" MouseLeave="WindowMouseLeave"
-        LocationChanged="WindowLocationChanged">
+        LocationChanged="WindowLocationChanged" Loaded="WindowLoaded">
     <Window.Resources>
         <Style TargetType="Image">
             <Setter Property="RenderOptions.EdgeMode" Value="Aliased" />

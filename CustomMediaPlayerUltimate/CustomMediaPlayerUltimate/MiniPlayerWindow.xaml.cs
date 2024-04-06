@@ -132,6 +132,11 @@ public partial class MiniPlayerWindow : Window
         Properties.Settings.Default.MiniplayerLastLocationY = (int)Top;
     }
 
+    private void WindowLoaded(object sender, RoutedEventArgs e)
+    {
+        opacityTimer.Start();
+    }
+
     private void PlayPauseButtonClick(object sender, RoutedEventArgs e)
     {
         MainWindow.Instance.TogglePlayPause();
