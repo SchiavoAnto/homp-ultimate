@@ -101,4 +101,161 @@
             </Trigger>
         </Style.Triggers>
     </Style>
+
+    <Style TargetType="ScrollBar">
+        <Style.Triggers>
+            <Trigger Property="Orientation" Value="Vertical">
+                <Setter Property="Template">
+                    <Setter.Value>
+                        <ControlTemplate TargetType="ScrollBar">
+                            <Grid Width="8">
+                                <Track x:Name="PART_Track" Grid.Row="1" Orientation="{TemplateBinding Orientation}" IsDirectionReversed="True">
+                                    <Track.DecreaseRepeatButton>
+                                        <RepeatButton Command="ScrollBar.PageUpCommand">
+                                            <RepeatButton.Style>
+                                                <Style TargetType="RepeatButton">
+                                                    <Setter Property="Background" Value="#303030"/>
+                                                    <Setter Property="BorderThickness" Value="0"/>
+                                                    <Setter Property="Template">
+                                                        <Setter.Value>
+                                                            <ControlTemplate TargetType="RepeatButton">
+                                                                <Border Background="{TemplateBinding Background}" BorderThickness="0" CornerRadius="5,5,0,0"/>
+                                                            </ControlTemplate>
+                                                        </Setter.Value>
+                                                    </Setter>
+                                                </Style>
+                                            </RepeatButton.Style>
+                                        </RepeatButton>
+                                    </Track.DecreaseRepeatButton>
+                                    <Track.Thumb>
+                                        <Thumb>
+                                            <Thumb.Style>
+                                                <Style TargetType="Thumb">
+                                                    <Setter Property="Template">
+                                                        <Setter.Value>
+                                                            <ControlTemplate TargetType="Thumb">
+                                                                <Border BorderThickness="0" Width="{TemplateBinding Width}" Height="{TemplateBinding Height}">
+                                                                    <Rectangle>
+                                                                        <Rectangle.Style>
+                                                                            <Style TargetType="Rectangle">
+                                                                                <Setter Property="Fill" Value="#404040"/>
+                                                                                <Setter Property="RadiusX" Value="4"/>
+                                                                                <Setter Property="RadiusY" Value="4"/>
+                                                                                <Style.Triggers>
+                                                                                    <Trigger Property="IsMouseOver" Value="True">
+                                                                                        <Setter Property="Fill" Value="#505050"/>
+                                                                                    </Trigger>
+                                                                                </Style.Triggers>
+                                                                            </Style>
+                                                                        </Rectangle.Style>
+                                                                    </Rectangle>
+                                                                </Border>
+                                                            </ControlTemplate>
+                                                        </Setter.Value>
+                                                    </Setter>
+                                                </Style>
+                                            </Thumb.Style>
+                                        </Thumb>
+                                    </Track.Thumb>
+                                    <Track.IncreaseRepeatButton>
+                                        <RepeatButton Command="ScrollBar.PageDownCommand">
+                                            <RepeatButton.Style>
+                                                <Style TargetType="RepeatButton">
+                                                    <Setter Property="Background" Value="#303030"/>
+                                                    <Setter Property="BorderThickness" Value="0"/>
+                                                    <Setter Property="Template">
+                                                        <Setter.Value>
+                                                            <ControlTemplate TargetType="RepeatButton">
+                                                                <Border Background="{TemplateBinding Background}" BorderThickness="0" CornerRadius="0,0,5,5"/>
+                                                            </ControlTemplate>
+                                                        </Setter.Value>
+                                                    </Setter>
+                                                </Style>
+                                            </RepeatButton.Style>
+                                        </RepeatButton>
+                                    </Track.IncreaseRepeatButton>
+                                </Track>
+                            </Grid>
+                        </ControlTemplate>
+                    </Setter.Value>
+                </Setter>
+            </Trigger>
+            <Trigger Property="Orientation" Value="Horizontal">
+                <Setter Property="Template">
+                    <Setter.Value>
+                        <ControlTemplate TargetType="ScrollBar">
+                            <Grid Height="8">
+                                <Track x:Name="PART_Track" Grid.Column="1" Orientation="{TemplateBinding Orientation}" IsDirectionReversed="True">
+                                    <Track.DecreaseRepeatButton>
+                                        <RepeatButton Command="ScrollBar.PageLeftCommand">
+                                            <RepeatButton.Style>
+                                                <Style TargetType="RepeatButton">
+                                                    <Setter Property="Background" Value="#303030"/>
+                                                    <Setter Property="BorderThickness" Value="0"/>
+                                                    <Setter Property="Template">
+                                                        <Setter.Value>
+                                                            <ControlTemplate TargetType="RepeatButton">
+                                                                <Border Background="{TemplateBinding Background}" BorderThickness="0" CornerRadius="0,5,5,0"/>
+                                                            </ControlTemplate>
+                                                        </Setter.Value>
+                                                    </Setter>
+                                                </Style>
+                                            </RepeatButton.Style>
+                                        </RepeatButton>
+                                    </Track.DecreaseRepeatButton>
+                                    <Track.Thumb>
+                                        <Thumb>
+                                            <Thumb.Style>
+                                                <Style TargetType="Thumb">
+                                                    <Setter Property="Template">
+                                                        <Setter.Value>
+                                                            <ControlTemplate TargetType="Thumb">
+                                                                <Border BorderThickness="0" Width="{TemplateBinding Width}" Height="{TemplateBinding Height}">
+                                                                    <Rectangle>
+                                                                        <Rectangle.Style>
+                                                                            <Style TargetType="Rectangle">
+                                                                                <Setter Property="Fill" Value="#404040"/>
+                                                                                <Setter Property="RadiusX" Value="4"/>
+                                                                                <Setter Property="RadiusY" Value="4"/>
+                                                                                <Style.Triggers>
+                                                                                    <Trigger Property="IsMouseOver" Value="True">
+                                                                                        <Setter Property="Fill" Value="#505050"/>
+                                                                                    </Trigger>
+                                                                                </Style.Triggers>
+                                                                            </Style>
+                                                                        </Rectangle.Style>
+                                                                    </Rectangle>
+                                                                </Border>
+                                                            </ControlTemplate>
+                                                        </Setter.Value>
+                                                    </Setter>
+                                                </Style>
+                                            </Thumb.Style>
+                                        </Thumb>
+                                    </Track.Thumb>
+                                    <Track.IncreaseRepeatButton>
+                                        <RepeatButton Command="ScrollBar.PageRightCommand">
+                                            <RepeatButton.Style>
+                                                <Style TargetType="RepeatButton">
+                                                    <Setter Property="Background" Value="#303030"/>
+                                                    <Setter Property="BorderThickness" Value="0"/>
+                                                    <Setter Property="Template">
+                                                        <Setter.Value>
+                                                            <ControlTemplate TargetType="RepeatButton">
+                                                                <Border Background="{TemplateBinding Background}" BorderThickness="0" CornerRadius="5,0,0,5"/>
+                                                            </ControlTemplate>
+                                                        </Setter.Value>
+                                                    </Setter>
+                                                </Style>
+                                            </RepeatButton.Style>
+                                        </RepeatButton>
+                                    </Track.IncreaseRepeatButton>
+                                </Track>
+                            </Grid>
+                        </ControlTemplate>
+                    </Setter.Value>
+                </Setter>
+            </Trigger>
+        </Style.Triggers>
+    </Style>
 </ResourceDictionary>
