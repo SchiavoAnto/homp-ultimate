@@ -38,10 +38,12 @@ public partial class MainWindow : Window
             {
                 PlayerFadeIn();
                 SetPlayPauseImage(true);
+                MiniPlayerWindow.Instance?.SetPlayPauseImage(true);
             }
             else
             {
                 SetPlayPauseImage(false);
+                MiniPlayerWindow.Instance?.SetPlayPauseImage(false);
             }
         }
     }
@@ -52,6 +54,7 @@ public partial class MainWindow : Window
     private bool mediaAvailable = false;
     private bool isProgressSliderBeingDragged = false;
     private bool isVolumeSliderBeingDragged = false;
+    private bool isSettingsMiniplayerOpacitySliderBeingDragged = false;
     public Song? currentSong = null;
     private Song? prioritySong = null;
     private PlaylistElement? currentlySelectedPlaylistElement;
@@ -206,7 +209,7 @@ public partial class MainWindow : Window
         TogglePlayPause();
     }
 
-    private void TogglePlayPause()
+    public void TogglePlayPause()
     {
         if (IsPlaying)
         {
@@ -705,6 +708,11 @@ public partial class MainWindow : Window
             if (sourcePath is null) continue;
             SettingsSourceDirectoriesListView.Items.Add(sourcePath);
         }
+
+        SettingsMiniplayerAutoOpacityCheckbox.IsChecked = Properties.Settings.Default.MiniplayerAutoOpacity;
+        SettingsMiniplayerOpacitySlider.Value = Properties.Settings.Default.MiniplayerMinimumOpacity;
+        SettingsMiniplayerOpacitySliderLabel.Content = $"{(SettingsMiniplayerOpacitySlider.Value * 100d):0.00}%";
+        SettingsMiniplayerOpacityTimeoutNumberInputBox.SetValue(Properties.Settings.Default.MiniplayerFadingTimeout);
     }
 
     private async Task<bool> LoadSong(string dirPath, string songPath)
@@ -817,17 +825,27 @@ public partial class MainWindow : Window
             return;
         }
 
-        Song song = songCollection.Songs[songFile];
-        CurrentSongTitleLabel.Content = (song.Title == string.Empty) switch
+        Song song = allSongsPlaylist.Songs[songFile];
+        string title = (song.Title == string.Empty) switch
         {
             true => "Generic Song",
             false => song.Title
         };
-        CurrentSongArtistAlbumLabel.Content = song.Artist;
+        string artist = song.Artist;
+
+        if (MiniPlayerWindow.Instance is not null)
+        {
+            MiniPlayerWindow.Instance.SetTitleText(title);
+            MiniPlayerWindow.Instance.SetArtistText(artist);
+        }
+
         if (!song.Album.Equals(Album.Empty))
         {
-            CurrentSongArtistAlbumLabel.Content += " - " + song.Album.Name;
+            artist += " - " + song.Album.Name;
         }
+        CurrentSongTitleLabel.Content = title;
+        CurrentSongArtistAlbumLabel.Content = artist;
+
 
         mediaPlayer.Open(new Uri(songFile));
         mediaPlayer.Play();
@@ -861,8 +879,15 @@ public partial class MainWindow : Window
         PlaySong(lastSong.FilePath, currentCollection);
     }
 
-    private void NextSongInPlaylist()
+    public void NextSongInPlaylist()
     {
+        if (prioritySong is not null)
+        {
+            PlaySong(prioritySong?.FilePath!, currentCollection ?? allSongsPlaylist);
+            prioritySong = null;
+            return;
+        }
+
         if (currentCollection is null) return;
         if (playedSongs.Count >= currentCollection.Songs.Count)
         {
@@ -1135,5 +1160,46 @@ public partial class MainWindow : Window
     public void SetPrioritySong(Song song)
     {
         prioritySong = song;
+    }
+
+    private void MiniplayerButtonClick(object sender, RoutedEventArgs e)
+    {
+        new MiniPlayerWindow()?.Show();
+        MiniPlayerWindow.Instance?.SetTitleText(currentSong?.Title ?? "Song title");
+        MiniPlayerWindow.Instance?.SetArtistText(currentSong?.Artist ?? "Song artist");
+        MiniPlayerWindow.Instance?.SetPlayPauseImage(IsPlaying);
+        Hide();
+    }
+
+    private void OnSettingsMiniplayerAutoOpacityCheckboxChecked(object sender, RoutedEventArgs e)
+    {
+        Properties.Settings.Default.MiniplayerAutoOpacity = true;
+    }
+
+    private void OnSettingsMiniplayerAutoOpacityCheckboxUnchecked(object sender, RoutedEventArgs e)
+    {
+        Properties.Settings.Default.MiniplayerAutoOpacity = false;
+    }
+
+    public void SettingsMiniplayerOpacitySliderMouseMove(object sender, RoutedEventArgs e)
+    {
+        if (!isSettingsMiniplayerOpacitySliderBeingDragged) return;
+        SettingsMiniplayerOpacitySliderLabel.Content = $"{(SettingsMiniplayerOpacitySlider.Value * 100d):0.00}%";
+        Properties.Settings.Default.MiniplayerMinimumOpacity = SettingsMiniplayerOpacitySlider.Value;
+    }
+
+    public void SettingsMiniplayerOpacitySliderMouseDown(object sender, RoutedEventArgs e)
+    {
+        isSettingsMiniplayerOpacitySliderBeingDragged = true;
+    }
+
+    public void SettingsMiniplayerOpacitySliderMouseUp(object sender, RoutedEventArgs e)
+    {
+        isSettingsMiniplayerOpacitySliderBeingDragged = false;
+    }
+
+    private void SettingsMiniplayerOpacityTimeoutNumberInputBoxFinishedEditing(object sender, RoutedEventArgs e)
+    {
+        Properties.Settings.Default.MiniplayerFadingTimeout = (int)SettingsMiniplayerOpacityTimeoutNumberInputBox.NumericValue;
     }
 }

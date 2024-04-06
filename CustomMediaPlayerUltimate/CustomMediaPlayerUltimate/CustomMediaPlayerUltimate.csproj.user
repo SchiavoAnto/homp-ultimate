@@ -10,6 +10,9 @@
     <Compile Update="Elements\CollectionElement.xaml.cs">
       <SubType>Code</SubType>
     </Compile>
+    <Compile Update="Elements\NumberInputBox.xaml.cs">
+      <SubType>Code</SubType>
+    </Compile>
     <Compile Update="Elements\PlaylistElement.xaml.cs">
       <SubType>Code</SubType>
     </Compile>
@@ -25,6 +28,9 @@
     <Compile Update="Elements\SongsChooserDialog.xaml.cs">
       <SubType>Code</SubType>
     </Compile>
+    <Compile Update="MiniPlayerWindow.xaml.cs">
+      <SubType>Code</SubType>
+    </Compile>
   </ItemGroup>
   <ItemGroup>
     <Page Update="CommonStyles.xaml">
@@ -34,6 +40,9 @@
       <SubType>Designer</SubType>
     </Page>
     <Page Update="Elements\CollectionElement.xaml">
+      <SubType>Designer</SubType>
+    </Page>
+    <Page Update="Elements\NumberInputBox.xaml">
       <SubType>Designer</SubType>
     </Page>
     <Page Update="Elements\PlaylistElement.xaml">
@@ -52,6 +61,9 @@
       <SubType>Designer</SubType>
     </Page>
     <Page Update="MainWindow.xaml">
+      <SubType>Designer</SubType>
+    </Page>
+    <Page Update="MiniPlayerWindow.xaml">
       <SubType>Designer</SubType>
     </Page>
   </ItemGroup>

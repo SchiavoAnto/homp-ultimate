@@ -23,6 +23,50 @@
         </Style.Triggers>
     </Style>
 
+    <Style x:Key="CustomCloseButton" TargetType="Button">
+        <Setter Property="Background" Value="#CC0000" />
+        <Setter Property="Foreground" Value="WhiteSmoke"/>
+        <Setter Property="Template">
+            <Setter.Value>
+                <ControlTemplate TargetType="Button">
+                    <Border Background="{TemplateBinding Background}" BorderBrush="#BB0030" BorderThickness="2" Padding="0" Margin="0" CornerRadius="4">
+                        <ContentPresenter HorizontalAlignment="Center" VerticalAlignment="Center" />
+                    </Border>
+                </ControlTemplate>
+            </Setter.Value>
+        </Setter>
+        <Style.Triggers>
+            <Trigger Property="IsMouseOver" Value="True">
+                <Setter Property="Background" Value="#BB0000" />
+            </Trigger>
+            <Trigger Property="IsPressed" Value="True">
+                <Setter Property="Background" Value="#AA0000" />
+            </Trigger>
+        </Style.Triggers>
+    </Style>
+
+    <Style x:Key="CustomModernButton" TargetType="Button">
+        <Setter Property="Background" Value="Transparent"/>
+        <Setter Property="Foreground" Value="WhiteSmoke"/>
+        <Setter Property="Template">
+            <Setter.Value>
+                <ControlTemplate TargetType="Button">
+                    <Border Background="{TemplateBinding Background}" BorderThickness="0" Padding="4" Margin="0" CornerRadius="6">
+                        <ContentPresenter HorizontalAlignment="Center" VerticalAlignment="Center"/>
+                    </Border>
+                </ControlTemplate>
+            </Setter.Value>
+        </Setter>
+        <Style.Triggers>
+            <Trigger Property="IsMouseOver" Value="True">
+                <Setter Property="Background" Value="#007070" />
+            </Trigger>
+            <Trigger Property="IsPressed" Value="True">
+                <Setter Property="Background" Value="#009090" />
+            </Trigger>
+        </Style.Triggers>
+    </Style>
+
     <Style x:Key="CustomToggleButton" TargetType="ToggleButton">
         <Setter Property="Background" Value="#005050" />
         <Setter Property="Foreground" Value="WhiteSmoke"/>
@@ -49,7 +93,7 @@
         <Setter Property="Padding" Value="5" />
         <Setter Property="TextWrapping" Value="NoWrap"/>
         <Setter Property="VerticalAlignment" Value="Center"/>
-        <Setter Property="Background" Value="#252525"/>
+        <Setter Property="Background" Value="#303030"/>
         <Setter Property="Foreground" Value="WhiteSmoke"/>
     </Style>
 
