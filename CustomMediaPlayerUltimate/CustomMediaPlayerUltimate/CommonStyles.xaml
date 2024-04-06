@@ -93,7 +93,7 @@
         <Setter Property="Padding" Value="5" />
         <Setter Property="TextWrapping" Value="NoWrap"/>
         <Setter Property="VerticalAlignment" Value="Center"/>
-        <Setter Property="Background" Value="#252525"/>
+        <Setter Property="Background" Value="#303030"/>
         <Setter Property="Foreground" Value="WhiteSmoke"/>
     </Style>
 

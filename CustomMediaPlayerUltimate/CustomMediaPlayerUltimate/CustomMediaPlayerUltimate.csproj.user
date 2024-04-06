@@ -10,6 +10,9 @@
     <Compile Update="Elements\CollectionElement.xaml.cs">
       <SubType>Code</SubType>
     </Compile>
+    <Compile Update="Elements\NumberInputBox.xaml.cs">
+      <SubType>Code</SubType>
+    </Compile>
     <Compile Update="Elements\PlaylistElement.xaml.cs">
       <SubType>Code</SubType>
     </Compile>
@@ -37,6 +40,9 @@
       <SubType>Designer</SubType>
     </Page>
     <Page Update="Elements\CollectionElement.xaml">
+      <SubType>Designer</SubType>
+    </Page>
+    <Page Update="Elements\NumberInputBox.xaml">
       <SubType>Designer</SubType>
     </Page>
     <Page Update="Elements\PlaylistElement.xaml">
