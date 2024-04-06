@@ -144,63 +144,49 @@ public partial class MainWindow : Window
         }
     }
 
-    private void SwitchToAllSongsView(object sender, RoutedEventArgs e)
+    private void HideAllViews()
     {
         AlbumsView.Visibility = Visibility.Collapsed;
         ArtistsView.Visibility = Visibility.Collapsed;
         PlaylistsView.Visibility = Visibility.Collapsed;
         SearchResultsView.Visibility = Visibility.Collapsed;
         SettingsView.Visibility = Visibility.Collapsed;
+        AllSongsView.Visibility = Visibility.Collapsed;
+    }
+
+    private void SwitchToAllSongsView(object sender, RoutedEventArgs e)
+    {
+        HideAllViews();
         AllSongsView.Visibility = Visibility.Visible;
     }
 
     private void SwitchToPlaylistsView(object sender, RoutedEventArgs e)
     {
-        AllSongsView.Visibility = Visibility.Collapsed;
-        AlbumsView.Visibility = Visibility.Collapsed;
-        ArtistsView.Visibility = Visibility.Collapsed;
-        SearchResultsView.Visibility = Visibility.Collapsed;
-        SettingsView.Visibility = Visibility.Collapsed;
+        HideAllViews();
         PlaylistsView.Visibility = Visibility.Visible;
     }
 
     private void SwitchToAlbumsView(object sender, RoutedEventArgs e)
     {
-        AllSongsView.Visibility = Visibility.Collapsed;
-        ArtistsView.Visibility = Visibility.Collapsed;
-        SearchResultsView.Visibility = Visibility.Collapsed;
-        PlaylistsView.Visibility = Visibility.Collapsed;
-        SettingsView.Visibility = Visibility.Collapsed;
+        HideAllViews();
         AlbumsView.Visibility = Visibility.Visible;
     }
 
     private void SwitchToArtistsView(object sender, RoutedEventArgs e)
     {
-        AllSongsView.Visibility = Visibility.Collapsed;
-        AlbumsView.Visibility = Visibility.Collapsed;
-        SearchResultsView.Visibility = Visibility.Collapsed;
-        PlaylistsView.Visibility = Visibility.Collapsed;
-        SettingsView.Visibility = Visibility.Collapsed;
+        HideAllViews();
         ArtistsView.Visibility = Visibility.Visible;
     }
 
     private void SwitchToSearchResultsView(object sender, RoutedEventArgs e)
     {
-        AllSongsView.Visibility = Visibility.Collapsed;
-        PlaylistsView.Visibility = Visibility.Collapsed;
-        AlbumsView.Visibility = Visibility.Collapsed;
-        ArtistsView.Visibility = Visibility.Collapsed;
-        SettingsView.Visibility = Visibility.Collapsed;
+        HideAllViews();
         SearchResultsView.Visibility = Visibility.Visible;
     }
 
     private void SwitchToSettingsView(object sender, RoutedEventArgs e)
     {
-        AllSongsView.Visibility = Visibility.Collapsed;
-        PlaylistsView.Visibility = Visibility.Collapsed;
-        AlbumsView.Visibility = Visibility.Collapsed;
-        ArtistsView.Visibility = Visibility.Collapsed;
-        SearchResultsView.Visibility = Visibility.Collapsed;
+        HideAllViews();
         SettingsView.Visibility = Visibility.Visible;
     }
 
