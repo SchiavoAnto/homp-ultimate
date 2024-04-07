@@ -5,16 +5,28 @@
              xmlns:d="http://schemas.microsoft.com/expression/blend/2008" 
              xmlns:local="clr-namespace:CustomMediaPlayerUltimate.Elements"
              mc:Ignorable="d" 
-             d:DesignHeight="40" d:DesignWidth="200">
+             Height="30" d:DesignWidth="200">
     <Grid x:Name="GridContainer" Style="{StaticResource CustomSongElement}">
         <Grid.ColumnDefinitions>
+            <ColumnDefinition Width="Auto"/>
             <ColumnDefinition Width="*"/>
-            <ColumnDefinition Width="40"/>
         </Grid.ColumnDefinitions>
-        <Label x:Name="ItemTextLabel" Grid.Column="0" VerticalAlignment="Center" Foreground="WhiteSmoke"/>
-        <Button x:Name="PlayButton" Grid.Column="1" Width="28" Height="28" Margin="2,2,-6,2" Click="PlayButtonClick">
+        <Button x:Name="PlayButton" Grid.Column="0" Width="22" Height="22" Margin="6,0,0,0" Click="PlayButtonClick">
+            <Button.Style>
+                <Style TargetType="Button" BasedOn="{StaticResource ModernButton}">
+                    <Setter Property="Opacity" Value="0"/>
+                    <Setter Property="IsHitTestVisible" Value="False"/>
+                    <Style.Triggers>
+                        <DataTrigger Binding="{Binding IsMouseOver, ElementName=GridContainer}" Value="True">
+                            <Setter Property="Opacity" Value="1"/>
+                            <Setter Property="IsHitTestVisible" Value="True"/>
+                        </DataTrigger>
+                    </Style.Triggers>
+                </Style>
+            </Button.Style>
             <Image Source="/Images/play.png"/>
         </Button>
+        <Label x:Name="ItemTextLabel" Grid.Column="1" VerticalAlignment="Center" Foreground="WhiteSmoke"/>
 
         <Grid.ContextMenu>
             <ContextMenu>
