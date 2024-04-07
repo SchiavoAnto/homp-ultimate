@@ -24,6 +24,9 @@ public partial class MainWindow : Window
     private const int VOLUME_STEP = 2;
     public static MainWindow Instance = null!;
 
+    private static readonly GridLength collapsedLyricsTextBoxWidth = new GridLength(0f);
+    private static readonly GridLength expandedLyricsTextBoxWidth = new GridLength(400f);
+
     private MediaPlayer mediaPlayer = new MediaPlayer();
     private DispatcherTimer timer = new DispatcherTimer();
     private Random random = new Random();
@@ -107,6 +110,21 @@ public partial class MainWindow : Window
     {
         Properties.Settings.Default.Save();
         KeyboardHook.Stop();
+    }
+
+    private void OnWindowSizeChanged(object sender, SizeChangedEventArgs e)
+    {
+        bool mustAdapt = ActualWidth <= 600;
+        SongLyricsRichTextBoxColumn.Width = mustAdapt switch
+        {
+            true => collapsedLyricsTextBoxWidth,
+            false => expandedLyricsTextBoxWidth
+        };
+        SongLyricsRichTextBox.Visibility = mustAdapt switch
+        {
+            true => Visibility.Collapsed,
+            false => Visibility.Visible,
+        };
     }
 
     private void HandleHotkey(object? sender, Key key)

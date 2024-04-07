@@ -5,8 +5,8 @@
         xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
         xmlns:local="clr-namespace:CustomMediaPlayerUltimate.Elements"
         mc:Ignorable="d"
-        Title="HOMP - Highly Optimized Music Player" Width="1280" Height="720"
-        WindowStartupLocation="CenterScreen" Icon="/Images/icon.ico" Loaded="OnWindowLoaded" Closing="OnWindowClosing">
+        Title="HOMP - Highly Optimized Music Player" Width="1280" Height="720" WindowStartupLocation="CenterScreen"
+        Icon="/Images/icon.ico" Loaded="OnWindowLoaded" Closing="OnWindowClosing" SizeChanged="OnWindowSizeChanged">
     <Window.Resources>
         <Style TargetType="Image">
             <Setter Property="RenderOptions.EdgeMode" Value="Aliased" />
@@ -113,16 +113,16 @@
         <Grid x:Name="ContainerGrid" Margin="10,0,10,10">
             <Grid.ColumnDefinitions>
                 <ColumnDefinition Width="*"/>
-                <ColumnDefinition Width="400"/>
+                <ColumnDefinition x:Name="SongLyricsRichTextBoxColumn" Width="400"/>
             </Grid.ColumnDefinitions>
             <ScrollViewer x:Name="AllSongsView" Grid.Column="0" VerticalScrollBarVisibility="Auto">
-                <StackPanel x:Name="AllSongsListPanel" Orientation="Vertical" Margin="0,0,5,0">
-                    <StackPanel.Resources>
+                <VirtualizingStackPanel x:Name="AllSongsListPanel" Orientation="Vertical" Margin="0,0,5,0">
+                    <VirtualizingStackPanel.Resources>
                         <Style TargetType="{x:Type local:CustomSongElement}">
                             <Setter Property="Margin" Value="0,5,0,0"/>
                         </Style>
-                    </StackPanel.Resources>
-                </StackPanel>
+                    </VirtualizingStackPanel.Resources>
+                </VirtualizingStackPanel>
             </ScrollViewer>
             <Grid x:Name="PlaylistsView" Grid.Column="0" Visibility="Collapsed">
                 <Grid.ColumnDefinitions>
@@ -130,23 +130,23 @@
                     <ColumnDefinition Width="*"/>
                 </Grid.ColumnDefinitions>
                 <ScrollViewer Grid.Column="0" VerticalScrollBarVisibility="Auto">
-                    <StackPanel x:Name="PlaylistsListPanel" Orientation="Vertical" Margin="0,0,5,0">
-                        <StackPanel.Resources>
+                    <VirtualizingStackPanel x:Name="PlaylistsListPanel" Orientation="Vertical" Margin="0,0,5,0">
+                        <VirtualizingStackPanel.Resources>
                             <Style TargetType="{x:Type local:PlaylistElement}">
                                 <Setter Property="Margin" Value="0,5,0,0"/>
                             </Style>
-                        </StackPanel.Resources>
+                        </VirtualizingStackPanel.Resources>
                         <Label Foreground="WhiteSmoke" FontSize="18" FontWeight="Bold">Loading...</Label>
-                    </StackPanel>
+                    </VirtualizingStackPanel>
                 </ScrollViewer>
                 <ScrollViewer Grid.Column="1" VerticalScrollBarVisibility="Auto">
-                    <StackPanel x:Name="PlaylistSongsListPanel" Orientation="Vertical" Margin="0,0,5,0">
-                        <StackPanel.Resources>
+                    <VirtualizingStackPanel x:Name="PlaylistSongsListPanel" Orientation="Vertical" Margin="0,0,5,0">
+                        <VirtualizingStackPanel.Resources>
                             <Style TargetType="{x:Type local:CustomSongElement}">
                                 <Setter Property="Margin" Value="0,5,0,0"/>
                             </Style>
-                        </StackPanel.Resources>
-                    </StackPanel>
+                        </VirtualizingStackPanel.Resources>
+                    </VirtualizingStackPanel>
                 </ScrollViewer>
             </Grid>
             <Grid x:Name="AlbumsView" Grid.Column="0" Visibility="Collapsed">
@@ -155,23 +155,23 @@
                     <ColumnDefinition Width="*"/>
                 </Grid.ColumnDefinitions>
                 <ScrollViewer Grid.Column="0" VerticalScrollBarVisibility="Auto">
-                    <StackPanel x:Name="AlbumsListPanel" Orientation="Vertical" Margin="0,0,5,0">
-                        <StackPanel.Resources>
+                    <VirtualizingStackPanel x:Name="AlbumsListPanel" Orientation="Vertical" Margin="0,0,5,0">
+                        <VirtualizingStackPanel.Resources>
                             <Style TargetType="{x:Type local:CollectionElement}">
                                 <Setter Property="Margin" Value="0,5,0,0"/>
                             </Style>
-                        </StackPanel.Resources>
+                        </VirtualizingStackPanel.Resources>
                         <Label Foreground="WhiteSmoke" FontSize="18" FontWeight="Bold">Loading...</Label>
-                    </StackPanel>
+                    </VirtualizingStackPanel>
                 </ScrollViewer>
                 <ScrollViewer Grid.Column="1" VerticalScrollBarVisibility="Auto">
-                    <StackPanel x:Name="AlbumSongsListPanel" Orientation="Vertical" Margin="0,0,5,0">
-                        <StackPanel.Resources>
+                    <VirtualizingStackPanel x:Name="AlbumSongsListPanel" Orientation="Vertical" Margin="0,0,5,0">
+                        <VirtualizingStackPanel.Resources>
                             <Style TargetType="{x:Type local:CustomSongElement}">
                                 <Setter Property="Margin" Value="0,5,0,0"/>
                             </Style>
-                        </StackPanel.Resources>
-                    </StackPanel>
+                        </VirtualizingStackPanel.Resources>
+                    </VirtualizingStackPanel>
                 </ScrollViewer>
             </Grid>
             <Grid x:Name="ArtistsView" Grid.Column="0" Visibility="Collapsed">
@@ -180,35 +180,35 @@
                     <ColumnDefinition Width="*"/>
                 </Grid.ColumnDefinitions>
                 <ScrollViewer Grid.Column="0" VerticalScrollBarVisibility="Auto">
-                    <StackPanel x:Name="ArtistsListPanel" Orientation="Vertical" Margin="0,0,5,0">
-                        <StackPanel.Resources>
+                    <VirtualizingStackPanel x:Name="ArtistsListPanel" Orientation="Vertical" Margin="0,0,5,0">
+                        <VirtualizingStackPanel.Resources>
                             <Style TargetType="{x:Type local:CollectionElement}">
                                 <Setter Property="Margin" Value="0,5,0,0"/>
                             </Style>
-                        </StackPanel.Resources>
+                        </VirtualizingStackPanel.Resources>
                         <Label Foreground="WhiteSmoke" FontSize="18" FontWeight="Bold">Loading...</Label>
-                    </StackPanel>
+                    </VirtualizingStackPanel>
                 </ScrollViewer>
                 <ScrollViewer Grid.Column="1" VerticalScrollBarVisibility="Auto">
-                    <StackPanel x:Name="ArtistSongsListPanel" Orientation="Vertical" Margin="0,0,5,0">
-                        <StackPanel.Resources>
+                    <VirtualizingStackPanel x:Name="ArtistSongsListPanel" Orientation="Vertical" Margin="0,0,5,0">
+                        <VirtualizingStackPanel.Resources>
                             <Style TargetType="{x:Type local:CustomSongElement}">
                                 <Setter Property="Margin" Value="0,5,0,0"/>
                             </Style>
-                        </StackPanel.Resources>
-                    </StackPanel>
+                        </VirtualizingStackPanel.Resources>
+                    </VirtualizingStackPanel>
                 </ScrollViewer>
             </Grid>
             <ScrollViewer x:Name="SearchResultsView" Grid.Column="0" Visibility="Collapsed" VerticalScrollBarVisibility="Auto">
-                <StackPanel x:Name="SearchResultSongsListPanel" Orientation="Vertical" Margin="0,0,5,0">
-                    <StackPanel.Resources>
+                <VirtualizingStackPanel x:Name="SearchResultSongsListPanel" Orientation="Vertical" Margin="0,0,5,0">
+                    <VirtualizingStackPanel.Resources>
                         <Style TargetType="{x:Type local:CustomSongElement}">
                             <Setter Property="Margin" Value="0,5,0,0"/>
                         </Style>
-                    </StackPanel.Resources>
+                    </VirtualizingStackPanel.Resources>
                     <Label Foreground="WhiteSmoke" FontSize="18" FontWeight="Bold">Search results</Label>
                     <Label Foreground="WhiteSmoke">Search results will appear here.</Label>
-                </StackPanel>
+                </VirtualizingStackPanel>
             </ScrollViewer>
             <ScrollViewer x:Name="SettingsView" Grid.Column="0" Visibility="Collapsed" VerticalScrollBarVisibility="Auto">
                 <StackPanel Orientation="Vertical">
