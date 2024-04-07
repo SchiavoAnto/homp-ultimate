@@ -106,15 +106,6 @@ public partial class NumberInputBox : UserControl
         e.Handled = !valid;
     }
 
-    private void TextBoxTextChanged(object sender, RoutedEventArgs e)
-    {
-        PlaceholderLabel.Visibility = InputTextBox.Text.Length switch
-        {
-            0 => Visibility.Visible,
-            _ => Visibility.Hidden
-        };
-    }
-
     private void TextBoxPasting(object sender, DataObjectPastingEventArgs e)
     {
         if (!e.DataObject.GetDataPresent(typeof(string)))

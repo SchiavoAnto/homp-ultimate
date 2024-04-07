@@ -19,7 +19,6 @@
                 <ColumnDefinition Width="Auto"/>
                 <ColumnDefinition Width="*"/>
                 <ColumnDefinition Width="Auto"/>
-                <ColumnDefinition Width="Auto"/>
             </Grid.ColumnDefinitions>
             <StackPanel Grid.Column="0" Orientation="Horizontal">
                 <Button Content="All songs" Click="SwitchToAllSongsView"/>
@@ -35,8 +34,21 @@
                 <Button Content="Settings" Click="SwitchToSettingsView"/>
             </StackPanel>
 
-            <Label Grid.Column="2" Foreground="WhiteSmoke">Search for a song:</Label>
-            <TextBox x:Name="SearchInputTextBox" Width="200" Grid.Column="3" ToolTip="Search a song..." KeyUp="SearchInputTextBoxKeyUp"/>
+            <Grid Grid.Column="2">
+                <TextBox x:Name="SearchInputTextBox" Width="200" Grid.Column="3" KeyUp="SearchInputTextBoxKeyUp"/>
+                <TextBlock IsHitTestVisible="False" Text="Search by title, album, year..." VerticalAlignment="Center" HorizontalAlignment="Left" Margin="10,0,0,0" Foreground="DarkGray">
+                    <TextBlock.Style>
+                        <Style TargetType="{x:Type TextBlock}">
+                            <Setter Property="Visibility" Value="Collapsed"/>
+                            <Style.Triggers>
+                                <DataTrigger Binding="{Binding Text, ElementName=SearchInputTextBox}" Value="">
+                                    <Setter Property="Visibility" Value="Visible"/>
+                                </DataTrigger>
+                            </Style.Triggers>
+                        </Style>
+                    </TextBlock.Style>
+                </TextBlock>
+            </Grid>
         </Grid>
 
         <Grid DockPanel.Dock="Bottom" Background="#303030" Height="60" MaxHeight="60" MinHeight="60">

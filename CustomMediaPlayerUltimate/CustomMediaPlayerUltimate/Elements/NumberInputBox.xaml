@@ -8,30 +8,50 @@
              Width="114" Height="30">
     <StackPanel Orientation="Horizontal">
         <Grid>
-            <TextBox x:Name="InputTextBox" Width="100" Height="30" PreviewTextInput="TextBoxPreviewInput" TextChanged="TextBoxTextChanged" DataObject.Pasting="TextBoxPasting" LostFocus="TextBoxLostFocus" KeyUp="TextBoxKeyUp" ToolTipOpening="TextBoxTooltipOpening">
+            <TextBox x:Name="InputTextBox" Width="100" Height="30" PreviewTextInput="TextBoxPreviewInput" DataObject.Pasting="TextBoxPasting" LostFocus="TextBoxLostFocus" KeyUp="TextBoxKeyUp" ToolTipOpening="TextBoxTooltipOpening">
                 <TextBox.Resources>
-                    <Style TargetType="{x:Type Border}">
-                        <Setter Property="CornerRadius" Value="5,0,0,5"/>
-                    </Style>
-                    <Style TargetType="TextBox" BasedOn="{StaticResource {x:Type TextBox}}">
+                    <Style TargetType="TextBox">
                         <Setter Property="Padding" Value="2"/>
-                        <Setter Property="BorderBrush" Value="#00AAAA"/>
-                        <Setter Property="BorderThickness" Value="2,2,0,2"/>
                         <Setter Property="VerticalContentAlignment" Value="Center"/>
+                        <Setter Property="Background" Value="#303030"/>
+                        <Setter Property="Foreground" Value="WhiteSmoke"/>
+                        <Setter Property="Template">
+                            <Setter.Value>
+                                <ControlTemplate TargetType="TextBox">
+                                    <Border Background="{TemplateBinding Background}" BorderBrush="#00AAAA" BorderThickness="2,2,0,2" Height="30" CornerRadius="5,0,0,5">
+                                        <ScrollViewer x:Name="PART_ContentHost"/>
+                                    </Border>
+                                </ControlTemplate>
+                            </Setter.Value>
+                        </Setter>
                         <Style.Triggers>
                             <Trigger Property="IsMouseOver" Value="True">
-                                <Setter Property="BorderBrush" Value="#00AAAA" />
+                                <Setter Property="Background" Value="#353535" />
+                            </Trigger>
+                            <Trigger Property="IsFocused" Value="True">
+                                <Setter Property="Background" Value="#404040" />
                             </Trigger>
                         </Style.Triggers>
                     </Style>
                 </TextBox.Resources>
                 <TextBox.ToolTip>
-                    <ToolTip Background="#303030">
+                    <ToolTip>
                         <Label x:Name="InputTextBoxTooltipLabel" Margin="0" Padding="0" Foreground="WhiteSmoke">Insert a value</Label>
                     </ToolTip>
                 </TextBox.ToolTip>
             </TextBox>
-            <Label x:Name="PlaceholderLabel" IsHitTestVisible="False" VerticalContentAlignment="Center" Foreground="LightGray" FontSize="11" Margin="1,0,0,0">Type a number...</Label>
+            <TextBlock IsHitTestVisible="False" Text="Type a number..." VerticalAlignment="Center" HorizontalAlignment="Left" Margin="7,0,0,0" Foreground="DarkGray">
+                <TextBlock.Style>
+                    <Style TargetType="{x:Type TextBlock}">
+                        <Setter Property="Visibility" Value="Collapsed"/>
+                        <Style.Triggers>
+                            <DataTrigger Binding="{Binding Text, ElementName=InputTextBox}" Value="">
+                                <Setter Property="Visibility" Value="Visible"/>
+                            </DataTrigger>
+                        </Style.Triggers>
+                    </Style>
+                </TextBlock.Style>
+            </TextBlock>
         </Grid>
         <Grid>
             <Grid.RowDefinitions>
