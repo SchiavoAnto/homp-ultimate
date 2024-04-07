@@ -17,34 +17,26 @@
         <Grid DockPanel.Dock="Top" Margin="10">
             <Grid.ColumnDefinitions>
                 <ColumnDefinition Width="Auto"/>
-                <ColumnDefinition Width="Auto"/>
-                <ColumnDefinition Width="Auto"/>
-                <ColumnDefinition Width="Auto"/>
-                <ColumnDefinition Width="Auto"/>
-                <ColumnDefinition Width="Auto"/>
-                <ColumnDefinition Width="Auto"/>
-                <ColumnDefinition Width="Auto"/>
-                <ColumnDefinition Width="Auto"/>
-                <ColumnDefinition Width="Auto"/>
-                <ColumnDefinition Width="Auto"/>
                 <ColumnDefinition Width="*"/>
                 <ColumnDefinition Width="Auto"/>
                 <ColumnDefinition Width="Auto"/>
             </Grid.ColumnDefinitions>
-            <Button Content="All songs" Grid.Column="0" Click="SwitchToAllSongsView"/>
-            <Separator Opacity="0" Width="6" Grid.Column="1"/>
-            <Button Content="Playlists" Grid.Column="2" Click="SwitchToPlaylistsView"/>
-            <Separator Opacity="0" Width="6" Grid.Column="3"/>
-            <Button Content="Albums" Grid.Column="4" Click="SwitchToAlbumsView"/>
-            <Separator Opacity="0" Width="6" Grid.Column="5"/>
-            <Button Content="Artists" Grid.Column="6" Click="SwitchToArtistsView"/>
-            <Separator Opacity="0" Width="6" Grid.Column="7"/>
-            <Button Content="Search results" Grid.Column="8" Click="SwitchToSearchResultsView"/>
-            <Separator Opacity="0" Width="6" Grid.Column="9"/>
-            <Button Content="Settings" Grid.Column="10" Click="SwitchToSettingsView"/>
-            
-            <Label Grid.Column="12" Foreground="WhiteSmoke">Search for a song:</Label>
-            <TextBox x:Name="SearchInputTextBox" Width="200" Grid.Column="13" ToolTip="Search a song..." KeyUp="SearchInputTextBoxKeyUp"/>
+            <StackPanel Grid.Column="0" Orientation="Horizontal">
+                <Button Content="All songs" Click="SwitchToAllSongsView"/>
+                <Separator Opacity="0" Width="6"/>
+                <Button Content="Playlists" Click="SwitchToPlaylistsView"/>
+                <Separator Opacity="0" Width="6"/>
+                <Button Content="Albums" Click="SwitchToAlbumsView"/>
+                <Separator Opacity="0" Width="6"/>
+                <Button Content="Artists" Click="SwitchToArtistsView"/>
+                <Separator Opacity="0" Width="6"/>
+                <Button Content="Search results" Click="SwitchToSearchResultsView"/>
+                <Separator Opacity="0" Width="6"/>
+                <Button Content="Settings" Click="SwitchToSettingsView"/>
+            </StackPanel>
+
+            <Label Grid.Column="2" Foreground="WhiteSmoke">Search for a song:</Label>
+            <TextBox x:Name="SearchInputTextBox" Width="200" Grid.Column="3" ToolTip="Search a song..." KeyUp="SearchInputTextBoxKeyUp"/>
         </Grid>
 
         <Grid DockPanel.Dock="Bottom" Background="#303030" Height="60" MaxHeight="60" MinHeight="60">
