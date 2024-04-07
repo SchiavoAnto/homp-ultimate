@@ -956,12 +956,17 @@ public partial class MainWindow : Window
 
     private void SetPlayPauseImage(bool playing)
     {
+        PlayPauseButtonImage.Source = ConstructImageFromPath(playing ? "/Images/pause.png" : "/Images/play.png");
+    }
+
+    private BitmapImage ConstructImageFromPath(string path)
+    {
         BitmapImage image = new BitmapImage();
         image.BeginInit();
-        image.UriSource = new Uri(playing ? "/Images/pause.png" : "/Images/play.png", UriKind.Relative);
+        image.UriSource = new Uri(path, UriKind.Relative);
         image.EndInit();
 
-        PlayPauseButtonImage.Source = image;
+        return image;
     }
 
     private void IncreaseVolume()
@@ -1173,6 +1178,25 @@ public partial class MainWindow : Window
         MiniPlayerWindow.Instance?.SetArtistText(currentSong?.Artist ?? "Song artist");
         MiniPlayerWindow.Instance?.SetPlayPauseImage(IsPlaying);
         Hide();
+    }
+
+    private void SongLyricsRichTextBoxVisibilityButtonClick(object sender, RoutedEventArgs e)
+    {
+        SongLyricsRichTextBoxColumn.Width = SongLyricsRichTextBoxVisibilityButton.IsChecked switch
+        {
+            true => expandedLyricsTextBoxWidth,
+            _ => collapsedLyricsTextBoxWidth
+        };
+        SongLyricsRichTextBox.Visibility = SongLyricsRichTextBoxVisibilityButton.IsChecked switch
+        {
+            true => Visibility.Visible,
+            _ => Visibility.Collapsed
+        };
+        SongLyricsRichTextBoxVisibilityButtonImage.Source = SongLyricsRichTextBoxVisibilityButton.IsChecked switch
+        {
+            true => ConstructImageFromPath("/Images/lyrics_shown.png"),
+            _ => ConstructImageFromPath("/Images/lyrics_hidden.png")
+        };
     }
 
     private void OnSettingsMiniplayerAutoOpacityCheckboxChecked(object sender, RoutedEventArgs e)

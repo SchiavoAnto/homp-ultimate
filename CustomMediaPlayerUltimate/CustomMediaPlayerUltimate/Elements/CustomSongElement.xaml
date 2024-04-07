@@ -14,14 +14,14 @@
         <Button x:Name="PlayButton" Grid.Column="0" Width="22" Height="22" Margin="6,0,0,0" Click="PlayButtonClick">
             <Button.Style>
                 <Style TargetType="Button" BasedOn="{StaticResource ModernButton}">
-                    <Setter Property="Opacity" Value="0"/>
+                    <!--<Setter Property="Opacity" Value="0"/>
                     <Setter Property="IsHitTestVisible" Value="False"/>
                     <Style.Triggers>
                         <DataTrigger Binding="{Binding IsMouseOver, ElementName=GridContainer}" Value="True">
                             <Setter Property="Opacity" Value="1"/>
                             <Setter Property="IsHitTestVisible" Value="True"/>
                         </DataTrigger>
-                    </Style.Triggers>
+                    </Style.Triggers>-->
                 </Style>
             </Button.Style>
             <Image Source="/Images/play.png"/>

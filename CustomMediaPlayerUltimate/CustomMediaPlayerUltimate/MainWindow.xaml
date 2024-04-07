@@ -103,6 +103,11 @@
                         <Image Source="/Images/miniplayer.png"/>
                     </Button.Content>
                 </Button>
+                <ToggleButton x:Name="SongLyricsRichTextBoxVisibilityButton" Style="{StaticResource ModernToggleButton}" Width="30" Height="30" IsChecked="True" Click="SongLyricsRichTextBoxVisibilityButtonClick">
+                    <ToggleButton.Content>
+                        <Image x:Name="SongLyricsRichTextBoxVisibilityButtonImage" Source="/Images/lyrics_shown.png"/>
+                    </ToggleButton.Content>
+                </ToggleButton>
                 <StackPanel Orientation="Vertical" VerticalAlignment="Center" Margin="10,5,10,5">
                     <Slider x:Name="VolumeSlider" Width="150" Maximum="100" IsSnapToTickEnabled="True" PreviewMouseLeftButtonDown="VolumeSliderMouseDown" PreviewMouseLeftButtonUp="VolumeSliderMouseUp" PreviewMouseMove="VolumeSliderMouseMove" PreviewMouseWheel="VolumeSliderMouseWheel"/>
                     <Label x:Name="VolumeLabel" Foreground="WhiteSmoke">Volume: 100%</Label>

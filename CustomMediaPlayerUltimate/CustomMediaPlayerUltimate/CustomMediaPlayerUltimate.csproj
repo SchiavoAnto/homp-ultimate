@@ -17,6 +17,8 @@
     <None Remove="Images\forward.png" />
     <None Remove="Images\icon.ico" />
     <None Remove="Images\icon.png" />
+    <None Remove="Images\lyrics_hidden.png" />
+    <None Remove="Images\lyrics_shown.png" />
     <None Remove="Images\miniplayer.png" />
     <None Remove="Images\pause.png" />
     <None Remove="Images\play.png" />
@@ -37,6 +39,7 @@
     <Resource Include="Images\allSongs.png" />
     <Resource Include="Images\backward.png" />
     <Resource Include="Images\forward.png" />
+    <Resource Include="Images\lyrics_shown.png" />
     <Resource Include="Images\icon.ico" />
     <Resource Include="Images\icon.png" />
     <Resource Include="Images\miniplayer.png" />
@@ -46,6 +49,7 @@
     <Resource Include="Images\repeat.png" />
     <Resource Include="Images\selected_mark.png" />
     <Resource Include="Images\settings.png" />
+    <Resource Include="Images\lyrics_hidden.png" />
     <Resource Include="Images\shuffle.png" />
   </ItemGroup>
 
