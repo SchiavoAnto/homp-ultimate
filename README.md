@@ -3,16 +3,17 @@
 ![A screenshot of HOMP's playlists page](Assets/Screenshots/homp_playlists.png)  
 
 HOMP is a simple lightweight music player.  
-Some of its features include:  
-- Support for global shortcuts without media keys  
-- Lyrics support and built-in lyrics editor  
-- Easy to use user interface  
+Some of its features include:
+- Support for global shortcuts without media keys
+- Lyrics support and built-in lyrics editor
+- Easy to use user interface
 - Automatic album and artist organization
-- Ultra fast search for each supported song attribute  
+- Ultra fast search for each supported song attribute
+- Miniplayer window with playback controls  
 
 ## Global shortcuts  
 
-HOMP was originally created with the goal of creating a music player completely controllable by non-media keys shortcuts that was lightweight enough to be used when doing other heavy tasks.  
+HOMP was originally created with the goal of creating a music player completely controllable by non-media keys shortcuts that was lightweight enough to be used while doing other heavy tasks.  
 The supported shortcuts are:  
 - `CTRL-ALT-SHIFT-P`: Play/Pause  
 - `CTRL-ALT-SHIFT-N`: Next song in collection  
@@ -22,11 +23,11 @@ The supported shortcuts are:
 - `CTRL-ALT-SHIFT-UP`: Volume up by 2% (the amount will be customizable)  
 - `CTRL-ALT-SHIFT-DOWN`: Volume down by 2% (the amount will be customizable)  
 
-These shortcuts work even with HOMP running in the background.  
+These shortcuts work even with HOMP running in the background. All shortcut keys are customizable (only the actual activator key, modifiers are fixed to `CTRL-ALT-SHIFT`).  
 
 ## Running HOMP  
 
-HOMP uses WPF and .NET 7.0.  
+HOMP uses WPF and .NET 8.0.  
 This makes HOMP a Windows only program and there are no plans to port it to other platforms.  
 
 The project is divided into 2 sub-projects:  
