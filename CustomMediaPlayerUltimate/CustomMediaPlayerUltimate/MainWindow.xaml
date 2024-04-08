@@ -98,12 +98,13 @@
                 </StackPanel>
             </StackPanel>
             <StackPanel Grid.Column="1" Orientation="Horizontal" VerticalAlignment="Center">
-                <Button Style="{StaticResource ModernButton}" Width="30" Height="30" Click="MiniplayerButtonClick">
+                <Button Style="{StaticResource ModernButton}" Width="26" Height="26" Click="MiniplayerButtonClick">
                     <Button.Content>
                         <Image Source="/Images/miniplayer.png"/>
                     </Button.Content>
                 </Button>
-                <ToggleButton x:Name="SongLyricsRichTextBoxVisibilityButton" Style="{StaticResource ModernToggleButton}" Width="30" Height="30" IsChecked="True" Click="SongLyricsRichTextBoxVisibilityButtonClick">
+                <Separator Width="4" Opacity="0"/>
+                <ToggleButton x:Name="SongLyricsRichTextBoxVisibilityButton" Style="{StaticResource ModernToggleButton}" Width="26" Height="26" IsChecked="True" Click="SongLyricsRichTextBoxVisibilityButtonClick">
                     <ToggleButton.Content>
                         <Image x:Name="SongLyricsRichTextBoxVisibilityButtonImage" Source="/Images/lyrics_shown.png"/>
                     </ToggleButton.Content>
