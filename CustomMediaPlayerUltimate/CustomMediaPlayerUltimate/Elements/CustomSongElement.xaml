@@ -28,7 +28,7 @@
             <Image Source="/Images/play.png"/>
         </Button>
         <Label x:Name="ItemTextLabel" Grid.Column="1" VerticalAlignment="Center" Foreground="WhiteSmoke"/>
-        <Label x:Name="ItemDurationLabel" Grid.Column="2" VerticalAlignment="Center" Foreground="LightGray"/>
+        <Label x:Name="ItemDurationLabel" Grid.Column="2" VerticalAlignment="Center" Foreground="LightGray" FontSize="11"/>
 
         <Grid.ContextMenu>
             <ContextMenu>
