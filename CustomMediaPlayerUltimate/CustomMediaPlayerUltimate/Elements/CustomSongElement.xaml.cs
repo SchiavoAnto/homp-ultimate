@@ -7,30 +7,8 @@ namespace CustomMediaPlayerUltimate.Elements;
 
 public partial class CustomSongElement : UserControl
 {
-    public Song Song { get; set; }
-    public SongCollection Collection { get; set; }
-
-    private string _text = string.Empty;
-    public string Text
-    {
-        get { return _text; }
-        set
-        {
-            _text = value;
-            ItemTextLabel.Content = value;
-        }
-    }
-
-    private string _duration = string.Empty;
-    public string Duration
-    {
-        get { return _duration; }
-        set
-        {
-            _duration = value;
-            ItemDurationLabel.Content = value;
-        }
-    }
+    public Song Song { get; private set; }
+    public SongCollection Collection { get; init; }
 
     private bool _hasErrored = false;
     public bool HasErrored
@@ -43,10 +21,19 @@ public partial class CustomSongElement : UserControl
         }
     }
 
-    public CustomSongElement()
+    public CustomSongElement(Song song)
     {
         InitializeComponent();
+        Song = song;
         Collection = null!;
+
+        SongTitleLabel.Content = Song.Title;
+        SongArtistLabel.Content = Song.Artist;
+        SongDurationLabel.Content = Song.Duration;
+        if (Song.Cover is not null)
+        {
+            SongCoverImage.Source = Song.Cover;
+        }
     }
 
     private void EditLyricsMenuItemClick(object sender, RoutedEventArgs e)

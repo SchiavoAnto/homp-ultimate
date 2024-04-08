@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Windows.Media.Imaging;
 using Microsoft.WindowsAPICodePack.Shell;
 using Microsoft.WindowsAPICodePack.Shell.PropertySystem;
 
@@ -49,5 +50,15 @@ internal class Utils
         }
         catch { }
         return info;
+    }
+
+    public static BitmapImage ConstructImageFromPath(string path, UriKind mode = UriKind.Relative)
+    {
+        BitmapImage image = new BitmapImage();
+        image.BeginInit();
+        image.UriSource = new Uri(path, mode);
+        image.EndInit();
+
+        return image;
     }
 }

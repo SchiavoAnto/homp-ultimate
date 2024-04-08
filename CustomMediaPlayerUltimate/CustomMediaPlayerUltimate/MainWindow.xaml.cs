@@ -9,7 +9,6 @@ using System.Windows.Controls;
 using System.Windows.Documents;
 using System.Windows.Threading;
 using System.Collections.Generic;
-using System.Windows.Media.Imaging;
 using System.Collections.Specialized;
 using CustomMediaPlayerUltimate.Elements;
 using CustomMediaPlayerUltimate.DataStructures;
@@ -21,6 +20,7 @@ public partial class MainWindow : Window
     public static string MUSIC_PATH = Environment.GetFolderPath(Environment.SpecialFolder.MyMusic);
     public static string PLAYLISTS_PATH = $"{Environment.GetFolderPath(Environment.SpecialFolder.MyMusic)}\\HompPlaylists";
     public static string LYRICS_PATH = $"{Environment.GetFolderPath(Environment.SpecialFolder.MyMusic)}\\Lyrics";
+    public static string COVERS_PATH = $"{Environment.GetFolderPath(Environment.SpecialFolder.MyMusic)}\\HompCovers";
     private const int VOLUME_STEP = 2;
     public static MainWindow Instance = null!;
 
@@ -445,11 +445,8 @@ public partial class MainWindow : Window
         PlaylistSongsListPanel.Children.Add(new Label() { Content = playlist.Name, Foreground = Brushes.WhiteSmoke, FontSize = 18, FontWeight = FontWeights.Bold });
         foreach (KeyValuePair<string, Song> songPair in playlists[playlist.Name].Songs.OrderBy((kvp) => kvp.Key))
         {
-            PlaylistSongsListPanel.Children.Add(new CustomSongElement()
+            PlaylistSongsListPanel.Children.Add(new CustomSongElement(songPair.Value)
             {
-                Text = songPair.Value.FileName,
-                Duration = songPair.Value.Duration,
-                Song = songPair.Value,
                 Collection = playlists[playlist.Name]
             });
         }
@@ -462,11 +459,8 @@ public partial class MainWindow : Window
         AlbumSongsListPanel.Children.Add(new Label() { Content = albumName, Foreground = Brushes.WhiteSmoke, FontSize = 18, FontWeight = FontWeights.Bold });
         foreach (Song song in albums[albumName].Songs.Values)
         {
-            AlbumSongsListPanel.Children.Add(new CustomSongElement()
+            AlbumSongsListPanel.Children.Add(new CustomSongElement(song)
             {
-                Text = song.FileName,
-                Duration = song.Duration,
-                Song = song,
                 Collection = albums[albumName]
             });
         }
@@ -479,11 +473,8 @@ public partial class MainWindow : Window
         ArtistSongsListPanel.Children.Add(new Label() { Content = artistName, Foreground = Brushes.WhiteSmoke, FontSize = 18, FontWeight = FontWeights.Bold });
         foreach (Song song in artists[artistName].Songs.Values)
         {
-            ArtistSongsListPanel.Children.Add(new CustomSongElement()
+            ArtistSongsListPanel.Children.Add(new CustomSongElement(song)
             {
-                Text = song.FileName,
-                Duration = song.Duration,
-                Song = song,
                 Collection = artists[artistName]
             });
         }
@@ -527,11 +518,8 @@ public partial class MainWindow : Window
             SearchResultSongsListPanel.Children.Add(spanel);
             foreach (Song song in results)
             {
-                SearchResultSongsListPanel.Children.Add(new CustomSongElement()
+                SearchResultSongsListPanel.Children.Add(new CustomSongElement(song)
                 {
-                    Text = song.FileName,
-                    Duration = song.Duration,
-                    Song = song,
                     Collection = playlist
                 });
             }
@@ -754,19 +742,20 @@ public partial class MainWindow : Window
             // Song Duration
             if (info.ContainsKey("Duration")) song.Duration = info["Duration"];
 
+            if (File.Exists($"{COVERS_PATH}\\{song.FileName}.mp3[Cover].png"))
+            {
+                song.Cover = Utils.ConstructImageFromPath($"{COVERS_PATH}\\{song.FileName}.mp3[Cover].png", UriKind.Absolute);
+            }
+
             allSongsPlaylist.AddSong(song);
             artists[artistName].AddSong(song);
             albums[albumName].AddSong(song);
 
             await Dispatcher.BeginInvoke(() =>
             {
-                AllSongsListPanel.Children.Add(new CustomSongElement()
+                AllSongsListPanel.Children.Add(new CustomSongElement(song)
                 {
-                    Text = song.FileName,
-                    Duration = song.Duration,
-                    Song = song,
-                    Collection = allSongsPlaylist,
-                    HasErrored = false
+                    Collection = allSongsPlaylist
                 });
             }, DispatcherPriority.Background);
 
@@ -778,9 +767,8 @@ public partial class MainWindow : Window
             // does not show a playing button.
             await Dispatcher.BeginInvoke(() =>
             {
-                AllSongsListPanel.Children.Add(new CustomSongElement()
+                AllSongsListPanel.Children.Add(new CustomSongElement(song)
                 {
-                    Text = song.FileName,
                     HasErrored = true
                 });
             }, DispatcherPriority.Background);
@@ -944,17 +932,7 @@ public partial class MainWindow : Window
 
     private void SetPlayPauseImage(bool playing)
     {
-        PlayPauseButtonImage.Source = ConstructImageFromPath(playing ? "/Images/pause.png" : "/Images/play.png");
-    }
-
-    private BitmapImage ConstructImageFromPath(string path)
-    {
-        BitmapImage image = new BitmapImage();
-        image.BeginInit();
-        image.UriSource = new Uri(path, UriKind.Relative);
-        image.EndInit();
-
-        return image;
+        PlayPauseButtonImage.Source = Utils.ConstructImageFromPath(playing ? "/Images/pause.png" : "/Images/play.png");
     }
 
     private void IncreaseVolume()
@@ -1182,8 +1160,8 @@ public partial class MainWindow : Window
         };
         SongLyricsRichTextBoxVisibilityButtonImage.Source = SongLyricsRichTextBoxVisibilityButton.IsChecked switch
         {
-            true => ConstructImageFromPath("/Images/lyrics_shown.png"),
-            _ => ConstructImageFromPath("/Images/lyrics_hidden.png")
+            true => Utils.ConstructImageFromPath("/Images/lyrics_shown.png"),
+            _ => Utils.ConstructImageFromPath("/Images/lyrics_hidden.png")
         };
     }
 

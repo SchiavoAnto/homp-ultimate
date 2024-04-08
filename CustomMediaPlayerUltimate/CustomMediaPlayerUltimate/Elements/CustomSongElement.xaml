@@ -5,30 +5,57 @@
              xmlns:d="http://schemas.microsoft.com/expression/blend/2008" 
              xmlns:local="clr-namespace:CustomMediaPlayerUltimate.Elements"
              mc:Ignorable="d" 
-             Height="30" d:DesignWidth="200">
+             Height="40" d:DesignWidth="200">
     <Grid x:Name="GridContainer" Style="{StaticResource CustomSongElement}">
         <Grid.ColumnDefinitions>
             <ColumnDefinition Width="Auto"/>
             <ColumnDefinition Width="*"/>
             <ColumnDefinition Width="Auto"/>
         </Grid.ColumnDefinitions>
-        <Button x:Name="PlayButton" Grid.Column="0" Width="22" Height="22" Margin="6,0,0,0" Click="PlayButtonClick">
-            <Button.Style>
-                <Style TargetType="Button" BasedOn="{StaticResource ModernButton}">
-                    <Setter Property="Opacity" Value="0"/>
-                    <Setter Property="IsHitTestVisible" Value="False"/>
-                    <Style.Triggers>
-                        <DataTrigger Binding="{Binding IsMouseOver, ElementName=GridContainer}" Value="True">
-                            <Setter Property="Opacity" Value="1"/>
-                            <Setter Property="IsHitTestVisible" Value="True"/>
-                        </DataTrigger>
-                    </Style.Triggers>
-                </Style>
-            </Button.Style>
-            <Image Source="/Images/play.png"/>
-        </Button>
-        <Label x:Name="ItemTextLabel" Grid.Column="1" VerticalAlignment="Center" Foreground="WhiteSmoke"/>
-        <Label x:Name="ItemDurationLabel" Grid.Column="2" VerticalAlignment="Center" Foreground="LightGray" FontSize="11"/>
+        <Grid Grid.Column="0">
+            <Image x:Name="SongCoverImage" Width="36" Height="36" Margin="2,0,0,0" RenderOptions.BitmapScalingMode="HighQuality"/>
+            <Grid>
+                <Rectangle Width="36" Height="36" Margin="2,0,0,0" Fill="Black">
+                    <Rectangle.Style>
+                        <Style TargetType="Rectangle">
+                            <Setter Property="Opacity" Value="0"/>
+                            <Style.Triggers>
+                                <DataTrigger Binding="{Binding IsMouseOver, ElementName=GridContainer}" Value="True">
+                                    <Setter Property="Opacity" Value="0.65"/>
+                                </DataTrigger>
+                            </Style.Triggers>
+                        </Style>
+                    </Rectangle.Style>
+                </Rectangle>
+                <Button x:Name="PlayButton" Width="22" Height="22" Margin="2,0,0,0" Click="PlayButtonClick">
+                    <Button.Style>
+                        <Style TargetType="Button" BasedOn="{StaticResource ModernButton}">
+                            <Setter Property="Opacity" Value="0"/>
+                            <Setter Property="IsHitTestVisible" Value="False"/>
+                            <Style.Triggers>
+                                <DataTrigger Binding="{Binding IsMouseOver, ElementName=GridContainer}" Value="True">
+                                    <Setter Property="Opacity" Value="1"/>
+                                    <Setter Property="IsHitTestVisible" Value="True"/>
+                                </DataTrigger>
+                            </Style.Triggers>
+                        </Style>
+                    </Button.Style>
+                    <Image Source="/Images/play.png"/>
+                </Button>
+            </Grid>
+        </Grid>
+        <Grid Grid.Column="1" Margin="5,0,0,0" VerticalAlignment="Center">
+            <Grid.RowDefinitions>
+                <RowDefinition Height="Auto"/>
+                <RowDefinition Height="Auto"/>
+                <RowDefinition Height="Auto"/>
+            </Grid.RowDefinitions>
+            
+            <Label x:Name="SongTitleLabel" Grid.Row="0" VerticalAlignment="Center" Foreground="WhiteSmoke" Padding="0" FontWeight="Medium"/>
+            <Separator Grid.Row="1" Height="3" Opacity="0" Padding="0" Margin="0"/>
+            <Label x:Name="SongArtistLabel" Grid.Row="2" VerticalAlignment="Center" Foreground="LightGray" Padding="0" FontSize="11"/>
+        </Grid>
+        <Label x:Name="SongDurationLabel" Grid.Column="2" VerticalAlignment="Center" Foreground="LightGray" FontSize="11"/>
 
         <Grid.ContextMenu>
             <ContextMenu>

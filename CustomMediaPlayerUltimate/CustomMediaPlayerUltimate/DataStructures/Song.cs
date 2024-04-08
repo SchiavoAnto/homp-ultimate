@@ -1,4 +1,6 @@
-﻿namespace CustomMediaPlayerUltimate.DataStructures;
+﻿using System.Windows.Media.Imaging;
+
+namespace CustomMediaPlayerUltimate.DataStructures;
 
 public struct Song
 {
@@ -9,31 +11,7 @@ public struct Song
     public Album Album { get; set; } = Album.Empty;
     public string Year { get; set; } = string.Empty;
     public string Duration { get; set; } = string.Empty;
-
-    public Song(string path, string title, string artist, Album album, string year, string duration) : this(path, title, artist, album, year)
-    {
-        Duration = duration;
-    }
-
-    public Song(string path, string title, string artist, Album album, string year) : this(path, title, artist, album)
-    {
-        Year = year;
-    }
-
-    public Song(string path, string title, string artist, Album album) : this(path, title, artist)
-    {
-        Album = album;
-    }
-
-    public Song(string path, string title, string artist) : this(path, title)
-    {
-        Artist = artist;
-    }
-
-    public Song(string path, string title) : this(path)
-    {
-        Title = title;
-    }
+    public BitmapImage? Cover { get; set; } = null;
 
     public Song(string path)
     {
