@@ -21,6 +21,17 @@ public partial class CustomSongElement : UserControl
         }
     }
 
+    private string _duration = string.Empty;
+    public string Duration
+    {
+        get { return _duration; }
+        set
+        {
+            _duration = value;
+            ItemDurationLabel.Content = value;
+        }
+    }
+
     private bool _hasErrored = false;
     public bool HasErrored
     {

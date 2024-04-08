@@ -448,6 +448,7 @@ public partial class MainWindow : Window
             PlaylistSongsListPanel.Children.Add(new CustomSongElement()
             {
                 Text = songPair.Value.FileName,
+                Duration = songPair.Value.Duration,
                 Song = songPair.Value,
                 Collection = playlists[playlist.Name]
             });
@@ -464,6 +465,7 @@ public partial class MainWindow : Window
             AlbumSongsListPanel.Children.Add(new CustomSongElement()
             {
                 Text = song.FileName,
+                Duration = song.Duration,
                 Song = song,
                 Collection = albums[albumName]
             });
@@ -480,6 +482,7 @@ public partial class MainWindow : Window
             ArtistSongsListPanel.Children.Add(new CustomSongElement()
             {
                 Text = song.FileName,
+                Duration = song.Duration,
                 Song = song,
                 Collection = artists[artistName]
             });
@@ -527,6 +530,7 @@ public partial class MainWindow : Window
                 SearchResultSongsListPanel.Children.Add(new CustomSongElement()
                 {
                     Text = song.FileName,
+                    Duration = song.Duration,
                     Song = song,
                     Collection = playlist
                 });
@@ -722,50 +726,33 @@ public partial class MainWindow : Window
     private async Task<bool> LoadSong(string dirPath, string songPath)
     {
         Song song = new Song(songPath);
-        Dictionary<string, string>? props = new();
         try
         {
             song.FileName = songPath.Replace($"{dirPath}\\", "").Replace(".mp3", "");
-            props?.Clear();
-            Tuple<bool, Dictionary<string, string>?> tagResult = Utils.ReadID3v2Tags(songPath);
-            if (tagResult.Item1) props = tagResult.Item2;
+            Dictionary<string, string> info = Utils.GetMediaInformation(songPath);
             string title = song.FileName;
             string artistName = "Unknown Artist";
             string albumName = "Unknown Album";
-            string year = "";
-            if (props is not null)
-            {
-                // Title
-                if (props.ContainsKey("TIT2")) title = props["TIT2"];
-                song.Title = title;
 
-                // Artist
-                if (props.ContainsKey("TPE1")) artistName = props["TPE1"];
-                song.Artist = artistName;
-                if (!artists.ContainsKey(artistName))
-                {
-                    artists[artistName] = new Playlist(artistName);
-                }
+            // Song Title
+            if (info.ContainsKey("Title")) title = info["Title"];
+            song.Title = title;
 
-                // Year
-                if (props.ContainsKey("TYER"))
-                {
-                    year = props["TYER"];
-                }
-                else
-                {
-                    if (props.ContainsKey("TDRC")) year = props["TDRC"];
-                }
-                song.Year = year;
+            // Song Artists
+            if (info.ContainsKey("Artist")) artistName = info["Artist"];
+            if (!artists.ContainsKey(artistName)) artists[artistName] = new Playlist(artistName);
+            song.Artist = artistName;
 
-                // Album
-                if (props.ContainsKey("TALB")) albumName = props["TALB"];
-                if (!albums.ContainsKey(albumName))
-                {
-                    albums[albumName] = new Album(albumName);
-                }
-                song.Album = albums[albumName];
-            }
+            // Song Album
+            if (info.ContainsKey("Album")) albumName = info["Album"];
+            if (!albums.ContainsKey(albumName)) albums[albumName] = new Album(albumName);
+            song.Album = albums[albumName];
+
+            // Song Year
+            if (info.ContainsKey("Year")) song.Year = info["Year"];
+
+            // Song Duration
+            if (info.ContainsKey("Duration")) song.Duration = info["Duration"];
 
             allSongsPlaylist.AddSong(song);
             artists[artistName].AddSong(song);
@@ -776,6 +763,7 @@ public partial class MainWindow : Window
                 AllSongsListPanel.Children.Add(new CustomSongElement()
                 {
                     Text = song.FileName,
+                    Duration = song.Duration,
                     Song = song,
                     Collection = allSongsPlaylist,
                     HasErrored = false

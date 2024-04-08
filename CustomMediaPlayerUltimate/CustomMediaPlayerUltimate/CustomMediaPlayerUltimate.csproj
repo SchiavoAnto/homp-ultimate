@@ -34,6 +34,10 @@
   </ItemGroup>
 
   <ItemGroup>
+    <PackageReference Include="WindowsAPICodePack" Version="7.0.4" />
+  </ItemGroup>
+
+  <ItemGroup>
     <Resource Include="Images\add.png" />
     <Resource Include="Images\addPlaylist.png" />
     <Resource Include="Images\allSongs.png" />

@@ -8,6 +8,12 @@ public struct Song
     public string Artist { get; set; } = string.Empty;
     public Album Album { get; set; } = Album.Empty;
     public string Year { get; set; } = string.Empty;
+    public string Duration { get; set; } = string.Empty;
+
+    public Song(string path, string title, string artist, Album album, string year, string duration) : this(path, title, artist, album, year)
+    {
+        Duration = duration;
+    }
 
     public Song(string path, string title, string artist, Album album, string year) : this(path, title, artist, album)
     {

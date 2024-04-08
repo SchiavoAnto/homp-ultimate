@@ -10,6 +10,7 @@
         <Grid.ColumnDefinitions>
             <ColumnDefinition Width="Auto"/>
             <ColumnDefinition Width="*"/>
+            <ColumnDefinition Width="Auto"/>
         </Grid.ColumnDefinitions>
         <Button x:Name="PlayButton" Grid.Column="0" Width="22" Height="22" Margin="6,0,0,0" Click="PlayButtonClick">
             <Button.Style>
@@ -27,6 +28,7 @@
             <Image Source="/Images/play.png"/>
         </Button>
         <Label x:Name="ItemTextLabel" Grid.Column="1" VerticalAlignment="Center" Foreground="WhiteSmoke"/>
+        <Label x:Name="ItemDurationLabel" Grid.Column="2" VerticalAlignment="Center" Foreground="WhiteSmoke"/>
 
         <Grid.ContextMenu>
             <ContextMenu>
