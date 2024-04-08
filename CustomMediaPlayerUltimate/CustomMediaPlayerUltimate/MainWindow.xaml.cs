@@ -18,9 +18,9 @@ namespace CustomMediaPlayerUltimate;
 public partial class MainWindow : Window
 {
     public static string MUSIC_PATH = Environment.GetFolderPath(Environment.SpecialFolder.MyMusic);
-    public static string PLAYLISTS_PATH = $"{Environment.GetFolderPath(Environment.SpecialFolder.MyMusic)}\\HompPlaylists";
-    public static string LYRICS_PATH = $"{Environment.GetFolderPath(Environment.SpecialFolder.MyMusic)}\\Lyrics";
-    public static string COVERS_PATH = $"{Environment.GetFolderPath(Environment.SpecialFolder.MyMusic)}\\HompCovers";
+    public static string PLAYLISTS_PATH = $"{MUSIC_PATH}\\HompPlaylists";
+    public static string LYRICS_PATH = $"{MUSIC_PATH}\\Lyrics";
+    public static string COVERS_PATH = $"{MUSIC_PATH}\\HompCovers";
     private const int VOLUME_STEP = 2;
     public static MainWindow Instance = null!;
 
