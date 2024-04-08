@@ -319,7 +319,7 @@
                     </StackPanel>
                 </StackPanel>
             </ScrollViewer>
-            <RichTextBox x:Name="SongLyricsRichTextBox" Grid.Column="1" Background="#252525" Foreground="WhiteSmoke" BorderThickness="0" IsReadOnly="True"/>
+            <RichTextBox x:Name="SongLyricsRichTextBox" Grid.Column="1" Background="#252525" Foreground="WhiteSmoke" BorderThickness="0" IsReadOnly="True" VerticalScrollBarVisibility="Auto"/>
         </Grid>
     </DockPanel>
 </Window>
