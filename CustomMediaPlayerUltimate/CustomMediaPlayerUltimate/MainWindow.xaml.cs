@@ -743,7 +743,7 @@ public partial class MainWindow : Window
             await AllSongsView.Dispatcher.BeginInvoke(() =>
             {
                 AllSongs.Add(new(song, allSongsPlaylist));
-            });
+            }, DispatcherPriority.Background);
 
             return true;
         }
@@ -753,7 +753,7 @@ public partial class MainWindow : Window
             await AllSongsView.Dispatcher.BeginInvoke(() =>
             {
                 AllSongs.Add(new(song, null!));
-            });
+            }, DispatcherPriority.Background);
 
             return false;
         }
