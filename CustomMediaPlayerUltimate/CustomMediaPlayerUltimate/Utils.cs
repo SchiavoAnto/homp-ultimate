@@ -19,25 +19,25 @@ internal class Utils
                 try
                 {
                     prop = shell.Properties!.System!.Title!;
-                    info.Add("Title", prop?.ValueAsObject!.ToString()!);
+                    info.Add("Title", prop?.ValueAsObject?.ToString() ?? "Unknown Title");
                 }
                 catch { }
                 try
                 {
                     prop = shell.Properties!.System!.Music.Artist;
-                    info.Add("Artist", string.Join(", ", (string[])prop?.ValueAsObject!));
+                    info.Add("Artist", string.Join(", ", (string[])prop?.ValueAsObject!) ?? "Unknown Artist");
                 }
                 catch { }
                 try
                 {
                     prop = shell.Properties!.System!.Music.AlbumTitle;
-                    info.Add("Album", prop?.ValueAsObject!.ToString()!);
+                    info.Add("Album", prop?.ValueAsObject?.ToString() ?? "Unknown Album");
                 }
                 catch { }
                 try
                 {
                     prop = shell.Properties!.System!.Media.Year;
-                    info.Add("Year", prop?.ValueAsObject!.ToString()!);
+                    info.Add("Year", prop?.ValueAsObject?.ToString() ?? "");
                 } catch { }
                 try
                 {

@@ -5,7 +5,7 @@
              xmlns:d="http://schemas.microsoft.com/expression/blend/2008" 
              xmlns:local="clr-namespace:CustomMediaPlayerUltimate.Elements"
              mc:Ignorable="d" 
-             Height="40" d:DesignWidth="200">
+             Height="40" d:DesignWidth="200" Loaded="CustomSongElementLoaded">
     <Grid x:Name="GridContainer" Style="{StaticResource CustomSongElement}">
         <Grid.ColumnDefinitions>
             <ColumnDefinition Width="Auto"/>
@@ -13,7 +13,7 @@
             <ColumnDefinition Width="Auto"/>
         </Grid.ColumnDefinitions>
         <Grid Grid.Column="0">
-            <Image x:Name="SongCoverImage" Width="36" Height="36" Margin="2,0,0,0" RenderOptions.BitmapScalingMode="HighQuality"/>
+            <Image x:Name="SongCoverImage" Width="36" Height="36" Margin="2,0,0,0" RenderOptions.BitmapScalingMode="HighQuality" Source="{Binding Song.Cover}"/>
             <Grid>
                 <Rectangle Width="36" Height="36" Margin="2,0,0,0" Fill="Black">
                     <Rectangle.Style>
@@ -51,11 +51,11 @@
                 <RowDefinition Height="Auto"/>
             </Grid.RowDefinitions>
             
-            <Label x:Name="SongTitleLabel" Grid.Row="0" VerticalAlignment="Center" Foreground="WhiteSmoke" Padding="0" FontWeight="Medium"/>
+            <Label x:Name="SongTitleLabel" Grid.Row="0" VerticalAlignment="Center" Foreground="WhiteSmoke" Padding="0" FontWeight="Medium" Content="{Binding Song.Title}"/>
             <Separator Grid.Row="1" Height="3" Opacity="0" Padding="0" Margin="0"/>
-            <Label x:Name="SongArtistLabel" Grid.Row="2" VerticalAlignment="Center" Foreground="LightGray" Padding="0" FontSize="11"/>
+            <Label x:Name="SongArtistLabel" Grid.Row="2" VerticalAlignment="Center" Foreground="LightGray" Padding="0" FontSize="11" Content="{Binding Song.Artist}"/>
         </Grid>
-        <Label x:Name="SongDurationLabel" Grid.Column="2" VerticalAlignment="Center" Foreground="LightGray" FontSize="11"/>
+        <Label x:Name="SongDurationLabel" Grid.Column="2" VerticalAlignment="Center" Foreground="LightGray" FontSize="11" Content="{Binding Song.Duration}"/>
 
         <Grid.ContextMenu>
             <ContextMenu>

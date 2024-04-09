@@ -10,6 +10,7 @@ using System.Windows.Documents;
 using System.Windows.Threading;
 using System.Collections.Generic;
 using System.Collections.Specialized;
+using System.Collections.ObjectModel;
 using CustomMediaPlayerUltimate.Elements;
 using CustomMediaPlayerUltimate.DataStructures;
 
@@ -64,6 +65,11 @@ public partial class MainWindow : Window
     private CollectionElement? currentlySelectedAlbumElement;
     private CollectionElement? currentlySelectedArtistElement;
 
+    public ObservableCollection<CustomSongElement.CustomSongElementInfo> AllSongs { get; set; } = new();
+    public ObservableCollection<CustomSongElement.CustomSongElementInfo> PlaylistSongs { get; set; } = new();
+    public ObservableCollection<CustomSongElement.CustomSongElementInfo> AlbumSongs { get; set; } = new();
+    public ObservableCollection<CustomSongElement.CustomSongElementInfo> ArtistSongs { get; set; } = new();
+    public ObservableCollection<CustomSongElement.CustomSongElementInfo> SearchSongs { get; set; } = new();
     private SongCollection? currentCollection;
     private Playlist allSongsPlaylist;
     private Dictionary<string, Playlist> playlists = new Dictionary<string, Playlist>();
@@ -76,6 +82,7 @@ public partial class MainWindow : Window
         InitializeComponent();
 
         Instance = this;
+        DataContext = this;
 #if DEBUG
         Title = $"(DEBUG) {Title}";
 #endif
@@ -86,6 +93,8 @@ public partial class MainWindow : Window
 
     public async void OnWindowLoaded(object sender, RoutedEventArgs e)
     {
+        EnsureFolders();
+
         //Carichiamo le impostazioni
         LoadSettings();
         //Carichiamo tutte le canzoni
@@ -104,6 +113,13 @@ public partial class MainWindow : Window
         timer.Interval = TimeSpan.FromMilliseconds(100);
         timer.Tick += Timer_Tick;
         timer.Start();
+    }
+
+    private void EnsureFolders()
+    {
+        Directory.CreateDirectory(PLAYLISTS_PATH);
+        Directory.CreateDirectory(LYRICS_PATH);
+        Directory.CreateDirectory(COVERS_PATH);
     }
 
     private void OnWindowClosing(object sender, System.ComponentModel.CancelEventArgs e)
@@ -441,42 +457,33 @@ public partial class MainWindow : Window
     private void LoadPlaylistSongsInView(Playlist playlist)
     {
         if (playlist.Equals(Playlist.Empty)) return;
-        PlaylistSongsListPanel.Children.Clear();
-        PlaylistSongsListPanel.Children.Add(new Label() { Content = playlist.Name, Foreground = Brushes.WhiteSmoke, FontSize = 18, FontWeight = FontWeights.Bold });
+        PlaylistSongs.Clear();
+        PlaylistSongsListTitleLabel.Content = playlist.Name;
         foreach (KeyValuePair<string, Song> songPair in playlists[playlist.Name].Songs.OrderBy((kvp) => kvp.Key))
         {
-            PlaylistSongsListPanel.Children.Add(new CustomSongElement(songPair.Value)
-            {
-                Collection = playlists[playlist.Name]
-            });
+            PlaylistSongs.Add(new(songPair.Value, playlists[playlist.Name]));
         }
     }
 
     private void LoadAlbumSongsInView(string albumName)
     {
         if (!albums.ContainsKey(albumName)) { MessageBox.Show("Could not load album."); return; }
-        AlbumSongsListPanel.Children.Clear();
-        AlbumSongsListPanel.Children.Add(new Label() { Content = albumName, Foreground = Brushes.WhiteSmoke, FontSize = 18, FontWeight = FontWeights.Bold });
+        AlbumSongs.Clear();
+        AlbumSongsListTitleLabel.Content = albumName;
         foreach (Song song in albums[albumName].Songs.Values)
         {
-            AlbumSongsListPanel.Children.Add(new CustomSongElement(song)
-            {
-                Collection = albums[albumName]
-            });
+            AlbumSongs.Add(new(song, albums[albumName]));
         }
     }
 
     private void LoadArtistSongsInView(string artistName)
     {
         if (!artists.ContainsKey(artistName)) { MessageBox.Show("Could not load artist's songs."); return; }
-        ArtistSongsListPanel.Children.Clear();
-        ArtistSongsListPanel.Children.Add(new Label() { Content = artistName, Foreground = Brushes.WhiteSmoke, FontSize = 18, FontWeight = FontWeights.Bold });
+        ArtistSongs.Clear();
+        AristSongsListTitleLabel.Content = artistName;
         foreach (Song song in artists[artistName].Songs.Values)
         {
-            ArtistSongsListPanel.Children.Add(new CustomSongElement(song)
-            {
-                Collection = artists[artistName]
-            });
+            ArtistSongs.Add(new(song, artists[artistName]));
         }
     }
 
@@ -496,32 +503,13 @@ public partial class MainWindow : Window
                     playlist.AddSong(song);
                 }
             }
-            SearchResultSongsListPanel.Children.Clear();
-            StackPanel spanel = new StackPanel() { Orientation = Orientation.Vertical };
-            spanel.Children.Add(new Label()
-            {
-                Content = $"Search results for '{SearchInputTextBox.Text}'",
-                Foreground = Brushes.WhiteSmoke,
-                FontSize = 18,
-                FontWeight = FontWeights.Bold,
-                Margin = new Thickness(0),
-                Padding = new Thickness(0)
-            });
-            spanel.Children.Add(new Label()
-            {
-                Content = $"{results.Count()} results",
-                Foreground = Brushes.LightGray,
-                FontSize = 14,
-                Margin = new Thickness(0),
-                Padding = new Thickness(0)
-            });
-            SearchResultSongsListPanel.Children.Add(spanel);
+            SearchSongs.Clear();
+            SearchResultsTitleLabel.Content = $"Search results for '{SearchInputTextBox.Text}'";
+            int resultsCount = results.Count();
+            SearchResultsSubtitleLabel.Content = $"{resultsCount} {(resultsCount == 1 ? "result" : "results")}";
             foreach (Song song in results)
             {
-                SearchResultSongsListPanel.Children.Add(new CustomSongElement(song)
-                {
-                    Collection = playlist
-                });
+                SearchSongs.Add(new(song, playlist));
             }
             SwitchToSearchResultsView(null!, null!);
         }
@@ -530,8 +518,7 @@ public partial class MainWindow : Window
     private async Task<bool> LoadAllSongs()
     {
         allSongsPlaylist = new Playlist("__HOMP_ALL_SONGS_PLAYLIST__");
-        AllSongsListPanel.Children.Clear();
-        AllSongsListPanel.Children.Add(new Label() { Content = "All Songs", Foreground = Brushes.WhiteSmoke, FontSize = 18, FontWeight = FontWeights.Bold });
+        AllSongs.Clear();
         foreach (string? path in Properties.Settings.Default.SourceDirectories)
         {
             if (path is null) continue;
@@ -555,29 +542,29 @@ public partial class MainWindow : Window
 
     private void LoadAllPlaylists()
     {
+        PlaylistsListPanel.Children.Clear();
+        Grid grid = new Grid();
+        grid.ColumnDefinitions.Add(new ColumnDefinition() { Width = new GridLength(0, GridUnitType.Auto) });
+        grid.ColumnDefinitions.Add(new ColumnDefinition() { Width = new GridLength(100, GridUnitType.Star) });
+        grid.ColumnDefinitions.Add(new ColumnDefinition() { Width = new GridLength(0, GridUnitType.Auto) });
+
+        Label titleLabel = new Label() { Content = "Playlists", Foreground = Brushes.WhiteSmoke, FontSize = 18, FontWeight = FontWeights.Bold };
+        Grid.SetColumn(titleLabel, 0);
+        grid.Children.Add(titleLabel);
+
+        Button addNewButton = new Button() { Content = "New playlist...", Height = 30d };
+        addNewButton.Click += NewPlaylistButtonClick;
+        Grid.SetColumn(addNewButton, 2);
+        grid.Children.Add(addNewButton);
+        PlaylistsListPanel.Children.Add(grid);
+
         if (!Directory.Exists(PLAYLISTS_PATH)) return;
         try
         {
             string[] allPlaylists = Directory.GetFiles(PLAYLISTS_PATH, "*.homppl");
             playlists.Clear();
-            PlaylistsListPanel.Children.Clear();
-            PlaylistSongsListPanel.Children.Clear();
+            PlaylistSongs.Clear();
 
-            Grid grid = new Grid();
-            grid.ColumnDefinitions.Add(new ColumnDefinition() { Width = new GridLength(0, GridUnitType.Auto) });
-            grid.ColumnDefinitions.Add(new ColumnDefinition() { Width = new GridLength(100, GridUnitType.Star) });
-            grid.ColumnDefinitions.Add(new ColumnDefinition() { Width = new GridLength(0, GridUnitType.Auto) });
-
-            Label titleLabel = new Label() { Content = "Playlists", Foreground = Brushes.WhiteSmoke, FontSize = 18, FontWeight = FontWeights.Bold };
-            Grid.SetColumn(titleLabel, 0);
-            grid.Children.Add(titleLabel);
-
-            Button addNewButton = new Button() { Content = "New playlist...", Height = 30d };
-            addNewButton.Click += NewPlaylistButtonClick;
-            Grid.SetColumn(addNewButton, 2);
-            grid.Children.Add(addNewButton);
-
-            PlaylistsListPanel.Children.Add(grid);
             foreach (string p in allPlaylists)
             {
                 string playlistName = p.Replace($"{PLAYLISTS_PATH}\\", "").Replace(".homppl", "");
@@ -738,9 +725,11 @@ public partial class MainWindow : Window
 
             // Song Year
             if (info.ContainsKey("Year")) song.Year = info["Year"];
+            else song.Year = "";
 
             // Song Duration
             if (info.ContainsKey("Duration")) song.Duration = info["Duration"];
+            else song.Duration = "";
 
             if (File.Exists($"{COVERS_PATH}\\{song.FileName}.mp3[Cover].png"))
             {
@@ -751,27 +740,20 @@ public partial class MainWindow : Window
             artists[artistName].AddSong(song);
             albums[albumName].AddSong(song);
 
-            await Dispatcher.BeginInvoke(() =>
+            await AllSongsView.Dispatcher.BeginInvoke(() =>
             {
-                AllSongsListPanel.Children.Add(new CustomSongElement(song)
-                {
-                    Collection = allSongsPlaylist
-                });
-            }, DispatcherPriority.Background);
+                AllSongs.Add(new(song, allSongsPlaylist));
+            });
 
             return true;
         }
         catch
         {
-            // No need to pass Song and Collection because an errored item
-            // does not show a playing button.
-            await Dispatcher.BeginInvoke(() =>
+            song.HasErrored = true;
+            await AllSongsView.Dispatcher.BeginInvoke(() =>
             {
-                AllSongsListPanel.Children.Add(new CustomSongElement(song)
-                {
-                    HasErrored = true
-                });
-            }, DispatcherPriority.Background);
+                AllSongs.Add(new(song, null!));
+            });
 
             return false;
         }
@@ -1128,6 +1110,7 @@ public partial class MainWindow : Window
 
     private void PlayCollection(SongCollection collection)
     {
+        if (collection.Songs.Count == 0) return;
         Song startingSong = collection.Songs.Values.ElementAt(random.Next(collection.Songs.Count));
         PlaySong(startingSong.FilePath, collection);
     }

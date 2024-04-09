@@ -7,41 +7,36 @@ namespace CustomMediaPlayerUltimate.Elements;
 
 public partial class CustomSongElement : UserControl
 {
-    public Song Song { get; private set; }
-    public SongCollection Collection { get; init; }
-
-    private bool _hasErrored = false;
-    public bool HasErrored
+    public class CustomSongElementInfo
     {
-        get { return _hasErrored; }
-        set
+        public Song Song { get; private init; }
+        public SongCollection Collection { get; private init; }
+
+        public CustomSongElementInfo(Song song, SongCollection collection)
         {
-            _hasErrored = value;
-            PlayButton.Visibility = value ? Visibility.Hidden : Visibility.Visible;
+            Song = song;
+            Collection = collection;
         }
     }
 
-    public CustomSongElement(Song song)
+    private CustomSongElementInfo Info { get; set; }
+
+    public CustomSongElement()
     {
         InitializeComponent();
-        Song = song;
-        Collection = null!;
+    }
 
-        SongTitleLabel.Content = Song.Title;
-        SongArtistLabel.Content = Song.Artist;
-        SongDurationLabel.Content = Song.Duration;
-        if (Song.Cover is not null)
-        {
-            SongCoverImage.Source = Song.Cover;
-        }
+    private void CustomSongElementLoaded(object sender, RoutedEventArgs e)
+    {
+        Info = (CustomSongElementInfo)Tag;
     }
 
     private void EditLyricsMenuItemClick(object sender, RoutedEventArgs e)
     {
-        if (HasErrored) return;
-        BigInputBox bib = new BigInputBox("Insert song lyrics", $"Insert here the lyrics for '{Song.FileName}':");
+        if (Info.Song.HasErrored) return;
+        BigInputBox bib = new BigInputBox("Insert song lyrics", $"Insert here the lyrics for '{Info.Song.FileName}':");
 
-        string lyricsFileName = $"{MainWindow.LYRICS_PATH}\\{Song.FileName}.mp3[Lyrics].txt";
+        string lyricsFileName = $"{MainWindow.LYRICS_PATH}\\{Info.Song.FileName}.mp3[Lyrics].txt";
         if (File.Exists(lyricsFileName))
         {
             try
@@ -62,7 +57,7 @@ public partial class CustomSongElement : UserControl
         {
             try
             {
-                string lyricsPath = $"{MainWindow.LYRICS_PATH}\\{Song.FileName}.mp3[Lyrics].txt";
+                string lyricsPath = $"{MainWindow.LYRICS_PATH}\\{Info.Song.FileName}.mp3[Lyrics].txt";
                 string lyrics = bib.InputTextBox.Text;
                 using (StreamWriter sw = new StreamWriter(lyricsPath))
                 {
@@ -70,7 +65,7 @@ public partial class CustomSongElement : UserControl
                     sw.Close();
                     sw.Dispose();
                 }
-                if (MainWindow.Instance.currentSong.HasValue && MainWindow.Instance.currentSong.Value.FilePath == Song.FilePath)
+                if (MainWindow.Instance.currentSong.HasValue && MainWindow.Instance.currentSong.Value.FilePath == Info.Song.FilePath)
                 {
                     MainWindow.Instance.LoadLyricsInView();
                 }
@@ -84,11 +79,11 @@ public partial class CustomSongElement : UserControl
 
     private void PlayAsNextSongMenuItemClick(object sender, RoutedEventArgs e)
     {
-        MainWindow.Instance.SetPrioritySong(Song);
+        MainWindow.Instance.SetPrioritySong(Info.Song);
     }
 
     private void PlayButtonClick(object sender, RoutedEventArgs e)
     {
-        MainWindow.Instance.PlaySong(Song.FilePath, Collection);
+        MainWindow.Instance.PlaySong(Info.Song.FilePath, Info.Collection);
     }
 }
