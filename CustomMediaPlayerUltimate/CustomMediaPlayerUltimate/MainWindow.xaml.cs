@@ -29,6 +29,33 @@ public partial class MainWindow : Window
     private static readonly GridLength expandedLyricsTextBoxWidth = new GridLength(400f);
 
     private WindowState lastWindowState = WindowState.Normal;
+    private bool isSidebarVisible = true;
+    private (bool SaveValue, bool Val) IsSidebarVisible
+    {
+        get { return (false, isSidebarVisible); }
+        set
+        {
+            isSidebarVisible = value.Val;
+            SongLyricsRichTextBoxColumn.Width = value.Val switch
+            {
+                true => expandedLyricsTextBoxWidth,
+                false => collapsedLyricsTextBoxWidth
+            };
+            SongLyricsRichTextBox.Visibility = value.Val switch
+            {
+                true => Visibility.Visible,
+                false => Visibility.Collapsed
+            };
+            SongLyricsRichTextBoxVisibilityButton.IsChecked = value.Val;
+            SongLyricsRichTextBoxVisibilityButtonImage.Source = value.Val switch
+            {
+                true => Utils.ConstructImageFromPath("/Images/lyrics_shown.png"),
+                false => Utils.ConstructImageFromPath("/Images/lyrics_hidden.png")
+            };
+            if (value.SaveValue) lastIsSidebarVisible = value.Val;
+        }
+    }
+    private bool lastIsSidebarVisible = true;
 
     private MediaPlayer mediaPlayer = new MediaPlayer();
     private DispatcherTimer timer = new DispatcherTimer();
@@ -133,15 +160,10 @@ public partial class MainWindow : Window
     private void OnWindowSizeChanged(object sender, SizeChangedEventArgs e)
     {
         bool mustAdapt = ActualWidth <= 600;
-        SongLyricsRichTextBoxColumn.Width = mustAdapt switch
+        IsSidebarVisible = mustAdapt switch
         {
-            true => collapsedLyricsTextBoxWidth,
-            false => expandedLyricsTextBoxWidth
-        };
-        SongLyricsRichTextBox.Visibility = mustAdapt switch
-        {
-            true => Visibility.Collapsed,
-            false => Visibility.Visible,
+            true => (false, false),
+            false => (false, lastIsSidebarVisible)
         };
     }
 
@@ -1188,21 +1210,7 @@ public partial class MainWindow : Window
 
     private void SongLyricsRichTextBoxVisibilityButtonClick(object sender, RoutedEventArgs e)
     {
-        SongLyricsRichTextBoxColumn.Width = SongLyricsRichTextBoxVisibilityButton.IsChecked switch
-        {
-            true => expandedLyricsTextBoxWidth,
-            _ => collapsedLyricsTextBoxWidth
-        };
-        SongLyricsRichTextBox.Visibility = SongLyricsRichTextBoxVisibilityButton.IsChecked switch
-        {
-            true => Visibility.Visible,
-            _ => Visibility.Collapsed
-        };
-        SongLyricsRichTextBoxVisibilityButtonImage.Source = SongLyricsRichTextBoxVisibilityButton.IsChecked switch
-        {
-            true => Utils.ConstructImageFromPath("/Images/lyrics_shown.png"),
-            _ => Utils.ConstructImageFromPath("/Images/lyrics_hidden.png")
-        };
+        IsSidebarVisible = (true, !IsSidebarVisible.Val);
     }
 
     private void OnSettingsMiniplayerAutoOpacityCheckboxChecked(object sender, RoutedEventArgs e)
