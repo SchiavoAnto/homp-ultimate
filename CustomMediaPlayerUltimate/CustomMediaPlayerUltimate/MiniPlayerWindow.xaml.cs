@@ -3,18 +3,29 @@ using System.Timers;
 using System.Windows;
 using System.Windows.Input;
 using System.ComponentModel;
+using System.Windows.Interop;
 using System.Windows.Threading;
 using System.Windows.Media.Imaging;
+using System.Runtime.InteropServices;
 
 namespace CustomMediaPlayerUltimate;
 
 public partial class MiniPlayerWindow : Window
 {
+    private const int GWL_EXSTYLE = -20;
+    private const int WS_EX_NOACTIVATE = 0x08000000;
+
     public static MiniPlayerWindow? Instance;
 
     private Timer titleTimer = new Timer(10);
     private Timer artistTimer = new Timer(10);
     private Timer opacityTimer = new Timer(10);
+
+    [DllImport("user32.dll")]
+    public static extern IntPtr SetWindowLong(IntPtr hWnd, int nIndex, int dwNewLong);
+
+    [DllImport("user32.dll")]
+    public static extern int GetWindowLong(IntPtr hWnd, int nIndex);
 
     public MiniPlayerWindow()
     {
@@ -86,6 +97,14 @@ public partial class MiniPlayerWindow : Window
                 }
             });
         };
+    }
+
+    protected override void OnSourceInitialized(EventArgs e)
+    {
+        base.OnSourceInitialized(e);
+
+        WindowInteropHelper helper = new(this);
+        SetWindowLong(helper.Handle, GWL_EXSTYLE, GetWindowLong(helper.Handle, GWL_EXSTYLE) | WS_EX_NOACTIVATE);
     }
 
     private void CloseButtonClick(object sender, RoutedEventArgs e)
@@ -176,6 +195,18 @@ public partial class MiniPlayerWindow : Window
             SongArtistLabelContainer.ScrollToHorizontalOffset(0f);
         });
         artistTimer.Start();
+    }
+
+    public void SetCover(BitmapImage? image)
+    {
+        SongCoverImage.Visibility = image switch
+        {
+            null => Visibility.Collapsed,
+            _ => Visibility.Visible,
+        };
+        SongCoverImageSeparator.Visibility = SongCoverImage.Visibility;
+        if (image == null) return;
+        SongCoverImage.Source = image;
     }
 
     public void SetPlayPauseImage(bool playing)

@@ -842,6 +842,7 @@ public partial class MainWindow : Window
         {
             MiniPlayerWindow.Instance.SetTitleText(title);
             MiniPlayerWindow.Instance.SetArtistText(artist);
+            MiniPlayerWindow.Instance.SetCover(song.Cover);
         }
 
         if (!song.Album.Equals(Album.Empty))
@@ -1167,6 +1168,7 @@ public partial class MainWindow : Window
     {
         Show();
         WindowState = lastWindowState;
+        Activate();
     }
 
     private void ShowMiniplayer()
@@ -1175,6 +1177,7 @@ public partial class MainWindow : Window
         MiniPlayerWindow.Instance?.SetTitleText(currentSong?.Title ?? "Song title");
         MiniPlayerWindow.Instance?.SetArtistText(currentSong?.Artist ?? "Song artist");
         MiniPlayerWindow.Instance?.SetPlayPauseImage(IsPlaying);
+        MiniPlayerWindow.Instance?.SetCover(currentSong?.Cover);
         Hide();
     }
 
