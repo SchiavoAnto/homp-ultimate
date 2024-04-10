@@ -81,6 +81,7 @@ public partial class MainWindow : Window
     private bool isVolumeSliderBeingDragged = false;
     private bool isSettingsMiniplayerOpacitySliderBeingDragged = false;
     public Song? currentSong = null;
+    private int currentSongIndex = -1;
     private Song? prioritySong = null;
     private PlaylistElement? currentlySelectedPlaylistElement;
     private CollectionElement? currentlySelectedAlbumElement;
@@ -96,7 +97,7 @@ public partial class MainWindow : Window
     private Dictionary<string, Playlist> playlists = new Dictionary<string, Playlist>();
     private Dictionary<string, Album> albums = new Dictionary<string, Album>();
     private Dictionary<string, Playlist> artists = new Dictionary<string, Playlist>();
-    private List<Song> playedSongs = new List<Song>();
+    private List<Song> songQueue = new();
 
     public MainWindow()
     {
@@ -865,26 +866,25 @@ public partial class MainWindow : Window
         if (currentCollection != songCollection)
         {
             currentCollection = songCollection;
-            playedSongs.Clear();
-        }
-        if (playedSongs.Count >= currentCollection.Songs.Count)
-        {
-            playedSongs.Clear();
+            songQueue.Clear();
+            songQueue.EnsureCapacity(currentCollection.Songs.Count);
+            songQueue.Add(song);
+            currentSongIndex = 0;
+            Song[] qSongs = (from s in currentCollection.Songs.Values.ToArray() where !s.Equals(song) select s).ToArray();
+            random.Shuffle(qSongs);
+            songQueue.AddRange(qSongs);
         }
         currentSong = song;
         ProgressSlider.Value = 0;
-        playedSongs.Add(song);
 
         LoadLyricsInView();
     }
 
     private void PreviousSongInPlaylist()
     {
-        if (playedSongs.Count < 1) return;
-
-        Song lastSong = playedSongs.Count == 1 ? playedSongs.Last() : playedSongs[^2];
-        playedSongs.Remove(lastSong);
-        PlaySong(lastSong.FilePath, currentCollection);
+        currentSongIndex--;
+        if (currentSongIndex < 0) currentSongIndex = songQueue.Count - 1;
+        PlaySong(songQueue[currentSongIndex].FilePath, currentCollection);
     }
 
     public void NextSongInPlaylist()
@@ -897,17 +897,9 @@ public partial class MainWindow : Window
         }
 
         if (currentCollection is null) return;
-        if (playedSongs.Count >= currentCollection.Songs.Count)
-        {
-            playedSongs.Clear();
-        }
-        int randomNextSongIndex;
-        do
-        {
-            randomNextSongIndex = random.Next(currentCollection.Songs.Count);
-        }
-        while (playedSongs.Contains(currentCollection.Songs.Values.ElementAt(randomNextSongIndex)));
-        PlaySong(currentCollection.Songs[currentCollection.Songs.Keys.ElementAt(randomNextSongIndex)].FilePath, currentCollection);
+        currentSongIndex++;
+        if (currentSongIndex >= songQueue.Count) currentSongIndex = 0;
+        PlaySong(songQueue[currentSongIndex].FilePath, currentCollection);
     }
 
     private void MediaPlayer_MediaOpened(object? sender, EventArgs e)
