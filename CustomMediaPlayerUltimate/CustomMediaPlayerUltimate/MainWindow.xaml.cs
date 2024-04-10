@@ -160,6 +160,7 @@ public partial class MainWindow : Window
 
     private void OnWindowKeyUp(object sender, KeyEventArgs e)
     {
+        if (Keyboard.FocusedElement != this) return;
         if (e.Key == Key.Space)
         {
             TogglePlayPause();
