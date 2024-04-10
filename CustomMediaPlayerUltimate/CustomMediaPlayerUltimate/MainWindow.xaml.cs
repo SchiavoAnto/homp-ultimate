@@ -200,6 +200,21 @@ public partial class MainWindow : Window
                 ToggleShuffle();
             }
         }
+        else
+        {
+            if (key == Key.MediaPreviousTrack)
+            {
+                PreviousSongInPlaylist();
+            }
+            else if (key == Key.MediaPlayPause)
+            {
+                TogglePlayPause();
+            }
+            else if (key == Key.MediaNextTrack)
+            {
+                NextSongInPlaylist();
+            }
+        }
     }
 
     private void HideAllViews()
