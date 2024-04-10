@@ -62,4 +62,9 @@ public partial class CollectionElement : UserControl
     {
         OnDoubleClickDelegate.Invoke(this);
     }
+
+    private void PlayCtxClicked(object sender, RoutedEventArgs e)
+    {
+        OnDoubleClickDelegate.Invoke(this);
+    }
 }

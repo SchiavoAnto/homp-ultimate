@@ -642,6 +642,7 @@ public partial class MainWindow : Window
                 PlaylistElement playlistElement = new PlaylistElement(
                     (self) =>
                     {
+                        if (currentlySelectedPlaylistElement == self) return;
                         if (currentlySelectedPlaylistElement is not null) currentlySelectedPlaylistElement.Focused = false;
                         LoadPlaylistSongsInView(playlists[playlistName]);
                         currentlySelectedPlaylistElement = self;
@@ -676,6 +677,7 @@ public partial class MainWindow : Window
             AlbumsListPanel.Children.Add(new CollectionElement(
             (self) =>
             {
+                if (currentlySelectedAlbumElement == self) return;
                 if (currentlySelectedAlbumElement is not null) currentlySelectedAlbumElement.Focused = false;
                 LoadAlbumSongsInView(kvp.Key);
                 currentlySelectedAlbumElement = self;
@@ -699,6 +701,7 @@ public partial class MainWindow : Window
             ArtistsListPanel.Children.Add(new CollectionElement(
             (self) =>
             {
+                if (currentlySelectedArtistElement == self) return;
                 if (currentlySelectedArtistElement is not null) currentlySelectedArtistElement.Focused = false;
                 LoadArtistSongsInView(kvp.Key);
                 currentlySelectedArtistElement = self;

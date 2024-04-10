@@ -75,6 +75,11 @@ public partial class PlaylistElement : UserControl
         OnDoubleClickDelegate.Invoke(this);
     }
 
+    private void PlayCtxClicked(object sender, RoutedEventArgs e)
+    {
+        OnDoubleClickDelegate.Invoke(this);
+    }
+
     private void ManageSongsCtxClicked(object sender, RoutedEventArgs e)
     {
         OnManageSongsCtxClickedDelegate.Invoke();

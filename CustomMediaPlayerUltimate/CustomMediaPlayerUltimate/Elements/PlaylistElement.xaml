@@ -16,6 +16,8 @@
 
         <Grid.ContextMenu>
             <ContextMenu>
+                <MenuItem Header="Play" Click="PlayCtxClicked"/>
+                <Separator/>
                 <MenuItem Header="Manage songs" Click="ManageSongsCtxClicked"/>
                 <Separator/>
                 <MenuItem Header="Rename" Click="RenameCtxClicked"/>
