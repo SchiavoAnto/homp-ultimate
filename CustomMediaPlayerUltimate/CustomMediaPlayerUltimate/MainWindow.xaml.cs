@@ -158,6 +158,14 @@ public partial class MainWindow : Window
         }
     }
 
+    private void OnWindowKeyUp(object sender, KeyEventArgs e)
+    {
+        if (e.Key == Key.Space)
+        {
+            TogglePlayPause();
+        }
+    }
+
     private void HandleHotkey(object? sender, Key key)
     {
         if (Keyboard.Modifiers == (ModifierKeys.Control | ModifierKeys.Alt | ModifierKeys.Shift))

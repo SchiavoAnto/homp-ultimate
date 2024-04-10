@@ -6,7 +6,8 @@
         xmlns:local="clr-namespace:CustomMediaPlayerUltimate.Elements"
         DataContext="{Binding RelativeSource={RelativeSource Self}}"
         Title="HOMP - Highly Optimized Music Player" Width="1280" Height="720" WindowStartupLocation="CenterScreen"
-        Icon="/Images/icon.ico" Loaded="OnWindowLoaded" Closing="OnWindowClosing" SizeChanged="OnWindowSizeChanged" StateChanged="OnWindowStateChanged">
+        Icon="/Images/icon.ico" Loaded="OnWindowLoaded" Closing="OnWindowClosing" SizeChanged="OnWindowSizeChanged"
+        StateChanged="OnWindowStateChanged" KeyUp="OnWindowKeyUp">
     <Window.Resources>
         <Style TargetType="Image">
             <Setter Property="RenderOptions.EdgeMode" Value="Aliased" />
