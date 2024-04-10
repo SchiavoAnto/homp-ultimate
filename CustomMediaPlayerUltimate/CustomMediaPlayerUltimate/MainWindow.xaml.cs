@@ -97,6 +97,14 @@ public partial class MainWindow : Window
     {
         EnsureFolders();
 
+        mediaPlayer.MediaOpened += MediaPlayer_MediaOpened;
+        mediaPlayer.MediaEnded += MediaPlayer_MediaEnded;
+        mediaPlayer.MediaFailed += MediaPlayer_MediaFailed;
+
+        timer.Interval = TimeSpan.FromMilliseconds(100);
+        timer.Tick += Timer_Tick;
+        timer.Start();
+
         //Carichiamo le impostazioni
         LoadSettings();
         //Carichiamo tutte le canzoni
@@ -107,14 +115,6 @@ public partial class MainWindow : Window
         LoadAllAlbums();
         //Carichiamo tutti gli artisti
         LoadAllArtists();
-
-        mediaPlayer.MediaOpened += MediaPlayer_MediaOpened;
-        mediaPlayer.MediaEnded += MediaPlayer_MediaEnded;
-        mediaPlayer.MediaFailed += MediaPlayer_MediaFailed;
-
-        timer.Interval = TimeSpan.FromMilliseconds(100);
-        timer.Tick += Timer_Tick;
-        timer.Start();
     }
 
     private void EnsureFolders()
@@ -258,7 +258,10 @@ public partial class MainWindow : Window
                 currentCollection = allSongsPlaylist;
                 NextSongInPlaylist();
             }
-            mediaPlayer.Play();
+            else
+            {
+                mediaPlayer.Play();
+            }
             IsPlaying = true;
         }
     }
