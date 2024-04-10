@@ -1,5 +1,6 @@
 ﻿using System.IO;
 using System.Windows;
+using System.Windows.Input;
 using System.Windows.Controls;
 using CustomMediaPlayerUltimate.DataStructures;
 
@@ -29,6 +30,16 @@ public partial class CustomSongElement : UserControl
     private void CustomSongElementLoaded(object sender, RoutedEventArgs e)
     {
         Info = (CustomSongElementInfo)Tag;
+    }
+
+    private void CustomSongElementDoubleClick(object sender, MouseButtonEventArgs e)
+    {
+        MainWindow.Instance.PlaySong(Info!.Song.FilePath, Info.Collection);
+    }
+
+    private void PlayMenuItemClick(object sender, RoutedEventArgs e)
+    {
+        MainWindow.Instance.PlaySong(Info!.Song.FilePath, Info.Collection);
     }
 
     private void EditLyricsMenuItemClick(object sender, RoutedEventArgs e)
