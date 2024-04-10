@@ -19,7 +19,7 @@ public partial class CustomSongElement : UserControl
         }
     }
 
-    private CustomSongElementInfo Info { get; set; }
+    private CustomSongElementInfo? Info { get; set; }
 
     public CustomSongElement()
     {
@@ -33,7 +33,7 @@ public partial class CustomSongElement : UserControl
 
     private void EditLyricsMenuItemClick(object sender, RoutedEventArgs e)
     {
-        if (Info.Song.HasErrored) return;
+        if (Info!.Song.HasErrored) return;
         BigInputBox bib = new BigInputBox("Insert song lyrics", $"Insert here the lyrics for '{Info.Song.FileName}':");
 
         string lyricsFileName = $"{MainWindow.LYRICS_PATH}\\{Info.Song.FileName}.mp3[Lyrics].txt";
@@ -79,11 +79,11 @@ public partial class CustomSongElement : UserControl
 
     private void PlayAsNextSongMenuItemClick(object sender, RoutedEventArgs e)
     {
-        MainWindow.Instance.SetPrioritySong(Info.Song);
+        MainWindow.Instance.SetPrioritySong(Info!.Song);
     }
 
     private void PlayButtonClick(object sender, RoutedEventArgs e)
     {
-        MainWindow.Instance.PlaySong(Info.Song.FilePath, Info.Collection);
+        MainWindow.Instance.PlaySong(Info!.Song.FilePath, Info.Collection);
     }
 }
