@@ -6,7 +6,7 @@
         xmlns:local="clr-namespace:CustomMediaPlayerUltimate.Elements"
         DataContext="{Binding RelativeSource={RelativeSource Self}}"
         Title="HOMP - Highly Optimized Music Player" Width="1280" Height="720" WindowStartupLocation="CenterScreen"
-        Icon="/Images/icon.ico" Loaded="OnWindowLoaded" Closing="OnWindowClosing" SizeChanged="OnWindowSizeChanged">
+        Icon="/Images/icon.ico" Loaded="OnWindowLoaded" Closing="OnWindowClosing" SizeChanged="OnWindowSizeChanged" StateChanged="OnWindowStateChanged">
     <Window.Resources>
         <Style TargetType="Image">
             <Setter Property="RenderOptions.EdgeMode" Value="Aliased" />
@@ -543,7 +543,12 @@
                                     <Label Foreground="WhiteSmoke">milliseconds</Label>
                                 </StackPanel>
                             </StackPanel>
+                            <StackPanel Margin="10,5,0,0" Orientation="Vertical">
+                                <Label Margin="-4,0,0,0" Foreground="WhiteSmoke">Auto appear</Label>
+                                <CheckBox x:Name="SettingsMiniplayerAutoAppearOnMinimizeCheckbox" Margin="5,0,0,0" Foreground="WhiteSmoke" Checked="SettingsMiniplayerAutoAppearOnMinimizeCheckboxChecked" Unchecked="SettingsMiniplayerAutoAppearOnMinimizeCheckboxUnchecked">Show miniplayer automatically when minimizing HOMP</CheckBox>
+                            </StackPanel>
                         </StackPanel>
+                        <Separator x:Name="BottomSpacer" Height="20" Opacity="0"/>
                     </StackPanel>
                 </StackPanel>
             </ScrollViewer>

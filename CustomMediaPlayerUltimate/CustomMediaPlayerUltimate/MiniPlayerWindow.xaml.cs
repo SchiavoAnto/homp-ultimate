@@ -109,7 +109,7 @@ public partial class MiniPlayerWindow : Window
 
     private void WindowClosing(object sender, CancelEventArgs e)
     {
-        MainWindow.Instance.Show();
+        MainWindow.Instance.BackFromMiniplayer();
         Instance = null;
     }
 

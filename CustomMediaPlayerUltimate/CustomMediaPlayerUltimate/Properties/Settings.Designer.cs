@@ -249,5 +249,17 @@ namespace CustomMediaPlayerUltimate.Properties {
                 this["MiniplayerFadingTimeout"] = value;
             }
         }
+        
+        [global::System.Configuration.UserScopedSettingAttribute()]
+        [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
+        [global::System.Configuration.DefaultSettingValueAttribute("False")]
+        public bool MiniplayerAppearOnMinimize {
+            get {
+                return ((bool)(this["MiniplayerAppearOnMinimize"]));
+            }
+            set {
+                this["MiniplayerAppearOnMinimize"] = value;
+            }
+        }
     }
 }

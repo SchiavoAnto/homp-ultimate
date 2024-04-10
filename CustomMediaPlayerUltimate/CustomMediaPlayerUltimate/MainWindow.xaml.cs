@@ -28,6 +28,8 @@ public partial class MainWindow : Window
     private static readonly GridLength collapsedLyricsTextBoxWidth = new GridLength(0f);
     private static readonly GridLength expandedLyricsTextBoxWidth = new GridLength(400f);
 
+    private WindowState lastWindowState = WindowState.Normal;
+
     private MediaPlayer mediaPlayer = new MediaPlayer();
     private DispatcherTimer timer = new DispatcherTimer();
     private Random random = new Random();
@@ -141,6 +143,19 @@ public partial class MainWindow : Window
             true => Visibility.Collapsed,
             false => Visibility.Visible,
         };
+    }
+
+    private void OnWindowStateChanged(object sender, EventArgs e)
+    {
+        if (WindowState != WindowState.Minimized)
+        {
+            lastWindowState = WindowState;
+            return;
+        }
+        if (Properties.Settings.Default.MiniplayerAppearOnMinimize)
+        {
+            ShowMiniplayer();
+        }
     }
 
     private void HandleHotkey(object? sender, Key key)
@@ -696,6 +711,7 @@ public partial class MainWindow : Window
         SettingsMiniplayerOpacitySlider.Value = Properties.Settings.Default.MiniplayerMinimumOpacity;
         SettingsMiniplayerOpacitySliderLabel.Content = $"{(SettingsMiniplayerOpacitySlider.Value * 100d):0.00}%";
         SettingsMiniplayerOpacityTimeoutNumberInputBox.SetValue(Properties.Settings.Default.MiniplayerFadingTimeout);
+        SettingsMiniplayerAutoAppearOnMinimizeCheckbox.IsChecked = Properties.Settings.Default.MiniplayerAppearOnMinimize;
     }
 
     private async Task<bool> LoadSong(string dirPath, string songPath)
@@ -1120,13 +1136,24 @@ public partial class MainWindow : Window
         prioritySong = song;
     }
 
-    private void MiniplayerButtonClick(object sender, RoutedEventArgs e)
+    public void BackFromMiniplayer()
+    {
+        Show();
+        WindowState = lastWindowState;
+    }
+
+    private void ShowMiniplayer()
     {
         new MiniPlayerWindow()?.Show();
         MiniPlayerWindow.Instance?.SetTitleText(currentSong?.Title ?? "Song title");
         MiniPlayerWindow.Instance?.SetArtistText(currentSong?.Artist ?? "Song artist");
         MiniPlayerWindow.Instance?.SetPlayPauseImage(IsPlaying);
         Hide();
+    }
+
+    private void MiniplayerButtonClick(object sender, RoutedEventArgs e)
+    {
+        ShowMiniplayer();
     }
 
     private void SongLyricsRichTextBoxVisibilityButtonClick(object sender, RoutedEventArgs e)
@@ -1178,5 +1205,15 @@ public partial class MainWindow : Window
     private void SettingsMiniplayerOpacityTimeoutNumberInputBoxFinishedEditing(object sender, RoutedEventArgs e)
     {
         Properties.Settings.Default.MiniplayerFadingTimeout = (int)SettingsMiniplayerOpacityTimeoutNumberInputBox.NumericValue;
+    }
+
+    private void SettingsMiniplayerAutoAppearOnMinimizeCheckboxChecked(object sender, RoutedEventArgs e)
+    {
+        Properties.Settings.Default.MiniplayerAppearOnMinimize = true;
+    }
+
+    private void SettingsMiniplayerAutoAppearOnMinimizeCheckboxUnchecked(object sender, RoutedEventArgs e)
+    {
+        Properties.Settings.Default.MiniplayerAppearOnMinimize = false;
     }
 }
