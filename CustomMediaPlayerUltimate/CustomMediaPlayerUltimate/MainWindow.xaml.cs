@@ -36,16 +36,8 @@ public partial class MainWindow : Window
         set
         {
             isSidebarVisible = value.Val;
-            SongLyricsRichTextBoxColumn.Width = value.Val switch
-            {
-                true => expandedLyricsTextBoxWidth,
-                false => collapsedLyricsTextBoxWidth
-            };
-            SongLyricsRichTextBox.Visibility = value.Val switch
-            {
-                true => Visibility.Visible,
-                false => Visibility.Collapsed
-            };
+            SongLyricsRichTextBoxColumn.Width = value.Val ? expandedLyricsTextBoxWidth : collapsedLyricsTextBoxWidth;
+            SongLyricsRichTextBox.Visibility = value.Val ? Visibility.Visible : Visibility.Collapsed;
             SongLyricsRichTextBoxVisibilityButton.IsChecked = value.Val;
             SongLyricsRichTextBoxVisibilityButtonImage.Source = value.Val switch
             {
@@ -160,11 +152,7 @@ public partial class MainWindow : Window
     private void OnWindowSizeChanged(object sender, SizeChangedEventArgs e)
     {
         bool mustAdapt = ActualWidth <= 600;
-        IsSidebarVisible = mustAdapt switch
-        {
-            true => (false, false),
-            false => (false, lastIsSidebarVisible)
-        };
+        IsSidebarVisible = mustAdapt ? (false, false) : (false, lastIsSidebarVisible);
     }
 
     private void OnWindowStateChanged(object sender, EventArgs e)
@@ -853,11 +841,7 @@ public partial class MainWindow : Window
         }
 
         Song song = allSongsPlaylist.Songs[songFile];
-        string title = (song.Title == string.Empty) switch
-        {
-            true => "Generic Song",
-            false => song.Title
-        };
+        string title = (song.Title == string.Empty) ? "Generic Song" : song.Title;
         string artist = song.Artist;
 
         if (MiniPlayerWindow.Instance is not null)
@@ -898,11 +882,7 @@ public partial class MainWindow : Window
     {
         if (playedSongs.Count < 1) return;
 
-        Song lastSong = playedSongs.Count switch
-        {
-            1 => playedSongs.Last(),
-            _ => playedSongs[playedSongs.Count - 2]
-        };
+        Song lastSong = playedSongs.Count == 1 ? playedSongs.Last() : playedSongs[^2];
         playedSongs.Remove(lastSong);
         PlaySong(lastSong.FilePath, currentCollection);
     }
