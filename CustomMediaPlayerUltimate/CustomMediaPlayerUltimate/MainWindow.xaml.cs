@@ -863,16 +863,11 @@ public partial class MainWindow : Window
         mediaPlayer.Open(new Uri(songFile));
         mediaPlayer.Play();
         mediaPlayer.Volume = VolumeSlider.Value / 100f;
-        if (currentCollection != songCollection)
+        if (currentCollection != songCollection || songQueue.Count != currentCollection.Songs.Count)
         {
             currentCollection = songCollection;
-            songQueue.Clear();
-            songQueue.EnsureCapacity(currentCollection.Songs.Count);
-            songQueue.Add(song);
+            PopulateSongQueueFromSongAndCollection(song, currentCollection);
             currentSongIndex = 0;
-            Song[] qSongs = (from s in currentCollection.Songs.Values.ToArray() where !s.Equals(song) select s).ToArray();
-            random.Shuffle(qSongs);
-            songQueue.AddRange(qSongs);
         }
         currentSong = song;
         ProgressSlider.Value = 0;
@@ -882,6 +877,11 @@ public partial class MainWindow : Window
 
     private void PreviousSongInPlaylist()
     {
+        if (currentCollection is null) return;
+        if (songQueue.Count == 0)
+        {
+            PopulateSongQueueFromCollection(currentCollection);
+        }
         currentSongIndex--;
         if (currentSongIndex < 0) currentSongIndex = songQueue.Count - 1;
         PlaySong(songQueue[currentSongIndex].FilePath, currentCollection);
@@ -897,9 +897,34 @@ public partial class MainWindow : Window
         }
 
         if (currentCollection is null) return;
+        if (songQueue.Count == 0)
+        {
+            PopulateSongQueueFromCollection(currentCollection);
+        }
         currentSongIndex++;
         if (currentSongIndex >= songQueue.Count) currentSongIndex = 0;
         PlaySong(songQueue[currentSongIndex].FilePath, currentCollection);
+    }
+
+    private void PopulateSongQueueFromCollection(SongCollection collection)
+    {
+        songQueue.Clear();
+        songQueue.EnsureCapacity(collection.Songs.Count);
+        currentSongIndex = -1;
+        Song[] qSongs = collection.Songs.Values.ToArray();
+        random.Shuffle(qSongs);
+        songQueue.AddRange(qSongs);
+    }
+
+    private void PopulateSongQueueFromSongAndCollection(Song song, SongCollection collection)
+    {
+        songQueue.Clear();
+        songQueue.EnsureCapacity(collection.Songs.Count);
+        songQueue.Add(song);
+        currentSongIndex = -1;
+        Song[] qSongs = (from s in collection.Songs.Values.ToArray() where !s.Equals(song) select s).ToArray();
+        random.Shuffle(qSongs);
+        songQueue.AddRange(qSongs);
     }
 
     private void MediaPlayer_MediaOpened(object? sender, EventArgs e)
@@ -1149,8 +1174,8 @@ public partial class MainWindow : Window
     private void PlayCollection(SongCollection collection)
     {
         if (collection.Songs.Count == 0) return;
-        Song startingSong = collection.Songs.Values.ElementAt(random.Next(collection.Songs.Count));
-        PlaySong(startingSong.FilePath, collection);
+        currentCollection = collection;
+        NextSongInPlaylist();
     }
 
     public void SetPrioritySong(Song song)
