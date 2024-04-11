@@ -26,6 +26,7 @@ public struct Song
             Title.ToLower().Contains(query) ||
             Artist.ToLower().Contains(query) ||
             Album.Name.ToLower().Contains(query) ||
-            Year.Contains(query);
+            Year.Contains(query) ||
+            Duration.Contains(query);
     }
 }
