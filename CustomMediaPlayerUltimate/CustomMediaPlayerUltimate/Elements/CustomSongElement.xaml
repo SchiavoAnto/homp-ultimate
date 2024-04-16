@@ -40,7 +40,9 @@
                             </Style.Triggers>
                         </Style>
                     </Button.Style>
-                    <Image Source="/Images/play.png"/>
+                    <Button.Content>
+                        <ContentControl Content="{StaticResource PlayIcon}"/>
+                    </Button.Content>
                 </Button>
             </Grid>
         </Grid>

@@ -33,6 +33,9 @@
     </Compile>
   </ItemGroup>
   <ItemGroup>
+    <Page Update="CommonContents.xaml">
+      <SubType>Designer</SubType>
+    </Page>
     <Page Update="CommonStyles.xaml">
       <SubType>Designer</SubType>
     </Page>

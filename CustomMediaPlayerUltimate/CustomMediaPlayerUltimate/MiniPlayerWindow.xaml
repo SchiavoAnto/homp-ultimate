@@ -112,13 +112,13 @@
             </Grid>
             <Button Style="{StaticResource ModernButton}" Grid.Column="5" Width="25" Height="25" Click="PlayPauseButtonClick">
                 <Button.Content>
-                    <Image x:Name="PlayPauseButtonImage" Source="/Images/play.png"/>
+                    <ContentControl x:Name="PlayPauseButtonIcon" Content="{StaticResource PlayIcon}"/>
                 </Button.Content>
             </Button>
             <Separator Grid.Column="6" Opacity="0" Width="2"/>
             <Button Style="{StaticResource ModernButton}" Grid.Column="7" Width="25" Height="25" Click="NextSongButtonClick">
                 <Button.Content>
-                    <Image Source="/Images/forward.png"/>
+                    <ContentControl Content="{StaticResource ForwardIcon}"/>
                 </Button.Content>
             </Button>
         </Grid>

@@ -211,11 +211,6 @@ public partial class MiniPlayerWindow : Window
 
     public void SetPlayPauseImage(bool playing)
     {
-        BitmapImage image = new BitmapImage();
-        image.BeginInit();
-        image.UriSource = new Uri(playing ? "/Images/pause.png" : "/Images/play.png", UriKind.Relative);
-        image.EndInit();
-
-        PlayPauseButtonImage.Source = image;
+        PlayPauseButtonIcon.Content = playing ? Application.Current.FindResource("PauseIcon") : Application.Current.FindResource("PlayIcon");
     }
 }

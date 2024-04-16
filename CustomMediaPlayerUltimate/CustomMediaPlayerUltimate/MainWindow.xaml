@@ -63,33 +63,33 @@
                     <Label x:Name="ProgressLabel" Foreground="WhiteSmoke">00:00 / 00:00</Label>
                 </StackPanel>
                 <Separator Width="10" Opacity="0"/>
-                <ToggleButton x:Name="LoopToggleButton" Width="45" Height="45" Click="LoopToggleButtonClick">
+                <ToggleButton x:Name="LoopToggleButton" Style="{StaticResource ModernToggleButton}" Width="30" Height="30" Click="LoopToggleButtonClick">
                     <ToggleButton.Content>
-                        <Image Source="/Images/repeat.png"/>
+                        <ContentControl Content="{StaticResource LoopIcon}"/>
                     </ToggleButton.Content>
                 </ToggleButton>
                 <Separator Width="5" Opacity="0"/>
-                <Button x:Name="BackwardButton" Width="45" Height="45" Click="BackwardButtonClick">
+                <Button x:Name="BackwardButton" Style="{StaticResource ModernButton}" Width="30" Height="30" Click="BackwardButtonClick">
                     <Button.Content>
-                        <Image Source="/Images/backward.png"/>
+                        <ContentControl Content="{StaticResource BackwardIcon}"/>
                     </Button.Content>
                 </Button>
                 <Separator Width="5" Opacity="0"/>
-                <Button x:Name="PlayPauseButton" Width="45" Height="45" Click="PlayPauseButtonClick">
+                <Button x:Name="PlayPauseButton" Style="{StaticResource ModernButton}" Width="35" Height="35" Click="PlayPauseButtonClick">
                     <Button.Content>
-                        <Image x:Name="PlayPauseButtonImage" Source="/Images/play.png"/>
+                        <ContentControl x:Name="PlayPauseButtonIcon" Content="{StaticResource PlayIcon}"/>
                     </Button.Content>
                 </Button>
                 <Separator Width="5" Opacity="0"/>
-                <Button x:Name="ForwardButton" Width="45" Height="45" Click="ForwardButtonClick">
+                <Button x:Name="ForwardButton" Style="{StaticResource ModernButton}" Width="30" Height="30" Click="ForwardButtonClick">
                     <Button.Content>
-                        <Image Source="/Images/forward.png"/>
+                        <ContentControl Content="{StaticResource ForwardIcon}"/>
                     </Button.Content>
                 </Button>
                 <Separator Width="5" Opacity="0"/>
-                <ToggleButton x:Name="ShuffleToggleButton" Width="45" Height="45" Click="ShuffleToggleButtonClick">
+                <ToggleButton x:Name="ShuffleToggleButton" Style="{StaticResource ModernToggleButton}" Width="30" Height="30" Click="ShuffleToggleButtonClick">
                     <ToggleButton.Content>
-                        <Image Source="/Images/shuffle.png"/>
+                        <ContentControl Content="{StaticResource ShuffleIcon}"/>
                     </ToggleButton.Content>
                 </ToggleButton>
                 <Separator Width="10" Opacity="0"/>
@@ -101,13 +101,13 @@
             <StackPanel Grid.Column="1" Orientation="Horizontal" VerticalAlignment="Center">
                 <Button Style="{StaticResource ModernButton}" Width="26" Height="26" Click="MiniplayerButtonClick">
                     <Button.Content>
-                        <Image Source="/Images/miniplayer.png"/>
+                        <Image Source="{StaticResource MiniplayerIcon}"/>
                     </Button.Content>
                 </Button>
                 <Separator Width="4" Opacity="0"/>
                 <ToggleButton x:Name="SongLyricsRichTextBoxVisibilityButton" Style="{StaticResource ModernToggleButton}" Width="26" Height="26" IsChecked="True" Click="SongLyricsRichTextBoxVisibilityButtonClick">
                     <ToggleButton.Content>
-                        <Image x:Name="SongLyricsRichTextBoxVisibilityButtonImage" Source="/Images/lyrics_shown.png"/>
+                        <Image x:Name="SongLyricsRichTextBoxVisibilityButtonImage" Source="{StaticResource LyricsShownIcon}"/>
                     </ToggleButton.Content>
                 </ToggleButton>
                 <StackPanel Orientation="Vertical" VerticalAlignment="Center" Margin="10,5,10,5">

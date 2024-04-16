@@ -39,11 +39,7 @@ public partial class MainWindow : Window
             SongLyricsRichTextBoxColumn.Width = value.Val ? expandedLyricsTextBoxWidth : collapsedLyricsTextBoxWidth;
             SongLyricsRichTextBox.Visibility = value.Val ? Visibility.Visible : Visibility.Collapsed;
             SongLyricsRichTextBoxVisibilityButton.IsChecked = value.Val;
-            SongLyricsRichTextBoxVisibilityButtonImage.Source = value.Val switch
-            {
-                true => Utils.ConstructImageFromPath("/Images/lyrics_shown.png"),
-                false => Utils.ConstructImageFromPath("/Images/lyrics_hidden.png")
-            };
+            SongLyricsRichTextBoxVisibilityButtonImage.Source = value.Val ? Application.Current.FindResource("LyricsShownIcon") as DrawingImage : Application.Current.FindResource("LyricsHiddenIcon") as DrawingImage;
             if (value.SaveValue) lastIsSidebarVisible = value.Val;
         }
     }
@@ -980,7 +976,7 @@ public partial class MainWindow : Window
 
     private void SetPlayPauseImage(bool playing)
     {
-        PlayPauseButtonImage.Source = Utils.ConstructImageFromPath(playing ? "/Images/pause.png" : "/Images/play.png");
+        PlayPauseButtonIcon.Content = playing ? Application.Current.FindResource("PauseIcon") : Application.Current.FindResource("PlayIcon");
     }
 
     private void IncreaseVolume()
