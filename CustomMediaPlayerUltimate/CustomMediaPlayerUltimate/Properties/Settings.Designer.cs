@@ -154,7 +154,22 @@ namespace CustomMediaPlayerUltimate.Properties {
                 this["ToggleShuffleShortcutKey"] = value;
             }
         }
-        
+
+        [global::System.Configuration.UserScopedSettingAttribute()]
+        [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
+        [global::System.Configuration.DefaultSettingValueAttribute("34")]
+        public short GoToBeginningShortcutKey
+        {
+            get
+            {
+                return ((short)(this["GoToBeginningShortcutKey"]));
+            }
+            set
+            {
+                this["GoToBeginningShortcutKey"] = value;
+            }
+        }
+
         [global::System.Configuration.UserScopedSettingAttribute()]
         [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
         [global::System.Configuration.DefaultSettingValueAttribute("False")]

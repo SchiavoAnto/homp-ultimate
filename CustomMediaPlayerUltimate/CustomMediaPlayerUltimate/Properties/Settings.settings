@@ -62,5 +62,8 @@
     <Setting Name="MiniplayerAppearOnMinimize" Type="System.Boolean" Scope="User">
       <Value Profile="(Default)">False</Value>
     </Setting>
+    <Setting Name="GoToBeginningShortcutKey" Type="System.Int16" Scope="User">
+      <Value Profile="(Default)">34</Value>
+    </Setting>
   </Settings>
 </SettingsFile>

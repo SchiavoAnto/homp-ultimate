@@ -206,6 +206,10 @@ public partial class MainWindow : Window
             {
                 ToggleShuffle();
             }
+            else if (key == (Key)Properties.Settings.Default.GoToBeginningShortcutKey)
+            {
+                GoToBeginningOfSong();
+            }
         }
         else
         {
@@ -1005,6 +1009,12 @@ public partial class MainWindow : Window
     {
         ShuffleToggleButton.IsChecked = !ShuffleToggleButton.IsChecked;
         Properties.Settings.Default.PlayerShuffle = (bool)ShuffleToggleButton.IsChecked!;
+    }
+
+    private void GoToBeginningOfSong()
+    {
+        mediaPlayer.Position = TimeSpan.Zero;
+        ProgressSlider.Value = 0;
     }
 
     private void OnSettingsSearchShuffleCheckboxChecked(object sender, RoutedEventArgs e)
