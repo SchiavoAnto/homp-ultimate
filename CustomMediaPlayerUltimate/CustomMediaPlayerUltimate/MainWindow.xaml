@@ -99,13 +99,13 @@
                 </StackPanel>
             </StackPanel>
             <StackPanel Grid.Column="1" Orientation="Horizontal" VerticalAlignment="Center">
-                <Button Style="{StaticResource ModernButton}" Width="26" Height="26" Click="MiniplayerButtonClick">
+                <Button Style="{StaticResource ModernButton}" Width="26" Height="26" ToolTip="Switch to miniplayer" Click="MiniplayerButtonClick">
                     <Button.Content>
                         <ContentControl Content="{StaticResource MiniplayerIcon}"/>
                     </Button.Content>
                 </Button>
                 <Separator Width="4" Opacity="0"/>
-                <ToggleButton x:Name="SongLyricsRichTextBoxVisibilityButton" Style="{StaticResource ModernToggleButton}" Width="26" Height="26" IsChecked="True" Click="SongLyricsRichTextBoxVisibilityButtonClick">
+                <ToggleButton x:Name="SongLyricsRichTextBoxVisibilityButton" Style="{StaticResource ModernToggleButton}" Width="26" Height="26" ToolTip="Show/Hide lyrics" IsChecked="True" Click="SongLyricsRichTextBoxVisibilityButtonClick">
                     <ToggleButton.Content>
                         <ContentControl x:Name="SongLyricsRichTextBoxVisibilityButtonIcon" Content="{StaticResource LyricsShownIcon}"/>
                     </ToggleButton.Content>

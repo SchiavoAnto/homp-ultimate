@@ -119,6 +119,7 @@
 
     <Style TargetType="ToolTip">
         <Setter Property="Background" Value="#303030"/>
+        <Setter Property="Foreground" Value="WhiteSmoke"/>
     </Style>
 
     <Style x:Key="CustomSongElement" TargetType="Grid">
