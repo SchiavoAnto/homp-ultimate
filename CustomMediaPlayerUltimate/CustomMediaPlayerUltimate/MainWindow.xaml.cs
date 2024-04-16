@@ -39,7 +39,7 @@ public partial class MainWindow : Window
             SongLyricsRichTextBoxColumn.Width = value.Val ? expandedLyricsTextBoxWidth : collapsedLyricsTextBoxWidth;
             SongLyricsRichTextBox.Visibility = value.Val ? Visibility.Visible : Visibility.Collapsed;
             SongLyricsRichTextBoxVisibilityButton.IsChecked = value.Val;
-            SongLyricsRichTextBoxVisibilityButtonImage.Source = value.Val ? Application.Current.FindResource("LyricsShownIcon") as DrawingImage : Application.Current.FindResource("LyricsHiddenIcon") as DrawingImage;
+            SongLyricsRichTextBoxVisibilityButtonIcon.Content = value.Val ? Application.Current.FindResource("LyricsShownIcon") : Application.Current.FindResource("LyricsHiddenIcon");
             if (value.SaveValue) lastIsSidebarVisible = value.Val;
         }
     }

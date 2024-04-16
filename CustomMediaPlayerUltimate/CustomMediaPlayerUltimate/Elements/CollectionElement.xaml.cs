@@ -28,7 +28,7 @@ public partial class CollectionElement : UserControl
         set
         {
             _focused = value;
-            FocusedIndicatorImage.Visibility = value ? Visibility.Visible : Visibility.Collapsed;
+            FocusedIndicatorIcon.Visibility = value ? Visibility.Visible : Visibility.Collapsed;
             //GridContainer.Background = value ? Brushes.Gray : new SolidColorBrush(Color.FromRgb(48, 48, 48));
         }
     }

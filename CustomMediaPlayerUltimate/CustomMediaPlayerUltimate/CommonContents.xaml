@@ -46,74 +46,57 @@
         </Grid>
     </Viewbox>
 
-    <DrawingImage x:Key="LyricsHiddenIcon">
-        <DrawingImage.Drawing>
-            <DrawingGroup ClipGeometry="M0,0 V256 H256 V0 H0 Z">
-                <GeometryDrawing>
-                    <GeometryDrawing.Pen>
-                        <Pen Brush="#FFF5F5F5" Thickness="24" StartLineCap="Flat" EndLineCap="Flat" LineJoin="Miter" />
-                    </GeometryDrawing.Pen>
-                    <GeometryDrawing.Geometry>
-                        <LineGeometry StartPoint="159,24" EndPoint="159,232" />
-                    </GeometryDrawing.Geometry>
-                </GeometryDrawing>
-                <GeometryDrawing>
-                    <GeometryDrawing.Pen>
-                        <Pen Brush="#FFF5F5F5" Thickness="24" StartLineCap="Flat" EndLineCap="Flat" LineJoin="Miter" />
-                    </GeometryDrawing.Pen>
-                    <GeometryDrawing.Geometry>
-                        <RectangleGeometry RadiusX="12" RadiusY="12" Rect="12,12,232,232" />
-                    </GeometryDrawing.Geometry>
-                </GeometryDrawing>
-            </DrawingGroup>
-        </DrawingImage.Drawing>
-    </DrawingImage>
+    <Viewbox x:Key="LyricsHiddenIcon" x:Shared="False" Stretch="Uniform" SnapsToDevicePixels="True">
+        <Grid>
+            <Path StrokeThickness="24" Stroke="WhiteSmoke">
+                <Path.Data>
+                    <LineGeometry StartPoint="159,24" EndPoint="159,232"/>
+                </Path.Data>
+            </Path>
+            <Path StrokeThickness="24" Stroke="WhiteSmoke">
+                <Path.Data>
+                    <RectangleGeometry Rect="12,12,232,232" RadiusX="12" RadiusY="12"/>
+                </Path.Data>
+            </Path>
+        </Grid>
+    </Viewbox>
 
-    <DrawingImage x:Key="LyricsShownIcon">
-        <DrawingImage.Drawing>
-            <DrawingGroup ClipGeometry="M0,0 V256 H256 V0 H0 Z">
-                <GeometryDrawing>
-                    <GeometryDrawing.Pen>
-                        <Pen Brush="#FFF5F5F5" Thickness="24" StartLineCap="Flat" EndLineCap="Flat" LineJoin="Miter" />
-                    </GeometryDrawing.Pen>
-                    <GeometryDrawing.Geometry>
-                        <LineGeometry StartPoint="159,24" EndPoint="159,232" />
-                    </GeometryDrawing.Geometry>
-                </GeometryDrawing>
-                <GeometryDrawing>
-                    <GeometryDrawing.Pen>
-                        <Pen Brush="#FFF5F5F5" Thickness="24" StartLineCap="Flat" EndLineCap="Flat" LineJoin="Miter" />
-                    </GeometryDrawing.Pen>
-                    <GeometryDrawing.Geometry>
-                        <RectangleGeometry RadiusX="12" RadiusY="12" Rect="12,12,232,232" />
-                    </GeometryDrawing.Geometry>
-                </GeometryDrawing>
-                <GeometryDrawing Brush="#FFF5F5F5">
-                    <GeometryDrawing.Geometry>
-                        <RectangleGeometry RadiusX="0" RadiusY="0" Rect="171,24,61,208" />
-                    </GeometryDrawing.Geometry>
-                </GeometryDrawing>
-            </DrawingGroup>
-        </DrawingImage.Drawing>
-    </DrawingImage>
+    <Viewbox x:Key="LyricsShownIcon" x:Shared="False" Stretch="Uniform" SnapsToDevicePixels="True">
+        <Grid>
+            <Path StrokeThickness="24" Stroke="WhiteSmoke">
+                <Path.Data>
+                    <LineGeometry StartPoint="159,24" EndPoint="159,232"/>
+                </Path.Data>
+            </Path>
+            <Path StrokeThickness="24" Stroke="WhiteSmoke">
+                <Path.Data>
+                    <RectangleGeometry Rect="12,12,232,232" RadiusX="12" RadiusY="12"/>
+                </Path.Data>
+            </Path>
+            <Path Fill="WhiteSmoke">
+                <Path.Data>
+                    <RectangleGeometry Rect="171,24,61,208"/>
+                </Path.Data>
+            </Path>
+        </Grid>
+    </Viewbox>
 
-    <DrawingImage x:Key="MiniplayerIcon">
-        <DrawingImage.Drawing>
-            <DrawingGroup ClipGeometry="M0,0 V256 H256 V0 H0 Z">
-                <GeometryDrawing>
-                    <GeometryDrawing.Pen>
-                        <Pen Brush="#FFF5F5F5" Thickness="24" StartLineCap="Flat" EndLineCap="Flat" LineJoin="Miter" />
-                    </GeometryDrawing.Pen>
-                    <GeometryDrawing.Geometry>
-                        <RectangleGeometry RadiusX="12" RadiusY="12" Rect="12,12,168,168" />
-                    </GeometryDrawing.Geometry>
-                </GeometryDrawing>
-                <GeometryDrawing Brush="#FFF5F5F5">
-                    <GeometryDrawing.Geometry>
-                        <RectangleGeometry RadiusX="24" RadiusY="24" Rect="128,128,128,128" />
-                    </GeometryDrawing.Geometry>
-                </GeometryDrawing>
-            </DrawingGroup>
-        </DrawingImage.Drawing>
-    </DrawingImage>
+    <Viewbox x:Key="MiniplayerIcon" x:Shared="False" Stretch="Uniform" SnapsToDevicePixels="True">
+        <Grid>
+            <Path StrokeThickness="24" Stroke="WhiteSmoke">
+                <Path.Data>
+                    <RectangleGeometry Rect="12,12,168,168" RadiusX="12" RadiusY="12"/>
+                </Path.Data>
+            </Path>
+            <Path Fill="WhiteSmoke">
+                <Path.Data>
+                    <RectangleGeometry Rect="128,128,128,128" RadiusX="24" RadiusY="24"/>
+                </Path.Data>
+            </Path>
+        </Grid>
+    </Viewbox>
+
+    <Viewbox x:Key="SelectedMarkIcon" x:Shared="False" Stretch="Uniform" SnapsToDevicePixels="True">
+        <Path Fill="#F5F5F5" Data="M128 0L256 128L128 256V0Z"/>
+    </Viewbox>
 </ResourceDictionary>

@@ -94,20 +94,20 @@
                 </ToggleButton>
                 <Separator Width="10" Opacity="0"/>
                 <StackPanel Orientation="Vertical" VerticalAlignment="Center">
-                    <Label x:Name="CurrentSongTitleLabel" Content="No songs playing." Foreground="WhiteSmoke" FontWeight="Medium" FontSize="16"/>
+                    <Label x:Name="CurrentSongTitleLabel" Content="No song playing" Foreground="WhiteSmoke" FontWeight="Medium" FontSize="16"/>
                     <Label x:Name="CurrentSongArtistAlbumLabel" Content="Artist - Album" Foreground="WhiteSmoke"/>
                 </StackPanel>
             </StackPanel>
             <StackPanel Grid.Column="1" Orientation="Horizontal" VerticalAlignment="Center">
                 <Button Style="{StaticResource ModernButton}" Width="26" Height="26" Click="MiniplayerButtonClick">
                     <Button.Content>
-                        <Image Source="{StaticResource MiniplayerIcon}"/>
+                        <ContentControl Content="{StaticResource MiniplayerIcon}"/>
                     </Button.Content>
                 </Button>
                 <Separator Width="4" Opacity="0"/>
                 <ToggleButton x:Name="SongLyricsRichTextBoxVisibilityButton" Style="{StaticResource ModernToggleButton}" Width="26" Height="26" IsChecked="True" Click="SongLyricsRichTextBoxVisibilityButtonClick">
                     <ToggleButton.Content>
-                        <Image x:Name="SongLyricsRichTextBoxVisibilityButtonImage" Source="{StaticResource LyricsShownIcon}"/>
+                        <ContentControl x:Name="SongLyricsRichTextBoxVisibilityButtonIcon" Content="{StaticResource LyricsShownIcon}"/>
                     </ToggleButton.Content>
                 </ToggleButton>
                 <StackPanel Orientation="Vertical" VerticalAlignment="Center" Margin="10,5,10,5">
