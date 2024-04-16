@@ -475,6 +475,8 @@
                                             <RowDefinition Height="Auto"/>
                                             <RowDefinition Height="Auto"/>
                                             <RowDefinition Height="Auto"/>
+                                            <RowDefinition Height="Auto"/>
+                                            <RowDefinition Height="Auto"/>
                                         </Grid.RowDefinitions>
                                         <Grid.ColumnDefinitions>
                                             <ColumnDefinition Width="Auto"/>
@@ -501,6 +503,9 @@
                                         <Separator Grid.Row="11" Grid.Column="0" Height="5" Background="Transparent"/>
                                         <Label Foreground="WhiteSmoke" Grid.Row="12" Grid.Column="0">Toggle shuffle (default is S):</Label>
                                         <Button x:Name="SettingsToggleShuffleShortcutButton" MinWidth="50" Grid.Row="12" Grid.Column="1" Click="OnSettingsToggleShuffleShortcutButtonClick">S</Button>
+                                        <Separator Grid.Row="13" Grid.Column="0" Height="5" Background="Transparent"/>
+                                        <Label Foreground="WhiteSmoke" Grid.Row="14" Grid.Column="0">Go to beginning of song (default is 0):</Label>
+                                        <Button x:Name="SettingsGoToBeginningOfSongShortcutButton" MinWidth="50" Grid.Row="14" Grid.Column="1" Click="OnSettingsGoToBeginningOfSongShortcutButtonClick">0</Button>
                                     </Grid>
                                 </StackPanel>
                             </Expander>

@@ -734,6 +734,7 @@ public partial class MainWindow : Window
         SettingsPreviousSongShortcutButton.Content = $"{(Key)Properties.Settings.Default.PreviousSongShortcutKey}";
         SettingsToggleLoopShortcutButton.Content = $"{(Key)Properties.Settings.Default.ToggleLoopShortcutKey}";
         SettingsToggleShuffleShortcutButton.Content = $"{(Key)Properties.Settings.Default.ToggleShuffleShortcutKey}";
+        SettingsGoToBeginningOfSongShortcutButton.Content = $"{(Key)Properties.Settings.Default.GoToBeginningShortcutKey}";
 
         SettingsEnableFadeInCheckbox.IsChecked = Properties.Settings.Default.PlaybackFadeIn;
         SettingsEnableFadeOutCheckbox.IsChecked = Properties.Settings.Default.PlaybackFadeOut;
@@ -1073,6 +1074,11 @@ public partial class MainWindow : Window
     private void OnSettingsToggleShuffleShortcutButtonClick(object sender, RoutedEventArgs e)
     {
         ChangeShortcut("ToggleShuffleShortcutKey", SettingsToggleShuffleShortcutButton);
+    }
+
+    private void OnSettingsGoToBeginningOfSongShortcutButtonClick(object sender, RoutedEventArgs e)
+    {
+        ChangeShortcut("GoToBeginningShortcutKey", SettingsGoToBeginningOfSongShortcutButton);
     }
 
     private void OnSettingsEnableFadeInCheckboxChecked(object sender, RoutedEventArgs e)
