@@ -450,8 +450,8 @@
                     <Label Foreground="WhiteSmoke" FontSize="18" FontWeight="Bold" Margin="0,0,0,10">Settings</Label>
                     <StackPanel Orientation="Vertical">
                         <StackPanel Orientation="Vertical" Margin="5,-5,0,0">
-                            <CheckBox x:Name="SettingsSearchShuffleCheckbox" Foreground="WhiteSmoke" FontSize="13" FontWeight="SemiBold" Checked="OnSettingsSearchShuffleCheckboxChecked" Unchecked="OnSettingsSearchShuffleCheckboxUnchecked">Use search results as shuffle source</CheckBox>
-                            <TextBlock Foreground="LightGray" Margin="10,5,0,0" TextWrapping="Wrap">This option makes it so that Shuffle uses search results as the source of songs instead of the current collection. Gets applied for new searches only.</TextBlock>
+                            <CheckBox x:Name="SettingsSearchShuffleCheckbox" Foreground="WhiteSmoke" FontSize="13" FontWeight="SemiBold" Checked="OnSettingsSearchShuffleCheckboxChecked" Unchecked="OnSettingsSearchShuffleCheckboxUnchecked">Use search results as collection source</CheckBox>
+                            <TextBlock Foreground="LightGray" Margin="10,5,0,0" TextWrapping="Wrap">This option makes HOMP use the search results as source instead of the current collection. This affects Shuffle and Next song. Gets applied for new searches only.</TextBlock>
                         </StackPanel>
                         <StackPanel Orientation="Vertical" Margin="5,-5,0,0">
                             <Expander Margin="0,10,0,0">
