@@ -30,29 +30,29 @@ These shortcuts work even with HOMP running in the background. All shortcut keys
 
 HOMP has some quirks in how it works compared to other music players.  
 
-**1. Shuffle and Repeat**
-Shuffle works on the current song collection (all songs, album, playlist...) and the collection is always on loop.
+**1. Shuffle and Repeat**  
+Shuffle works on the current song collection (all songs, album, playlist...) and the collection is always on loop.  
 This means that while shuffle is turned on, all songs in the collection get played at least once, without repetitions, but the collection itself is looped, meaning that once every song has been played, it starts over from the beginning again.  
 Turning off shuffle just makes the playback stop once the current song ends.  
 
 Repeat on the other hand only affects single songs. This makes the single song loop, even when played from a collection. You can have both Shuffle and Repeat turned on, but repeat has priority over shuffle.  
 
-**2. Determining the current collection**
+**2. Determining the current collection**  
 The current collection indicates to HOMP which album/playlist/artist to use as source for Shuffle/Next song.  
-HOMP follows a single, easy rule to determine which collection has to be used: the current collection is the one where playback is started from.
-This means that:
-- Playing a song from 'All Songs' -> All loaded songs as source
-- Playing a song from 'Playlists' (or playing a playlist directly) -> That playlist as source
-- Playing a song from 'Albums' (or playing an album directly) -> That album as source
-- Playing a song from 'Artists' (or playing an artist directly) -> That artist as source
+HOMP follows a single, easy rule to determine which collection has to be used: the current collection is the one where playback is started from.  
+This means that:  
+- Playing a song from 'All Songs' -> All loaded songs as source  
+- Playing a song from 'Playlists' (or playing a playlist directly) -> That playlist as source  
+- Playing a song from 'Albums' (or playing an album directly) -> That album as source  
+- Playing a song from 'Artists' (or playing an artist directly) -> That artist as source  
 
 A special case is the 'Search results' page, where HOMP respects the 'Use search results as collection source' option.  
 If this option is active and playback is started from a song in the search results, then all of the songs in the search results are used as source.  
 
-**3. Play as next song**
-HOMP does not support manual queue management and the only option to force a song to get played after the current one is to right-click on it and click 'Play as next song'.
-This only plays that single song and does not change the collection source.
-This means that when the song that was forced to be played ends, HOMP returns to standard behaviour and resumes playing songs from the collection that was playing before.
+**3. Play as next song**  
+HOMP does not support manual queue management and the only option to force a song to get played after the current one is to right-click on it and click 'Play as next song'.  
+This only plays that single song and does not change the collection source.  
+This means that when the song that was forced to be played ends, HOMP returns to standard behaviour and resumes playing songs from the collection that was playing before.  
 
 ## Running HOMP  
 
