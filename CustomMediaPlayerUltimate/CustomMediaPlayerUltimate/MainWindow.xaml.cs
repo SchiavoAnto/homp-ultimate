@@ -1190,6 +1190,7 @@ public partial class MainWindow : Window
     {
         if (collection.Songs.Count == 0) return;
         currentCollection = collection;
+        PopulateSongQueueFromCollection(currentCollection);
         NextSongInPlaylist();
     }
 
