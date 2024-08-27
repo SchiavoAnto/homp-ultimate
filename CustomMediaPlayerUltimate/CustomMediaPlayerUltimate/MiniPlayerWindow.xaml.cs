@@ -4,6 +4,7 @@ using System.Windows;
 using System.Windows.Input;
 using System.ComponentModel;
 using System.Windows.Interop;
+using System.Windows.Controls;
 using System.Windows.Threading;
 using System.Windows.Media.Imaging;
 using System.Runtime.InteropServices;
@@ -165,6 +166,33 @@ public partial class MiniPlayerWindow : Window
     private void NextSongButtonClick(object sender, RoutedEventArgs e)
     {
         MainWindow.Instance.NextSongInPlaylist();
+    }
+
+    private void PreviousCtxClicked(object sender, RoutedEventArgs e)
+    {
+        MainWindow.Instance.PreviousSongInPlaylist();
+    }
+
+    private void LoopCtxClicked(object sender, RoutedEventArgs e)
+    {
+        MainWindow.Instance.UpdateLoop(LoopCtxMenuItem.IsChecked);
+    }
+
+    private void ShuffleCtxClicked(object sender, RoutedEventArgs e)
+    {
+        MainWindow.Instance.UpdateShuffle(ShuffleCtxMenuItem.IsChecked);
+    }
+
+    private void QuitCtxClicked(object sender, RoutedEventArgs e)
+    {
+        Close();
+        MainWindow.Instance.Close();
+    }
+
+    private void CtxMenuOpening(object sender, ContextMenuEventArgs e)
+    {
+        LoopCtxMenuItem.IsChecked = Properties.Settings.Default.PlayerLoop;
+        ShuffleCtxMenuItem.IsChecked = Properties.Settings.Default.PlayerShuffle;
     }
 
     public void SetTitleText(string title)

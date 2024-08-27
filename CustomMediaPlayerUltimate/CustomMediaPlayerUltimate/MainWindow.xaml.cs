@@ -883,7 +883,7 @@ public partial class MainWindow : Window
         LoadLyricsInView();
     }
 
-    private void PreviousSongInPlaylist()
+    public void PreviousSongInPlaylist()
     {
         if (currentCollection is null) return;
         if (songQueue.Count == 0)
@@ -1240,6 +1240,18 @@ public partial class MainWindow : Window
     private void MiniplayerButtonClick(object sender, RoutedEventArgs e)
     {
         ShowMiniplayer();
+    }
+
+    public void UpdateLoop(bool enabled)
+    {
+        Properties.Settings.Default.PlayerLoop = enabled;
+        LoopToggleButton.IsChecked = enabled;
+    }
+
+    public void UpdateShuffle(bool enabled)
+    {
+        Properties.Settings.Default.PlayerShuffle = enabled;
+        ShuffleToggleButton.IsChecked = enabled;
     }
 
     private void SongLyricsRichTextBoxVisibilityButtonClick(object sender, RoutedEventArgs e)

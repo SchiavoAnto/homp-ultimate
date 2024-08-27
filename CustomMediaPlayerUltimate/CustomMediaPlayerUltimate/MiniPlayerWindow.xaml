@@ -7,12 +7,21 @@
         Title="MiniPlayerWindow" Width="275" Height="55" MaxWidth="275" MaxHeight="55"
         WindowStyle="None" Topmost="True" AllowsTransparency="True" ShowInTaskbar="False" BorderThickness="0"
         Background="Transparent" Closing="WindowClosing" MouseEnter="WindowMouseEnter" MouseLeave="WindowMouseLeave"
-        LocationChanged="WindowLocationChanged" Loaded="WindowLoaded">
+        LocationChanged="WindowLocationChanged" Loaded="WindowLoaded" ContextMenuOpening="CtxMenuOpening">
     <Window.Resources>
         <Style TargetType="Image">
             <Setter Property="RenderOptions.EdgeMode" Value="Aliased" />
         </Style>
     </Window.Resources>
+    <Window.ContextMenu>
+        <ContextMenu>
+            <MenuItem Header="Previous" Click="PreviousCtxClicked"/>
+            <MenuItem x:Name="LoopCtxMenuItem" Header="Loop" IsCheckable="True" Click="LoopCtxClicked"/>
+            <MenuItem x:Name="ShuffleCtxMenuItem" Header="Shuffle" IsCheckable="True" Click="ShuffleCtxClicked"/>
+            <Separator/>
+            <MenuItem Header="Quit HOMP" Click="QuitCtxClicked"/>
+        </ContextMenu>
+    </Window.ContextMenu>
     
     <Border Padding="5" Margin="2" CornerRadius="5" BorderThickness="1" BorderBrush="#252525" Background="#252525">
         <Border.Effect>
