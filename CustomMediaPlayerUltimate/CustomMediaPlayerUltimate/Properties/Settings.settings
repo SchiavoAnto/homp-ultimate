@@ -65,5 +65,8 @@
     <Setting Name="GoToBeginningShortcutKey" Type="System.Int16" Scope="User">
       <Value Profile="(Default)">34</Value>
     </Setting>
+    <Setting Name="SwitchMiniplayerShortcutKey" Type="System.Int16" Scope="User">
+      <Value Profile="(Default)">56</Value>
+    </Setting>
   </Settings>
 </SettingsFile>

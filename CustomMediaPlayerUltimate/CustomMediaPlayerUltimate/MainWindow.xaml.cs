@@ -210,6 +210,10 @@ public partial class MainWindow : Window
             {
                 GoToBeginningOfSong();
             }
+            else if (key == (Key)Properties.Settings.Default.SwitchMiniplayerShortcutKey)
+            {
+                SwitchMiniplayerView();
+            }
         }
         else
         {
@@ -1081,6 +1085,11 @@ public partial class MainWindow : Window
         ChangeShortcut("GoToBeginningShortcutKey", SettingsGoToBeginningOfSongShortcutButton);
     }
 
+    private void OnSettingsSwitchMiniplayerShortcutButtonClick(object sender, RoutedEventArgs e)
+    {
+        ChangeShortcut("SwitchMiniplayerShortcutKey", SettingsSwitchMiniplayerShortcutButton);
+    }
+
     private void OnSettingsEnableFadeInCheckboxChecked(object sender, RoutedEventArgs e)
     {
         Properties.Settings.Default.PlaybackFadeIn = true;
@@ -1214,6 +1223,18 @@ public partial class MainWindow : Window
         MiniPlayerWindow.Instance?.SetPlayPauseImage(IsPlaying);
         MiniPlayerWindow.Instance?.SetCover(currentSong?.Cover);
         Hide();
+    }
+
+    private void SwitchMiniplayerView()
+    {
+        if (MiniPlayerWindow.Instance == null)
+        {
+            ShowMiniplayer();
+        }
+        else
+        {
+            MiniPlayerWindow.Instance.Close();
+        }
     }
 
     private void MiniplayerButtonClick(object sender, RoutedEventArgs e)

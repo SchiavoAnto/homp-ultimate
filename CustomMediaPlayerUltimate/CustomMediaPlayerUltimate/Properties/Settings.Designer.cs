@@ -12,7 +12,7 @@ namespace CustomMediaPlayerUltimate.Properties {
     
     
     [global::System.Runtime.CompilerServices.CompilerGeneratedAttribute()]
-    [global::System.CodeDom.Compiler.GeneratedCodeAttribute("Microsoft.VisualStudio.Editors.SettingsDesigner.SettingsSingleFileGenerator", "17.9.0.0")]
+    [global::System.CodeDom.Compiler.GeneratedCodeAttribute("Microsoft.VisualStudio.Editors.SettingsDesigner.SettingsSingleFileGenerator", "17.11.0.0")]
     public sealed partial class Settings : global::System.Configuration.ApplicationSettingsBase {
         
         private static Settings defaultInstance = ((Settings)(global::System.Configuration.ApplicationSettingsBase.Synchronized(new Settings())));
@@ -154,22 +154,7 @@ namespace CustomMediaPlayerUltimate.Properties {
                 this["ToggleShuffleShortcutKey"] = value;
             }
         }
-
-        [global::System.Configuration.UserScopedSettingAttribute()]
-        [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
-        [global::System.Configuration.DefaultSettingValueAttribute("34")]
-        public short GoToBeginningShortcutKey
-        {
-            get
-            {
-                return ((short)(this["GoToBeginningShortcutKey"]));
-            }
-            set
-            {
-                this["GoToBeginningShortcutKey"] = value;
-            }
-        }
-
+        
         [global::System.Configuration.UserScopedSettingAttribute()]
         [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
         [global::System.Configuration.DefaultSettingValueAttribute("False")]
@@ -274,6 +259,30 @@ namespace CustomMediaPlayerUltimate.Properties {
             }
             set {
                 this["MiniplayerAppearOnMinimize"] = value;
+            }
+        }
+        
+        [global::System.Configuration.UserScopedSettingAttribute()]
+        [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
+        [global::System.Configuration.DefaultSettingValueAttribute("34")]
+        public short GoToBeginningShortcutKey {
+            get {
+                return ((short)(this["GoToBeginningShortcutKey"]));
+            }
+            set {
+                this["GoToBeginningShortcutKey"] = value;
+            }
+        }
+        
+        [global::System.Configuration.UserScopedSettingAttribute()]
+        [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
+        [global::System.Configuration.DefaultSettingValueAttribute("56")]
+        public short SwitchMiniplayerShortcutKey {
+            get {
+                return ((short)(this["SwitchMiniplayerShortcutKey"]));
+            }
+            set {
+                this["SwitchMiniplayerShortcutKey"] = value;
             }
         }
     }

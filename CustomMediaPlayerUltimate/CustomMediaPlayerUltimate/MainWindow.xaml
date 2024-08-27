@@ -477,6 +477,8 @@
                                             <RowDefinition Height="Auto"/>
                                             <RowDefinition Height="Auto"/>
                                             <RowDefinition Height="Auto"/>
+                                            <RowDefinition Height="Auto"/>
+                                            <RowDefinition Height="Auto"/>
                                         </Grid.RowDefinitions>
                                         <Grid.ColumnDefinitions>
                                             <ColumnDefinition Width="Auto"/>
@@ -506,6 +508,9 @@
                                         <Separator Grid.Row="13" Grid.Column="0" Height="5" Background="Transparent"/>
                                         <Label Foreground="WhiteSmoke" Grid.Row="14" Grid.Column="0">Go to beginning of song (default is 0):</Label>
                                         <Button x:Name="SettingsGoToBeginningOfSongShortcutButton" MinWidth="50" Grid.Row="14" Grid.Column="1" Click="OnSettingsGoToBeginningOfSongShortcutButtonClick">0</Button>
+                                        <Separator Grid.Row="15" Grid.Column="0" Height="5" Background="Transparent"/>
+                                        <Label Foreground="WhiteSmoke" Grid.Row="16" Grid.Column="0">Switch from/to miniplayer (default is M):</Label>
+                                        <Button x:Name="SettingsSwitchMiniplayerShortcutButton" MinWidth="50" Grid.Row="16" Grid.Column="1" Click="OnSettingsSwitchMiniplayerShortcutButtonClick">M</Button>
                                     </Grid>
                                 </StackPanel>
                             </Expander>
