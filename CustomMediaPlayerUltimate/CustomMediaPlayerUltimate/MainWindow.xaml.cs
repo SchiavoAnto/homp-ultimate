@@ -765,33 +765,27 @@ public partial class MainWindow : Window
         Song song = new Song(songPath);
         try
         {
+            // Maybe use FileInfo? Could be worth a try
             song.FileName = songPath.Replace($"{dirPath}\\", "").Replace(".mp3", "");
             Dictionary<string, string> info = Utils.GetMediaInformation(songPath);
-            string title = song.FileName;
-            string artistName = "Unknown Artist";
-            string albumName = "Unknown Album";
 
             // Song Title
-            if (info.ContainsKey("Title")) title = info["Title"];
-            song.Title = title;
+            song.Title = info["Title"];
 
             // Song Artists
-            if (info.ContainsKey("Artist")) artistName = info["Artist"];
-            if (!artists.ContainsKey(artistName)) artists[artistName] = new Playlist(artistName);
-            song.Artist = artistName;
+            song.Artist = info["Artist"];
+            if (!artists.ContainsKey(song.Artist)) artists[song.Artist] = new Playlist(song.Artist);
 
             // Song Album
-            if (info.ContainsKey("Album")) albumName = info["Album"];
+            string albumName = info["Album"];
             if (!albums.ContainsKey(albumName)) albums[albumName] = new Album(albumName);
             song.Album = albums[albumName];
 
             // Song Year
-            if (info.ContainsKey("Year")) song.Year = info["Year"];
-            else song.Year = "";
+            song.Year = info["Year"];
 
             // Song Duration
-            if (info.ContainsKey("Duration")) song.Duration = info["Duration"];
-            else song.Duration = "";
+            song.Duration = info["Duration"];
 
             if (File.Exists($"{COVERS_PATH}\\{song.FileName}.mp3[Cover].png"))
             {
@@ -799,7 +793,7 @@ public partial class MainWindow : Window
             }
 
             allSongsPlaylist.AddSong(song);
-            artists[artistName].AddSong(song);
+            artists[song.Artist].AddSong(song);
             albums[albumName].AddSong(song);
 
             await AllSongsView.Dispatcher.BeginInvoke(() =>

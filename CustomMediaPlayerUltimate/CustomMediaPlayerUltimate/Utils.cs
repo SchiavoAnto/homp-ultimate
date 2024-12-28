@@ -15,7 +15,7 @@ internal class Utils
         {
             using (TagLib.File file = TagLib.File.Create(filename))
             {
-                info.Add("Title", file.Tag.Title);
+                info.Add("Title", file.Tag.Title ?? filename);
                 info.Add("Artist", string.Join(", ", file.Tag.Performers ?? ["Unknown Artist"]));
                 info.Add("Album", file.Tag.Album ?? "Unknown Album");
                 info.Add("Year", file.Tag.Year.ToString());
