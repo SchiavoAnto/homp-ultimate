@@ -1,8 +1,7 @@
 ﻿using System;
+using System.IO;
 using System.Collections.Generic;
 using System.Windows.Media.Imaging;
-using Microsoft.WindowsAPICodePack.Shell;
-using Microsoft.WindowsAPICodePack.Shell.PropertySystem;
 
 namespace CustomMediaPlayerUltimate;
 
@@ -11,41 +10,16 @@ internal class Utils
     public static Dictionary<string, string> GetMediaInformation(string filename)
     {
         Dictionary<string, string> info = new();
+        if (!File.Exists(filename)) return info;
         try
         {
-            using (ShellObject shell = ShellObject.FromParsingName(filename)!)
+            using (TagLib.File file = TagLib.File.Create(filename))
             {
-                IShellProperty prop;
-                try
-                {
-                    prop = shell.Properties!.System!.Title!;
-                    info.Add("Title", prop?.ValueAsObject?.ToString() ?? "Unknown Title");
-                }
-                catch { }
-                try
-                {
-                    prop = shell.Properties!.System!.Music.Artist;
-                    info.Add("Artist", string.Join(", ", (string[])prop?.ValueAsObject!) ?? "Unknown Artist");
-                }
-                catch { }
-                try
-                {
-                    prop = shell.Properties!.System!.Music.AlbumTitle;
-                    info.Add("Album", prop?.ValueAsObject?.ToString() ?? "Unknown Album");
-                }
-                catch { }
-                try
-                {
-                    prop = shell.Properties!.System!.Media.Year;
-                    info.Add("Year", prop?.ValueAsObject?.ToString() ?? "");
-                } catch { }
-                try
-                {
-                    prop = shell.Properties!.System!.Media.Duration!;
-                    TimeSpan span = TimeSpan.FromMicroseconds((ulong)prop?.ValueAsObject! / 10);
-                    info.Add("Duration", span.ToString("m':'ss"));
-                }
-                catch { }
+                info.Add("Title", file.Tag.Title);
+                info.Add("Artist", string.Join(", ", file.Tag.Performers ?? ["Unknown Artist"]));
+                info.Add("Album", file.Tag.Album ?? "Unknown Album");
+                info.Add("Year", file.Tag.Year.ToString());
+                info.Add("Duration", file.Properties.Duration.ToString("m':'ss"));
             }
         }
         catch { }
