@@ -18,10 +18,11 @@ namespace CustomMediaPlayerUltimate;
 
 public partial class MainWindow : Window
 {
-    public static string MUSIC_PATH = Environment.GetFolderPath(Environment.SpecialFolder.MyMusic);
-    public static string PLAYLISTS_PATH = $"{MUSIC_PATH}\\HompPlaylists";
-    public static string LYRICS_PATH = $"{MUSIC_PATH}\\Lyrics";
-    public static string COVERS_PATH = $"{MUSIC_PATH}\\HompCovers";
+    public static readonly string MUSIC_PATH = Environment.GetFolderPath(Environment.SpecialFolder.MyMusic);
+    public static readonly string PLAYLISTS_PATH = $"{MUSIC_PATH}\\HompPlaylists";
+    public static readonly string LYRICS_PATH = $"{MUSIC_PATH}\\Lyrics";
+    public static readonly string COVERS_PATH = $"{MUSIC_PATH}\\HompCovers";
+    public const string UNKNOWN_ALBUM = "Unknown Album";
     private const int VOLUME_STEP = 2;
     public static MainWindow Instance = null!;
 
@@ -767,25 +768,12 @@ public partial class MainWindow : Window
         {
             // Maybe use FileInfo? Could be worth a try
             song.FileName = songPath.Replace($"{dirPath}\\", "").Replace(".mp3", "");
-            Dictionary<string, string> info = Utils.GetMediaInformation(songPath);
+            if (!Utils.GetMediaInformation(song)) return false;
 
-            // Song Title
-            song.Title = info["Title"];
-
-            // Song Artists
-            song.Artist = info["Artist"];
             if (!artists.ContainsKey(song.Artist)) artists[song.Artist] = new SongCollection(song.Artist);
 
-            // Song Album
-            string albumName = info["Album"];
-            if (!albums.ContainsKey(albumName)) albums[albumName] = new SongCollection(albumName);
-            song.Album = albums[albumName];
-
-            // Song Year
-            song.Year = info["Year"];
-
-            // Song Duration
-            song.Duration = info["Duration"];
+            if (!albums.ContainsKey(song.Album ?? UNKNOWN_ALBUM))
+                albums[song.Album ?? UNKNOWN_ALBUM] = new SongCollection(song.Album ?? UNKNOWN_ALBUM);
 
             if (File.Exists($"{COVERS_PATH}\\{song.FileName}.mp3[Cover].png"))
             {
@@ -794,7 +782,7 @@ public partial class MainWindow : Window
 
             allSongsPlaylist.AddSong(song);
             artists[song.Artist].AddSong(song);
-            albums[albumName].AddSong(song);
+            albums[song.Album ?? UNKNOWN_ALBUM].AddSong(song);
 
             await AllSongsView.Dispatcher.BeginInvoke(() =>
             {
@@ -854,9 +842,9 @@ public partial class MainWindow : Window
             MiniPlayerWindow.Instance.SetCover(song.Cover);
         }
 
-        if (!song.Album.Equals(SongCollection.Empty))
+        if (song.Album is not null)
         {
-            artist += " - " + song.Album.Name;
+            artist += " - " + song.Album;
         }
         CurrentSongTitleLabel.Content = title;
         CurrentSongArtistAlbumLabel.Content = artist;

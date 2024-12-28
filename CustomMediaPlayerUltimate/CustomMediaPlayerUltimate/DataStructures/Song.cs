@@ -9,7 +9,7 @@ public class Song
     public string FileName { get; set; } = string.Empty;
     public string Title { get; set; } = string.Empty;
     public string Artist { get; set; } = string.Empty;
-    public SongCollection Album { get; set; } = SongCollection.Empty;
+    public string? Album { get; set; } = null;
     public string Year { get; set; } = string.Empty;
     public string Duration { get; set; } = string.Empty;
     public BitmapImage? Cover { get; set; } = null;
@@ -25,7 +25,7 @@ public class Song
         return FileName.ToLower().Contains(query) ||
             Title.ToLower().Contains(query) ||
             Artist.ToLower().Contains(query) ||
-            Album.Name.ToLower().Contains(query) ||
+            (Album ?? MainWindow.UNKNOWN_ALBUM).ToLower().Contains(query) ||
             Year.Contains(query) ||
             Duration.Contains(query);
     }

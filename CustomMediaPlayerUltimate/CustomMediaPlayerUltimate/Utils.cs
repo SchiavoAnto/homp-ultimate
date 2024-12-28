@@ -1,29 +1,31 @@
 ﻿using System;
 using System.IO;
-using System.Collections.Generic;
 using System.Windows.Media.Imaging;
+using CustomMediaPlayerUltimate.DataStructures;
 
 namespace CustomMediaPlayerUltimate;
 
 internal class Utils
 {
-    public static Dictionary<string, string> GetMediaInformation(string filename)
+    public static bool GetMediaInformation(Song song)
     {
-        Dictionary<string, string> info = new();
-        if (!File.Exists(filename)) return info;
+        if (!File.Exists(song.FilePath)) return false;
         try
         {
-            using (TagLib.File file = TagLib.File.Create(filename))
+            using (TagLib.File file = TagLib.File.Create(song.FilePath))
             {
-                info.Add("Title", file.Tag.Title ?? filename);
-                info.Add("Artist", string.Join(", ", file.Tag.Performers ?? ["Unknown Artist"]));
-                info.Add("Album", file.Tag.Album ?? "Unknown Album");
-                info.Add("Year", file.Tag.Year.ToString());
-                info.Add("Duration", file.Properties.Duration.ToString("m':'ss"));
+                song.Title = file.Tag.Title ?? song.FilePath;
+                song.Artist = string.Join(", ", file.Tag.Performers ?? ["Unknown Artist"]);
+                song.Album = file.Tag.Album;
+                song.Year = file.Tag.Year.ToString();
+                song.Duration = file.Properties.Duration.ToString("m':'ss");
             }
+            return true;
         }
-        catch { }
-        return info;
+        catch
+        {
+            return false;
+        }
     }
 
     public static BitmapImage ConstructImageFromPath(string path, UriKind mode = UriKind.Relative)
