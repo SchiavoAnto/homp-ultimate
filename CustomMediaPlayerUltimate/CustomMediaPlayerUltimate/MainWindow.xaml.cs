@@ -89,10 +89,10 @@ public partial class MainWindow : Window
     public ObservableCollection<CustomSongElement.CustomSongElementInfo> ArtistSongs { get; set; } = new();
     public ObservableCollection<CustomSongElement.CustomSongElementInfo> SearchSongs { get; set; } = new();
     private SongCollection? currentCollection;
-    private Playlist allSongsPlaylist;
-    private Dictionary<string, Playlist> playlists = new Dictionary<string, Playlist>();
-    private Dictionary<string, Album> albums = new Dictionary<string, Album>();
-    private Dictionary<string, Playlist> artists = new Dictionary<string, Playlist>();
+    private SongCollection allSongsPlaylist;
+    private Dictionary<string, SongCollection> playlists = new Dictionary<string, SongCollection>();
+    private Dictionary<string, SongCollection> albums = new Dictionary<string, SongCollection>();
+    private Dictionary<string, SongCollection> artists = new Dictionary<string, SongCollection>();
     private List<Song> songQueue = new();
 
     public MainWindow()
@@ -396,7 +396,7 @@ public partial class MainWindow : Window
                     sw.Close();
                     sw.Dispose();
                 }
-                playlists.Add(name, new Playlist(name));
+                playlists.Add(name, new SongCollection(name));
                 PlaylistsListPanel.Children.Add(new PlaylistElement(
                     (self) =>
                     {
@@ -421,9 +421,9 @@ public partial class MainWindow : Window
         }
     }
 
-    private void RenamePlaylist(Playlist playlist)
+    private void RenamePlaylist(SongCollection playlist)
     {
-        if (playlist.Equals(Playlist.Empty)) return;
+        if (playlist.Equals(SongCollection.Empty)) return;
         string oldPath = $"{PLAYLISTS_PATH}\\{playlist.Name}.homppl";
         InputBox ib = new InputBox("Insert playlist name", "Type the new name you want to give to the playlist:");
         if (ib.ShowDialog() == true)
@@ -443,9 +443,9 @@ public partial class MainWindow : Window
         }
     }
 
-    private void DeletePlaylist(Playlist playlist)
+    private void DeletePlaylist(SongCollection playlist)
     {
-        if (playlist.Equals(Playlist.Empty)) return;
+        if (playlist.Equals(SongCollection.Empty)) return;
         string path = $"{PLAYLISTS_PATH}\\{playlist.Name}.homppl";
         if (MessageBox.Show($"Are you sure to delete the playlist \"{playlist.Name}\"?", "Confirmation", MessageBoxButton.YesNo, MessageBoxImage.Question) == MessageBoxResult.Yes)
         {
@@ -462,9 +462,9 @@ public partial class MainWindow : Window
         }
     }
 
-    private void ManagePlaylistSongs(Playlist playlist)
+    private void ManagePlaylistSongs(SongCollection playlist)
     {
-        if (playlist.Equals(Playlist.Empty)) return;
+        if (playlist.Equals(SongCollection.Empty)) return;
         SongsChooserDialog scd = new SongsChooserDialog(allSongsPlaylist, playlist);
         if (scd.ShowDialog() != true) return;
         var result = scd.Result;
@@ -511,9 +511,9 @@ public partial class MainWindow : Window
         }
     }
 
-    private void LoadPlaylistSongsInView(Playlist playlist)
+    private void LoadPlaylistSongsInView(SongCollection playlist)
     {
-        if (playlist.Equals(Playlist.Empty)) return;
+        if (playlist.Equals(SongCollection.Empty)) return;
         PlaylistSongs.Clear();
         PlaylistSongsListTitleLabel.Content = playlist.Name;
         foreach (KeyValuePair<string, Song> songPair in playlists[playlist.Name].Songs.OrderBy((kvp) => kvp.Key))
@@ -551,10 +551,10 @@ public partial class MainWindow : Window
             IEnumerable<Song> results = from song in allSongsPlaylist.Songs.Values
                                         where song.IsCorrelated(SearchInputTextBox.Text)
                                         select song;
-            Playlist playlist = allSongsPlaylist;
+            SongCollection playlist = allSongsPlaylist;
             if (Properties.Settings.Default.UseSearchResultsAsShuffleSource)
             {
-                playlist = new Playlist("__HOMP_SEARCH_RESULTS_PLAYLIST__");
+                playlist = new SongCollection("__HOMP_SEARCH_RESULTS_PLAYLIST__");
                 foreach (Song song in results)
                 {
                     playlist.AddSong(song);
@@ -574,7 +574,7 @@ public partial class MainWindow : Window
 
     private async Task<bool> LoadAllSongs()
     {
-        allSongsPlaylist = new Playlist("__HOMP_ALL_SONGS_PLAYLIST__");
+        allSongsPlaylist = new SongCollection("__HOMP_ALL_SONGS_PLAYLIST__");
         AllSongs.Clear();
         foreach (string? path in Properties.Settings.Default.SourceDirectories)
         {
@@ -625,7 +625,7 @@ public partial class MainWindow : Window
             foreach (string p in allPlaylists)
             {
                 string playlistName = p.Replace($"{PLAYLISTS_PATH}\\", "").Replace(".homppl", "");
-                Playlist playlist = new Playlist(playlistName);
+                SongCollection playlist = new SongCollection(playlistName);
                 string[] songs = new string[] { };
                 using (StreamReader sr = new StreamReader(p))
                 {
@@ -676,7 +676,7 @@ public partial class MainWindow : Window
     {
         AlbumsListPanel.Children.Clear();
         AlbumsListPanel.Children.Add(new Label() { Content = "Albums", Foreground = Brushes.WhiteSmoke, FontSize = 18, FontWeight = FontWeights.Bold });
-        foreach (KeyValuePair<string, Album> kvp in albums.OrderBy((kvp) => kvp.Key))
+        foreach (KeyValuePair<string, SongCollection> kvp in albums.OrderBy((kvp) => kvp.Key))
         {
             AlbumsListPanel.Children.Add(new CollectionElement(
             (self) =>
@@ -700,7 +700,7 @@ public partial class MainWindow : Window
     {
         ArtistsListPanel.Children.Clear();
         ArtistsListPanel.Children.Add(new Label() { Content = "Artists", Foreground = Brushes.WhiteSmoke, FontSize = 18, FontWeight = FontWeights.Bold });
-        foreach (KeyValuePair<string, Playlist> kvp in artists.OrderBy((kvp) => kvp.Key))
+        foreach (KeyValuePair<string, SongCollection> kvp in artists.OrderBy((kvp) => kvp.Key))
         {
             ArtistsListPanel.Children.Add(new CollectionElement(
             (self) =>
@@ -774,11 +774,11 @@ public partial class MainWindow : Window
 
             // Song Artists
             song.Artist = info["Artist"];
-            if (!artists.ContainsKey(song.Artist)) artists[song.Artist] = new Playlist(song.Artist);
+            if (!artists.ContainsKey(song.Artist)) artists[song.Artist] = new SongCollection(song.Artist);
 
             // Song Album
             string albumName = info["Album"];
-            if (!albums.ContainsKey(albumName)) albums[albumName] = new Album(albumName);
+            if (!albums.ContainsKey(albumName)) albums[albumName] = new SongCollection(albumName);
             song.Album = albums[albumName];
 
             // Song Year
@@ -854,7 +854,7 @@ public partial class MainWindow : Window
             MiniPlayerWindow.Instance.SetCover(song.Cover);
         }
 
-        if (!song.Album.Equals(Album.Empty))
+        if (!song.Album.Equals(SongCollection.Empty))
         {
             artist += " - " + song.Album.Name;
         }
