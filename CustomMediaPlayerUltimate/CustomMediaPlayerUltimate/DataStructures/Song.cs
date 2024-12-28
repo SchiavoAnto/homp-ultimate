@@ -9,7 +9,7 @@ public struct Song
     public string FileName { get; set; } = string.Empty;
     public string Title { get; set; } = string.Empty;
     public string Artist { get; set; } = string.Empty;
-    public Album Album { get; set; } = Album.Empty;
+    public SongCollection Album { get; set; } = SongCollection.Empty;
     public string Year { get; set; } = string.Empty;
     public string Duration { get; set; } = string.Empty;
     public BitmapImage? Cover { get; set; } = null;
