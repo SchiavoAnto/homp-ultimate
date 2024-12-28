@@ -1,4 +1,6 @@
-﻿using System.Collections.Generic;
+﻿using System;
+using System.Linq;
+using System.Collections.Generic;
 using System.Windows.Media.Imaging;
 
 namespace CustomMediaPlayerUltimate.DataStructures;
@@ -17,6 +19,9 @@ public class SongCollection
     /// The cover image of this collection.
     /// </summary>
     public BitmapImage? Cover { get; set; } = null;
+
+    public TimeSpan TotalTime =>
+        TimeSpan.FromTicks(Songs.Values.Sum(song => song.Duration.Ticks));
 
     public static readonly SongCollection Empty = new SongCollection();
 

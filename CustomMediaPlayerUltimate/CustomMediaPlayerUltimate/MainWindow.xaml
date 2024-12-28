@@ -197,7 +197,13 @@
                         <RowDefinition Height="*"/>
                     </Grid.RowDefinitions>
 
-                    <Label x:Name="PlaylistSongsListTitleLabel" Grid.Row="0" Foreground="WhiteSmoke" FontSize="18" FontWeight="Bold"/>
+                    <StackPanel Grid.Row="0" Orientation="Horizontal">
+                        <Image x:Name="PlaylistSongsListCoverImage" Visibility="Collapsed" Width="75" Height="75" Margin="0,0,6,0" RenderOptions.BitmapScalingMode="HighQuality"/>
+                        <StackPanel Orientation="Vertical">
+                            <Label x:Name="PlaylistSongsListTitleLabel" Foreground="WhiteSmoke" FontSize="18" FontWeight="Bold" Margin="0" Padding="0"/>
+                            <Label x:Name="PlaylistSongsListDurationLabel" Foreground="LightGray" FontSize="14" Margin="0" Padding="0"/>
+                        </StackPanel>
+                    </StackPanel>
                     <ListView Grid.Row="1" ItemsSource="{Binding PlaylistSongs}">
                         <ListView.Style>
                             <Style TargetType="ListView">
@@ -267,7 +273,15 @@
                         <RowDefinition Height="Auto"/>
                         <RowDefinition Height="*"/>
                     </Grid.RowDefinitions>
-                    <Label x:Name="AlbumSongsListTitleLabel" Grid.Row="0" Foreground="WhiteSmoke" FontSize="18" FontWeight="Bold"/>
+                    <StackPanel Grid.Row="0" Orientation="Horizontal">
+                        <Image x:Name="AlbumSongsListCoverImage" Visibility="Collapsed" Width="75" Height="75" Margin="0,0,6,0" RenderOptions.BitmapScalingMode="HighQuality"/>
+                        <StackPanel Orientation="Vertical">
+                            <Label x:Name="AlbumSongsListTitleLabel" Foreground="WhiteSmoke" FontSize="18" FontWeight="Bold" Margin="0" Padding="0"/>
+                            <Label x:Name="AlbumSongsListDurationLabel" Foreground="LightGray" FontSize="14" Margin="0" Padding="0"/>
+                        </StackPanel>
+                    </StackPanel>
+                    <StackPanel Grid.Row="0" Orientation="Vertical">
+                    </StackPanel>
                     <ListView Grid.Row="1" ItemsSource="{Binding AlbumSongs}">
                         <ListView.Style>
                             <Style TargetType="ListView">
@@ -337,8 +351,13 @@
                         <RowDefinition Height="Auto"/>
                         <RowDefinition Height="*"/>
                     </Grid.RowDefinitions>
-
-                    <Label x:Name="AristSongsListTitleLabel" Grid.Row="0" Foreground="WhiteSmoke" FontSize="18" FontWeight="Bold"/>
+                    <StackPanel Grid.Row="0" Orientation="Horizontal">
+                        <Image x:Name="ArtistSongsListCoverImage" Visibility="Collapsed" Width="75" Height="75" Margin="0,0,6,0" RenderOptions.BitmapScalingMode="HighQuality"/>
+                        <StackPanel Orientation="Vertical">
+                            <Label x:Name="ArtistSongsListTitleLabel" Foreground="WhiteSmoke" FontSize="18" FontWeight="Bold" Margin="0" Padding="0"/>
+                            <Label x:Name="ArtistSongsListDurationLabel" Foreground="LightGray" FontSize="14" Margin="0" Padding="0"/>
+                        </StackPanel>
+                    </StackPanel>
                     <ListView Grid.Row="1" ItemsSource="{Binding ArtistSongs}">
                         <ListView.Style>
                             <Style TargetType="ListView">

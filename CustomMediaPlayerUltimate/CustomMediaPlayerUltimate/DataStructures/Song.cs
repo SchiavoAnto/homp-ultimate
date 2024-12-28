@@ -1,4 +1,5 @@
-﻿using System.Windows.Media.Imaging;
+﻿using System;
+using System.Windows.Media.Imaging;
 
 namespace CustomMediaPlayerUltimate.DataStructures;
 
@@ -11,7 +12,8 @@ public class Song
     public string Artist { get; set; } = string.Empty;
     public string? Album { get; set; } = null;
     public string Year { get; set; } = string.Empty;
-    public string Duration { get; set; } = string.Empty;
+    public TimeSpan Duration { get; set; } = TimeSpan.Zero;
+    public string DurationString => Duration.ToString(MainWindow.TIME_FORMAT);
     public BitmapImage? Cover { get; set; } = null;
 
     public Song(string path)
@@ -27,6 +29,6 @@ public class Song
             Artist.ToLower().Contains(query) ||
             (Album ?? MainWindow.UNKNOWN_ALBUM).ToLower().Contains(query) ||
             Year.Contains(query) ||
-            Duration.Contains(query);
+            Duration.ToString(MainWindow.TIME_FORMAT).Contains(query);
     }
 }

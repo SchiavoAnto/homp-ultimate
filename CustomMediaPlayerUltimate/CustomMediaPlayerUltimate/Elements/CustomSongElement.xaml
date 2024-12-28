@@ -57,7 +57,7 @@
             <Separator Grid.Row="1" Height="3" Opacity="0" Padding="0" Margin="0"/>
             <Label x:Name="SongArtistLabel" Grid.Row="2" VerticalAlignment="Center" Foreground="LightGray" Padding="0" FontSize="11" Content="{Binding Song.Artist}"/>
         </Grid>
-        <Label x:Name="SongDurationLabel" Grid.Column="2" VerticalAlignment="Center" Foreground="LightGray" FontSize="11" Content="{Binding Song.Duration}"/>
+        <Label x:Name="SongDurationLabel" Grid.Column="2" VerticalAlignment="Center" Foreground="LightGray" FontSize="11" Content="{Binding Song.DurationString}"/>
 
         <Grid.ContextMenu>
             <ContextMenu>

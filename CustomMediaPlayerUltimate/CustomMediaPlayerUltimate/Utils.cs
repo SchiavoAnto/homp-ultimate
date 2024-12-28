@@ -18,7 +18,7 @@ internal class Utils
                 song.Artist = string.Join(", ", file.Tag.Performers ?? ["Unknown Artist"]);
                 song.Album = file.Tag.Album;
                 song.Year = file.Tag.Year.ToString();
-                song.Duration = file.Properties.Duration.ToString("m':'ss");
+                song.Duration = file.Properties.Duration;
             }
             return true;
         }
@@ -36,5 +36,10 @@ internal class Utils
         image.EndInit();
 
         return image;
+    }
+
+    public static string Pluralize(int number, string singular, string plural)
+    {
+        return $"{number} {(number == 1 ? singular : plural)}";
     }
 }

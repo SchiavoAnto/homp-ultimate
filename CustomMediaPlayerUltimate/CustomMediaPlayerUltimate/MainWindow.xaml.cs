@@ -23,6 +23,8 @@ public partial class MainWindow : Window
     public static readonly string LYRICS_PATH = $"{MUSIC_PATH}\\Lyrics";
     public static readonly string COVERS_PATH = $"{MUSIC_PATH}\\HompCovers";
     public const string UNKNOWN_ALBUM = "Unknown Album";
+    public const string TIME_FORMAT = "m':'ss";
+    public const string TOTAL_TIME_FORMAT = "m'min 'ss's'";
     private const int VOLUME_STEP = 2;
     public static MainWindow Instance = null!;
 
@@ -517,6 +519,8 @@ public partial class MainWindow : Window
         if (playlist.Equals(SongCollection.Empty)) return;
         PlaylistSongs.Clear();
         PlaylistSongsListTitleLabel.Content = playlist.Name;
+        PlaylistSongsListDurationLabel.Content =
+            $"{playlist.Songs.Count} songs - {playlist.TotalTime.ToString(TOTAL_TIME_FORMAT)}";
         foreach (KeyValuePair<string, Song> songPair in playlists[playlist.Name].Songs.OrderBy((kvp) => kvp.Key))
         {
             PlaylistSongs.Add(new(songPair.Value, playlists[playlist.Name]));
@@ -528,6 +532,8 @@ public partial class MainWindow : Window
         if (!albums.ContainsKey(albumName)) { MessageBox.Show("Could not load album."); return; }
         AlbumSongs.Clear();
         AlbumSongsListTitleLabel.Content = albumName;
+        AlbumSongsListDurationLabel.Content =
+            $"{albums[albumName].Songs.Count} songs - {albums[albumName].TotalTime.ToString(TOTAL_TIME_FORMAT)}";
         foreach (Song song in albums[albumName].Songs.Values)
         {
             AlbumSongs.Add(new(song, albums[albumName]));
@@ -538,7 +544,9 @@ public partial class MainWindow : Window
     {
         if (!artists.ContainsKey(artistName)) { MessageBox.Show("Could not load artist's songs."); return; }
         ArtistSongs.Clear();
-        AristSongsListTitleLabel.Content = artistName;
+        ArtistSongsListTitleLabel.Content = artistName;
+        ArtistSongsListDurationLabel.Content =
+            $"{artists[artistName].Songs.Count} songs - {artists[artistName].TotalTime.ToString(TOTAL_TIME_FORMAT)}";
         foreach (Song song in artists[artistName].Songs.Values)
         {
             ArtistSongs.Add(new(song, artists[artistName]));
@@ -562,13 +570,16 @@ public partial class MainWindow : Window
                 }
             }
             SearchSongs.Clear();
-            SearchResultsTitleLabel.Content = $"Search results for '{SearchInputTextBox.Text}'";
-            int resultsCount = results.Count();
-            SearchResultsSubtitleLabel.Content = $"{resultsCount} {(resultsCount == 1 ? "result" : "results")}";
             foreach (Song song in results)
             {
                 SearchSongs.Add(new(song, playlist));
             }
+            SearchResultsTitleLabel.Content = $"Search results for '{SearchInputTextBox.Text}'";
+            SearchResultsSubtitleLabel.Content =
+                $"{Utils.Pluralize(SearchSongs.Count, "song", "songs")} - {
+                    TimeSpan.FromTicks(
+                        SearchSongs.Sum(song => song.Song.Duration.Ticks)
+                    ).ToString(TOTAL_TIME_FORMAT)}";
             SwitchToSearchResultsView(null!, null!);
         }
     }
