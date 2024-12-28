@@ -29,14 +29,14 @@ public class SongCollection
 
     public void AddSong(Song song)
     {
-        // if (song is null) return;
+        if (song is null) return;
         if (song.FilePath is null) return;
         Songs.Add(song.FilePath, song);
     }
 
     public bool RemoveSong(Song song)
     {
-        // if (song is null) return false;
+        if (song is null) return false;
         if (song.FilePath is null) return false;
         return Songs.Remove(song.FilePath);
     }

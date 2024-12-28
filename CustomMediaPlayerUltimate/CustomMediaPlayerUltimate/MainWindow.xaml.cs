@@ -490,7 +490,7 @@ public partial class MainWindow : Window
     public void LoadLyricsInView()
     {
         if (currentSong is null) return;
-        string lyricsFileName = $"{LYRICS_PATH}\\{currentSong.Value.FileName}.mp3[Lyrics].txt";
+        string lyricsFileName = $"{LYRICS_PATH}\\{currentSong.FileName}.mp3[Lyrics].txt";
         if (!File.Exists(lyricsFileName))
         {
             SetSongLyricsRichTextBoxText("No lyrics for this song.");
@@ -949,13 +949,13 @@ public partial class MainWindow : Window
         if (currentSong is null) return;
         if (prioritySong is not null)
         {
-            PlaySong(prioritySong.Value.FilePath, currentCollection);
+            PlaySong(prioritySong.FilePath, currentCollection);
             prioritySong = null;
             return;
         }
         if ((bool)LoopToggleButton.IsChecked!)
         {
-            PlaySong(currentSong.Value.FilePath, currentCollection!);
+            PlaySong(currentSong.FilePath, currentCollection!);
         }
         else if ((bool)ShuffleToggleButton.IsChecked!)
         {

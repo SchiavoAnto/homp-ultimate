@@ -2,7 +2,7 @@
 
 namespace CustomMediaPlayerUltimate.DataStructures;
 
-public struct Song
+public class Song
 {
     public bool HasErrored { get; set; } = false;
     public string FilePath { get; set; } = string.Empty;
