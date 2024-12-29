@@ -25,6 +25,7 @@ public partial class MainWindow : Window
     public const string UNKNOWN_ALBUM = "Unknown Album";
     public const string TIME_FORMAT = "m':'ss";
     public const string TOTAL_TIME_FORMAT = "m'min 'ss's'";
+    public const string TOTAL_TIME_FORMAT_HOURS = $"h'h '{TOTAL_TIME_FORMAT}";
     private const int VOLUME_STEP = 2;
     public static MainWindow Instance = null!;
 
@@ -519,8 +520,9 @@ public partial class MainWindow : Window
         if (playlist.Equals(SongCollection.Empty)) return;
         PlaylistSongs.Clear();
         PlaylistSongsListTitleLabel.Content = playlist.Name;
+        TimeSpan totalTime = playlist.TotalTime;
         PlaylistSongsListDurationLabel.Content =
-            $"{playlist.Songs.Count} songs - {playlist.TotalTime.ToString(TOTAL_TIME_FORMAT)}";
+            $"{playlist.Songs.Count} songs - {totalTime.ToString(((int)totalTime.TotalHours > 0) ? TOTAL_TIME_FORMAT_HOURS : TOTAL_TIME_FORMAT)}";
         foreach (KeyValuePair<string, Song> songPair in playlists[playlist.Name].Songs.OrderBy((kvp) => kvp.Key))
         {
             PlaylistSongs.Add(new(songPair.Value, playlists[playlist.Name]));
@@ -532,8 +534,9 @@ public partial class MainWindow : Window
         if (!albums.ContainsKey(albumName)) { MessageBox.Show("Could not load album."); return; }
         AlbumSongs.Clear();
         AlbumSongsListTitleLabel.Content = albumName;
+        TimeSpan totalTime = albums[albumName].TotalTime;
         AlbumSongsListDurationLabel.Content =
-            $"{albums[albumName].Songs.Count} songs - {albums[albumName].TotalTime.ToString(TOTAL_TIME_FORMAT)}";
+            $"{albums[albumName].Songs.Count} songs - {totalTime.ToString(((int)totalTime.TotalHours > 0) ? TOTAL_TIME_FORMAT_HOURS : TOTAL_TIME_FORMAT)}";
         foreach (Song song in albums[albumName].Songs.Values)
         {
             AlbumSongs.Add(new(song, albums[albumName]));
@@ -545,8 +548,9 @@ public partial class MainWindow : Window
         if (!artists.ContainsKey(artistName)) { MessageBox.Show("Could not load artist's songs."); return; }
         ArtistSongs.Clear();
         ArtistSongsListTitleLabel.Content = artistName;
+        TimeSpan totalTime = artists[artistName].TotalTime;
         ArtistSongsListDurationLabel.Content =
-            $"{artists[artistName].Songs.Count} songs - {artists[artistName].TotalTime.ToString(TOTAL_TIME_FORMAT)}";
+            $"{artists[artistName].Songs.Count} songs - {totalTime.ToString(((int)totalTime.TotalHours > 0) ? TOTAL_TIME_FORMAT_HOURS : TOTAL_TIME_FORMAT)}";
         foreach (Song song in artists[artistName].Songs.Values)
         {
             ArtistSongs.Add(new(song, artists[artistName]));
