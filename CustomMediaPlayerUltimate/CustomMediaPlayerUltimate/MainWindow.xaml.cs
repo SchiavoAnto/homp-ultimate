@@ -781,7 +781,20 @@ public partial class MainWindow : Window
             song.FileName = songPath.Replace($"{dirPath}\\", "").Replace(".mp3", "");
             if (!Utils.GetMediaInformation(song)) return false;
 
-            if (!artists.ContainsKey(song.Artist)) artists[song.Artist] = new SongCollection(song.Artist);
+            // Could maybe be a setting with values [Individual, Combined, Both]?
+            // Single artists
+            foreach (string artist in song.Artists)
+            {
+                if (!artists.ContainsKey(artist))
+                    artists[artist] = new SongCollection(artist);
+                artists[artist].AddSong(song);
+            }
+            // Combined artists
+            if (!artists.ContainsKey(song.Artist))
+                artists[song.Artist] = new SongCollection(song.Artist);
+
+            if (!artists[song.Artist].Songs.ContainsKey(song.FilePath))
+                artists[song.Artist].AddSong(song);
 
             if (!albums.ContainsKey(song.Album ?? UNKNOWN_ALBUM))
                 albums[song.Album ?? UNKNOWN_ALBUM] = new SongCollection(song.Album ?? UNKNOWN_ALBUM);
@@ -792,7 +805,6 @@ public partial class MainWindow : Window
             }
 
             allSongsPlaylist.AddSong(song);
-            artists[song.Artist].AddSong(song);
             albums[song.Album ?? UNKNOWN_ALBUM].AddSong(song);
 
             await AllSongsView.Dispatcher.BeginInvoke(() =>

@@ -10,6 +10,7 @@ public class Song
     public string FileName { get; set; } = string.Empty;
     public string Title { get; set; } = string.Empty;
     public string Artist { get; set; } = string.Empty;
+    public string[] Artists { get; set; } = [];
     public string? Album { get; set; } = null;
     public string Year { get; set; } = string.Empty;
     public TimeSpan Duration { get; set; } = TimeSpan.Zero;

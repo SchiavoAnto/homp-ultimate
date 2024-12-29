@@ -16,6 +16,9 @@ internal class Utils
             {
                 song.Title = file.Tag.Title ?? song.FilePath;
                 song.Artist = string.Join(", ", file.Tag.Performers ?? ["Unknown Artist"]);
+                // Maybe make the separator customizable
+                // Also, string.Join before and string.Split after looks stupid
+                song.Artists = song.Artist.Split([','], StringSplitOptions.TrimEntries);
                 song.Album = file.Tag.Album;
                 song.Year = file.Tag.Year.ToString();
                 song.Duration = file.Properties.Duration;
