@@ -1,5 +1,4 @@
 ﻿using System;
-using System.IO;
 using System.Windows.Media.Imaging;
 using CustomMediaPlayerUltimate.DataStructures;
 
@@ -9,18 +8,19 @@ internal class Utils
 {
     public static bool GetMediaInformation(Song song)
     {
-        if (!File.Exists(song.FilePath)) return false;
         try
         {
             using (TagLib.File file = TagLib.File.Create(song.FilePath))
             {
                 song.Title = file.Tag.Title ?? song.FilePath;
-                song.Artist = string.Join(", ", file.Tag.Performers ?? ["Unknown Artist"]);
-                // Maybe make the separator customizable
-                // Also, string.Join before and string.Split after looks stupid
-                song.Artists = song.Artist.Split([','], StringSplitOptions.TrimEntries);
+                song.Artists = file.Tag.Performers ?? ["Unknown Artist"];
+                song.Artist = string.Join(", ", song.Artists);
                 song.Album = file.Tag.Album;
-                song.Year = file.Tag.Year.ToString();
+                song.AlbumArtists = file.Tag.AlbumArtists ?? ["Unknown Artist"];
+                song.AlbumArtist = string.Join(", ", song.AlbumArtists);
+                song.Year = (int)file.Tag.Year;
+                song.TrackNumber = (int)file.Tag.Track;
+                song.Genres = file.Tag.Genres;
                 song.Duration = file.Properties.Duration;
             }
             return true;

@@ -128,7 +128,7 @@
                     <RowDefinition Height="*"/>
                 </Grid.RowDefinitions>
                 <Label Grid.Row="0" Content="All Songs" Foreground="WhiteSmoke" FontSize="18" FontWeight="Bold"/>
-                <ListView Grid.Row="1" ItemsSource="{Binding AllSongs}">
+                <ListView x:Name="AllSongsListView" Grid.Row="1">
                     <ListView.Style>
                         <Style TargetType="ListView">
                             <Setter Property="Template">

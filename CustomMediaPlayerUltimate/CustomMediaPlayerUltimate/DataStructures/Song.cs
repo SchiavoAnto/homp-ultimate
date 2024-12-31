@@ -10,9 +10,13 @@ public class Song
     public string FileName { get; set; } = string.Empty;
     public string Title { get; set; } = string.Empty;
     public string Artist { get; set; } = string.Empty;
-    public string[] Artists { get; set; } = [];
+    public string[] Artists { get; set; } = Array.Empty<string>();
     public string? Album { get; set; } = null;
-    public string Year { get; set; } = string.Empty;
+    public string AlbumArtist { get; set; } = string.Empty;
+    public string[] AlbumArtists { get; set; } = Array.Empty<string>();
+    public int Year { get; set; } = 0;
+    public int TrackNumber { get; set; } = 0;
+    public string[] Genres { get; set; } = Array.Empty<string>();
     public TimeSpan Duration { get; set; } = TimeSpan.Zero;
     public string DurationString => Duration.ToString(MainWindow.TIME_FORMAT);
     public BitmapImage? Cover { get; set; } = null;
@@ -29,7 +33,7 @@ public class Song
             Title.ToLower().Contains(query) ||
             Artist.ToLower().Contains(query) ||
             (Album ?? MainWindow.UNKNOWN_ALBUM).ToLower().Contains(query) ||
-            Year.Contains(query) ||
+            Year.ToString().Contains(query) ||
             Duration.ToString(MainWindow.TIME_FORMAT).Contains(query);
     }
 }

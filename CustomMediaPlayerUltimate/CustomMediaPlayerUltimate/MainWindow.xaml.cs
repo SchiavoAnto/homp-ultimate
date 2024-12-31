@@ -4,6 +4,7 @@ using System.Linq;
 using System.Windows;
 using System.Windows.Input;
 using System.Windows.Media;
+using Microsoft.Data.Sqlite;
 using System.Threading.Tasks;
 using System.Windows.Controls;
 using System.Windows.Documents;
@@ -16,6 +17,8 @@ using CustomMediaPlayerUltimate.DataStructures;
 
 namespace CustomMediaPlayerUltimate;
 
+// TODO: make some UI not available while loading stuff from DB.
+// (for example, the search box)
 public partial class MainWindow : Window
 {
     public static readonly string MUSIC_PATH = Environment.GetFolderPath(Environment.SpecialFolder.MyMusic);
@@ -27,6 +30,7 @@ public partial class MainWindow : Window
     public const string TOTAL_TIME_FORMAT = "m'min 'ss's'";
     public const string TOTAL_TIME_FORMAT_HOURS = $"h'h '{TOTAL_TIME_FORMAT}";
     private const int VOLUME_STEP = 2;
+    private static bool dbExists = false;
     public static MainWindow Instance = null!;
 
     private static readonly GridLength collapsedLyricsTextBoxWidth = new GridLength(0f);
@@ -87,13 +91,13 @@ public partial class MainWindow : Window
     private CollectionElement? currentlySelectedAlbumElement;
     private CollectionElement? currentlySelectedArtistElement;
 
-    public ObservableCollection<CustomSongElement.CustomSongElementInfo> AllSongs { get; set; } = new();
+    public List<CustomSongElement.CustomSongElementInfo>? AllSongs { get; set; }
     public ObservableCollection<CustomSongElement.CustomSongElementInfo> PlaylistSongs { get; set; } = new();
     public ObservableCollection<CustomSongElement.CustomSongElementInfo> AlbumSongs { get; set; } = new();
     public ObservableCollection<CustomSongElement.CustomSongElementInfo> ArtistSongs { get; set; } = new();
     public ObservableCollection<CustomSongElement.CustomSongElementInfo> SearchSongs { get; set; } = new();
     private SongCollection? currentCollection;
-    private SongCollection allSongsPlaylist;
+    private SongCollection? allSongsPlaylist;
     private Dictionary<string, SongCollection> playlists = new Dictionary<string, SongCollection>();
     private Dictionary<string, SongCollection> albums = new Dictionary<string, SongCollection>();
     private Dictionary<string, SongCollection> artists = new Dictionary<string, SongCollection>();
@@ -116,6 +120,12 @@ public partial class MainWindow : Window
     public async void OnWindowLoaded(object sender, RoutedEventArgs e)
     {
         EnsureFolders();
+        dbExists = File.Exists(Database.DB_PATH);
+        if (!Database.Init(dbExists))
+        {
+            MessageBox.Show("Database initialization failed. Will quit.", "HOMP", MessageBoxButton.OK, MessageBoxImage.Error);
+            Close();
+        }
 
         mediaPlayer.MediaOpened += MediaPlayer_MediaOpened;
         mediaPlayer.MediaEnded += MediaPlayer_MediaEnded;
@@ -125,15 +135,17 @@ public partial class MainWindow : Window
         timer.Tick += Timer_Tick;
         timer.Start();
 
-        //Carichiamo le impostazioni
         LoadSettings();
-        //Carichiamo tutte le canzoni
-        await LoadAllSongs();
-        //Carichiamo tutte le playlist
+
+        if (!dbExists)
+        {
+            await Task.Run(SaveAllToDB);
+        }
+        await LoadAllFromDB();
+
+        // TODO: Load playlists from DB
         LoadAllPlaylists();
-        //Carichiamo tutti gli album
         LoadAllAlbums();
-        //Carichiamo tutti gli artisti
         LoadAllArtists();
     }
 
@@ -148,6 +160,7 @@ public partial class MainWindow : Window
     {
         Properties.Settings.Default.Save();
         KeyboardHook.Stop();
+        Database.Close();
     }
 
     private void OnWindowSizeChanged(object sender, SizeChangedEventArgs e)
@@ -469,7 +482,7 @@ public partial class MainWindow : Window
     private void ManagePlaylistSongs(SongCollection playlist)
     {
         if (playlist.Equals(SongCollection.Empty)) return;
-        SongsChooserDialog scd = new SongsChooserDialog(allSongsPlaylist, playlist);
+        SongsChooserDialog scd = new SongsChooserDialog(allSongsPlaylist!, playlist);
         if (scd.ShowDialog() != true) return;
         var result = scd.Result;
         string path = $"{PLAYLISTS_PATH}\\{playlist.Name}.homppl";
@@ -561,7 +574,7 @@ public partial class MainWindow : Window
     {
         if (e.Key == Key.Enter)
         {
-            IEnumerable<Song> results = from song in allSongsPlaylist.Songs.Values
+            IEnumerable<Song> results = from song in allSongsPlaylist!.Songs.Values
                                         where song.IsCorrelated(SearchInputTextBox.Text)
                                         select song;
             SongCollection playlist = allSongsPlaylist;
@@ -579,38 +592,162 @@ public partial class MainWindow : Window
                 SearchSongs.Add(new(song, playlist));
             }
             SearchResultsTitleLabel.Content = $"Search results for '{SearchInputTextBox.Text}'";
+            TimeSpan totalTime = TimeSpan.FromTicks(SearchSongs.Sum(song => song.Song.Duration.Ticks));
             SearchResultsSubtitleLabel.Content =
                 $"{Utils.Pluralize(SearchSongs.Count, "song", "songs")} - {
-                    TimeSpan.FromTicks(
-                        SearchSongs.Sum(song => song.Song.Duration.Ticks)
-                    ).ToString(TOTAL_TIME_FORMAT)}";
+                    totalTime.ToString(((int)totalTime.TotalHours > 0) ? TOTAL_TIME_FORMAT_HOURS : TOTAL_TIME_FORMAT)}";
             SwitchToSearchResultsView(null!, null!);
         }
     }
 
-    private async Task<bool> LoadAllSongs()
+    private void SaveAllToDB()
     {
-        allSongsPlaylist = new SongCollection("__HOMP_ALL_SONGS_PLAYLIST__");
-        AllSongs.Clear();
+        if (!Database.StartTransaction()) return;
         foreach (string? path in Properties.Settings.Default.SourceDirectories)
         {
             if (path is null) continue;
             if (!Directory.Exists(path)) continue;
-            try
+            // Save source directory
+            Database.AddFolder(path);
+
+            string[] songPaths = Directory.GetFiles(path, "*.mp3", SearchOption.TopDirectoryOnly);
+            for (int i = 0; i < songPaths.Length; i++)
             {
-                string[] songPaths = Directory.GetFiles(path, "*.mp3");
-                foreach (string songPath in songPaths)
-                {
-                    await LoadSong(path, songPath);
-                }
-            }
-            catch (Exception ex)
-            {
-                MessageBox.Show($"Unable to load songs from directory '{path}'.\n\n" + ex.Message + "\n" + ex.StackTrace + ex.InnerException?.Message);
-                return false;
+                Song song = new(songPaths[i]);
+                // TODO: Might want to log failures.
+                if (!Utils.GetMediaInformation(song)) continue;
+                Database.AddSong(song);
             }
         }
-        return true;
+        Database.SetLastUpdate(DateTime.Now.Ticks);
+        Database.EndTransaction();
+    }
+
+    private async Task LoadAllFromDB()
+    {
+        // We get all the source directories used in the DB.
+        // TODO: check if the dirs in the DB are in the Settings.SourceDirectories
+        // setting, otherwise, delete it from DB and save that directory instead.
+        List<string?> dirs = new(Properties.Settings.Default.SourceDirectories.Count);
+        var dirReader = Database.ExecuteSelectQuery("SELECT path FROM folders;");
+        if (dirReader is null) return; // TODO: log error
+        while (dirReader.Read())
+        {
+            dirs.Add(dirReader.GetString(0));
+        }
+        dirReader.Close();
+
+        // If the DB did not exist when opening HOMP, this is the first time
+        // we are loading songs from it, and it just got created, so we can
+        // skip all the update checks.
+        // If it existed, then we need to do these checks.
+        if (dbExists)
+        {
+            // Get the last time we updated the DB.
+            var updReader = Database.ExecuteSelectQuery("SELECT last_db_update FROM homp;");
+            if (updReader is null) return; // TODO: log error
+            if (!updReader.Read())
+            {
+                return; // TODO: log error
+            }
+            long lastUpdate = updReader.GetInt64(0);
+            updReader.Close();
+
+            // We get the files of each dir and check if there are new ones.
+            for (int i = 0; i < dirs.Count; i++)
+            {
+                if (dirs[i] is null) continue;
+                FileInfo[] newFiles = new DirectoryInfo(dirs[i]!)
+                    .GetFiles()
+                    .Where(i => i.LastWriteTime.Ticks > lastUpdate || i.CreationTime.Ticks > lastUpdate)
+                    .ToArray();
+                // If there are any new files, we read them back from
+                // disk and save them to the DB.
+                if (newFiles.Length != 0)
+                {
+                    // Read each new file from disk
+                    // and save it to DB.
+                }
+            }
+        }
+
+        // We initialize the necessary collections.
+        int songCount = Database.GetRowCount("songs");
+        AllSongs = new(songCount <= 0 ? 32 : songCount);
+        allSongsPlaylist = new SongCollection("__HOMP_ALL_SONGS_PLAYLIST__");
+
+        // Songs
+        for (int i = 0; i < dirs.Count; i++)
+        {
+            using (var reader = Database.ExecuteSelectQuery("SELECT * FROM songs WHERE path LIKE @_path;", [("@_path", $"{dirs[i]}\\%")]))
+            {
+                if (reader is null) continue; // TODO: log error
+                if (dirs[i] is null) continue; // TODO: log error
+                while (reader!.Read())
+                {
+                    string? songPath = reader!.GetString(0);
+                    await LoadSongFromDB(dirs[i]!, songPath, reader);
+                }
+            }
+        }
+
+        AllSongsListView.ItemsSource = new ObservableCollection<CustomSongElement.CustomSongElementInfo>(AllSongs);
+    }
+
+    private async Task LoadSongFromDB(string dir, string? songPath, SqliteDataReader reader)
+    {
+        Song song = new(songPath!)
+        {
+            FileName = songPath?.Replace($"{dir}\\", "").Replace(".mp3", "") ?? string.Empty,
+            Title = reader.GetString(1) ?? string.Empty,
+            Artist = reader.GetString(2) ?? string.Empty,
+            // AlbumArtist = reader?.GetString(3) ?? "",
+            Album = reader.GetString(4) ?? UNKNOWN_ALBUM,
+            Year = reader.GetInt32(5),
+            TrackNumber = reader.GetInt32(6),
+            Duration = TimeSpan.FromTicks(reader.GetInt64(8)),
+            // Rating = reader?.GetByte(9) ?? 0,
+        };
+
+        song.Artists = song.Artist.Split(',', StringSplitOptions.TrimEntries);
+        song.Genres =
+            reader.GetString(7)?.Split(',', StringSplitOptions.TrimEntries)
+            ?? Array.Empty<string>();
+
+        // Could maybe be a setting with values [Individual, Combined, Both]?
+        // Single artists
+        foreach (string artist in song.Artists)
+        {
+            if (!artists.ContainsKey(artist))
+                artists[artist] = new SongCollection(artist);
+            artists[artist].AddSong(song);
+        }
+        // Combined artists
+        if (!artists.ContainsKey(song.Artist))
+            artists[song.Artist] = new SongCollection(song.Artist);
+
+        // If the song has a single artist, this would have caused problems.
+        // So we check before adding it.
+        if (!artists[song.Artist].Songs.ContainsKey(song.FilePath))
+            artists[song.Artist].AddSong(song);
+
+        // Create the album if it does not exist yet.
+        if (!albums.ContainsKey(song.Album ?? UNKNOWN_ALBUM))
+            albums[song.Album ?? UNKNOWN_ALBUM] = new SongCollection(song.Album ?? UNKNOWN_ALBUM);
+
+        // TODO: Slow. Maybe convert to ID3 cover tag?
+        //if (File.Exists($"{COVERS_PATH}\\{song.FileName}.mp3[Cover].png"))
+        //{
+        //    song.Cover = Utils.ConstructImageFromPath($"{COVERS_PATH}\\{song.FileName}.mp3[Cover].png", UriKind.Absolute);
+        //}
+
+        allSongsPlaylist?.AddSong(song);
+        albums[song.Album ?? UNKNOWN_ALBUM].AddSong(song);
+
+        await Task.Run(() =>
+        {
+            AllSongs?.Add(new(song, allSongsPlaylist!));
+        });
     }
 
     private void LoadAllPlaylists()
@@ -776,60 +913,6 @@ public partial class MainWindow : Window
         SettingsMiniplayerAutoAppearOnMinimizeCheckbox.IsChecked = Properties.Settings.Default.MiniplayerAppearOnMinimize;
     }
 
-    private async Task<bool> LoadSong(string dirPath, string songPath)
-    {
-        Song song = new Song(songPath);
-        try
-        {
-            // Maybe use FileInfo? Could be worth a try
-            song.FileName = songPath.Replace($"{dirPath}\\", "").Replace(".mp3", "");
-            if (!Utils.GetMediaInformation(song)) return false;
-
-            // Could maybe be a setting with values [Individual, Combined, Both]?
-            // Single artists
-            foreach (string artist in song.Artists)
-            {
-                if (!artists.ContainsKey(artist))
-                    artists[artist] = new SongCollection(artist);
-                artists[artist].AddSong(song);
-            }
-            // Combined artists
-            if (!artists.ContainsKey(song.Artist))
-                artists[song.Artist] = new SongCollection(song.Artist);
-
-            if (!artists[song.Artist].Songs.ContainsKey(song.FilePath))
-                artists[song.Artist].AddSong(song);
-
-            if (!albums.ContainsKey(song.Album ?? UNKNOWN_ALBUM))
-                albums[song.Album ?? UNKNOWN_ALBUM] = new SongCollection(song.Album ?? UNKNOWN_ALBUM);
-
-            if (File.Exists($"{COVERS_PATH}\\{song.FileName}.mp3[Cover].png"))
-            {
-                song.Cover = Utils.ConstructImageFromPath($"{COVERS_PATH}\\{song.FileName}.mp3[Cover].png", UriKind.Absolute);
-            }
-
-            allSongsPlaylist.AddSong(song);
-            albums[song.Album ?? UNKNOWN_ALBUM].AddSong(song);
-
-            await AllSongsView.Dispatcher.BeginInvoke(() =>
-            {
-                AllSongs.Add(new(song, allSongsPlaylist));
-            }, DispatcherPriority.Background);
-
-            return true;
-        }
-        catch
-        {
-            song.HasErrored = true;
-            await AllSongsView.Dispatcher.BeginInvoke(() =>
-            {
-                AllSongs.Add(new(song, null!));
-            }, DispatcherPriority.Background);
-
-            return false;
-        }
-    }
-
     private void Timer_Tick(object? sender, EventArgs e)
     {
         if (mediaPlayer.Source == null) return;
@@ -858,7 +941,7 @@ public partial class MainWindow : Window
             return;
         }
 
-        Song song = allSongsPlaylist.Songs[songFile];
+        Song song = allSongsPlaylist!.Songs[songFile];
         string title = (song.Title == string.Empty) ? "Generic Song" : song.Title;
         string artist = song.Artist;
 
