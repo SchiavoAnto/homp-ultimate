@@ -17,8 +17,6 @@ using CustomMediaPlayerUltimate.DataStructures;
 
 namespace CustomMediaPlayerUltimate;
 
-// TODO: make some UI not available while loading stuff from DB.
-// (for example, the search box)
 public partial class MainWindow : Window
 {
     public static readonly string MUSIC_PATH = Environment.GetFolderPath(Environment.SpecialFolder.MyMusic);
@@ -147,6 +145,8 @@ public partial class MainWindow : Window
         LoadAllPlaylists();
         LoadAllAlbums();
         LoadAllArtists();
+
+        FinishedLoading();
     }
 
     private void EnsureFolders()
@@ -911,6 +911,11 @@ public partial class MainWindow : Window
         SettingsMiniplayerOpacitySliderLabel.Content = $"{(SettingsMiniplayerOpacitySlider.Value * 100d):0.00}%";
         SettingsMiniplayerOpacityTimeoutNumberInputBox.SetValue(Properties.Settings.Default.MiniplayerFadingTimeout);
         SettingsMiniplayerAutoAppearOnMinimizeCheckbox.IsChecked = Properties.Settings.Default.MiniplayerAppearOnMinimize;
+    }
+
+    private void FinishedLoading()
+    {
+        SearchInputTextBox.IsEnabled = true;
     }
 
     private void Timer_Tick(object? sender, EventArgs e)

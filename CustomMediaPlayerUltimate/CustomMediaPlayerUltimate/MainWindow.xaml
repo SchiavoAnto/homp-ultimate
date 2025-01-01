@@ -36,14 +36,18 @@
             </StackPanel>
 
             <Grid Grid.Column="2">
-                <TextBox x:Name="SearchInputTextBox" Width="200" Grid.Column="3" KeyUp="SearchInputTextBoxKeyUp"/>
-                <TextBlock IsHitTestVisible="False" Text="Search by title, album, year..." VerticalAlignment="Center" HorizontalAlignment="Left" Margin="10,0,0,0" Foreground="DarkGray">
+                <TextBox x:Name="SearchInputTextBox" Width="200" Grid.Column="3" IsEnabled="False" KeyUp="SearchInputTextBoxKeyUp"/>
+                <TextBlock IsHitTestVisible="False" Text="Search by title, album, year..." VerticalAlignment="Center" HorizontalAlignment="Left" Margin="10,0,0,0">
                     <TextBlock.Style>
                         <Style TargetType="{x:Type TextBlock}">
                             <Setter Property="Visibility" Value="Collapsed"/>
+                            <Setter Property="Foreground" Value="DarkGray"/>
                             <Style.Triggers>
                                 <DataTrigger Binding="{Binding Text, ElementName=SearchInputTextBox}" Value="">
                                     <Setter Property="Visibility" Value="Visible"/>
+                                </DataTrigger>
+                                <DataTrigger Binding="{Binding IsEnabled, ElementName=SearchInputTextBox}" Value="False">
+                                    <Setter Property="Foreground" Value="Gray"/>
                                 </DataTrigger>
                             </Style.Triggers>
                         </Style>
