@@ -105,10 +105,14 @@ public partial class MainWindow : Window
     {
         InitializeComponent();
 
+        Logger.Init();
+        Logger.Log("HOMP started.");
+
         Instance = this;
         DataContext = this;
 #if DEBUG
         Title = $"(DEBUG) {Title}";
+        Logger.Warn("Running HOMP in Debug mode.");
 #endif
 
         KeyboardHook.OnKeyPressed += HandleHotkey;
@@ -119,6 +123,7 @@ public partial class MainWindow : Window
     {
         EnsureFolders();
         dbExists = File.Exists(Database.DB_PATH);
+        Logger.Log($"Database file found: {dbExists}");
         if (!Database.Init(dbExists))
         {
             MessageBox.Show("Database initialization failed. Will quit.", "HOMP", MessageBoxButton.OK, MessageBoxImage.Error);
@@ -155,6 +160,7 @@ public partial class MainWindow : Window
         Directory.CreateDirectory(PLAYLISTS_PATH);
         Directory.CreateDirectory(LYRICS_PATH);
         Directory.CreateDirectory(COVERS_PATH);
+        Logger.Log("HOMP folders created.");
     }
 
     private void OnWindowClosing(object sender, System.ComponentModel.CancelEventArgs e)
@@ -603,25 +609,49 @@ public partial class MainWindow : Window
 
     private void SaveAllToDB()
     {
-        if (!Database.StartTransaction()) return;
+        Logger.Log("Caching all files to the database...");
+        if (!Database.StartTransaction())
+        {
+            Logger.Error("Caching files failed! Database transaction denied.");
+            return;
+        }
         foreach (string? path in Properties.Settings.Default.SourceDirectories)
         {
             if (path is null) continue;
             if (!Directory.Exists(path)) continue;
             // Save source directory
+            Logger.Log($"Caching folder '{path}'.");
             Database.AddFolder(path);
+            int songsCached = 0;
 
             string[] songPaths = Directory.GetFiles(path, "*.mp3", SearchOption.TopDirectoryOnly);
+            Logger.Log($"Got {songPaths.Length} song files from '{path}'.");
             for (int i = 0; i < songPaths.Length; i++)
             {
                 Song song = new(songPaths[i]);
-                // TODO: Might want to log failures.
-                if (!Utils.GetMediaInformation(song)) continue;
-                Database.AddSong(song);
+                var mediaState = Utils.GetMediaInformation(song);
+                if (!mediaState.Success)
+                {
+                    Logger.Exception($"Skipped {songPaths[i]}: error while trying to retrieve media information", mediaState.Exception!);
+                    continue;
+                }
+                if (Database.AddSong(song))
+                {
+                    songsCached++;
+                }
+                else
+                {
+                    Logger.Error($"Caching of song {songPaths[i]} failed!");
+                }
             }
+            Logger.Log($"Finished caching folder '{path}', cached {songsCached} song files.");
         }
+        Logger.Log("Finished caching all folders.");
         Database.SetLastUpdate(DateTime.Now.Ticks);
-        Database.EndTransaction();
+        if (!Database.EndTransaction())
+        {
+            Logger.Error("Caching files failed! Database transaction cannot be committed.");
+        }
     }
 
     private async Task LoadAllFromDB()
@@ -629,13 +659,19 @@ public partial class MainWindow : Window
         // We get all the source directories used in the DB.
         // TODO: check if the dirs in the DB are in the Settings.SourceDirectories
         // setting, otherwise, delete it from DB and save that directory instead.
+        Logger.Log("Loading all files from database...");
         List<string?> dirs = new(Properties.Settings.Default.SourceDirectories.Count);
         var dirReader = Database.ExecuteSelectQuery("SELECT path FROM folders;");
-        if (dirReader is null) return; // TODO: log error
+        if (dirReader is null)
+        {
+            Logger.Error("Cannot load files from database! Failed to obtain data from 'folders' table.");
+            return;
+        }
         while (dirReader.Read())
         {
             dirs.Add(dirReader.GetString(0));
         }
+        Logger.Log($"Loaded {dirs.Count} directories from database.");
         dirReader.Close();
 
         // If the DB did not exist when opening HOMP, this is the first time
@@ -646,22 +682,33 @@ public partial class MainWindow : Window
         {
             // Get the last time we updated the DB.
             var updReader = Database.ExecuteSelectQuery("SELECT last_db_update FROM homp;");
-            if (updReader is null) return; // TODO: log error
+            if (updReader is null)
+            {
+                Logger.Log("Cannot load files from database! Failed to obtain data from 'homp' table.");
+                return;
+            }
             if (!updReader.Read())
             {
-                return; // TODO: log error
+                Logger.Log("Cannot load files from database! Failed to retrieve 'last_db_update'.");
+                return;
             }
             long lastUpdate = updReader.GetInt64(0);
+            Logger.Log($"Retrieved 'last_db_update' with value '{lastUpdate}'.");
             updReader.Close();
 
             // We get the files of each dir and check if there are new ones.
             for (int i = 0; i < dirs.Count; i++)
             {
-                if (dirs[i] is null) continue;
+                if (dirs[i] is null)
+                {
+                    Logger.Warn($"Skipping new files check from directory '{dirs[i]}' (from database): directory is null!");
+                    continue;
+                }
                 FileInfo[] newFiles = new DirectoryInfo(dirs[i]!)
                     .GetFiles()
                     .Where(i => i.LastWriteTime.Ticks > lastUpdate || i.CreationTime.Ticks > lastUpdate)
                     .ToArray();
+                Logger.Log($"Obtained {newFiles.Length} new/modified files from '{dirs[i]}'");
                 // If there are any new files, we read them back from
                 // disk and save them to the DB.
                 if (newFiles.Length != 0)
@@ -674,16 +721,26 @@ public partial class MainWindow : Window
 
         // We initialize the necessary collections.
         int songCount = Database.GetRowCount("songs");
+        Logger.Log($"Got {songCount} songs from database. Initializing songs collections.");
         AllSongs = new(songCount <= 0 ? 32 : songCount);
         allSongsPlaylist = new SongCollection("__HOMP_ALL_SONGS_PLAYLIST__");
 
         // Songs
+        Logger.Log("Loading all songs from database...");
         for (int i = 0; i < dirs.Count; i++)
         {
+            if (dirs[i] is null)
+            {
+                Logger.Warn($"Skipping songs from directory '{dirs[i]}' (from database): directory is null!");
+                continue;
+            }
             using (var reader = Database.ExecuteSelectQuery("SELECT * FROM songs WHERE path LIKE @_path;", [("@_path", $"{dirs[i]}\\%")]))
             {
-                if (reader is null) continue; // TODO: log error
-                if (dirs[i] is null) continue; // TODO: log error
+                if (reader is null)
+                {
+                    Logger.Error($"Cannot load songs from database! Failed to obtain data from 'songs' table with directory '{dirs[i]}'.");
+                    continue;
+                }
                 while (reader!.Read())
                 {
                     string? songPath = reader!.GetString(0);
@@ -691,10 +748,13 @@ public partial class MainWindow : Window
                 }
             }
         }
-
+        Logger.Log($"Finished loading all files from database.");
+        Logger.Log("Now showing all songs...");
         AllSongsListView.ItemsSource = new ObservableCollection<CustomSongElement.CustomSongElementInfo>(AllSongs);
+        Logger.Log("Songs are now shown in the UI.");
     }
 
+    // No logs present because this is a critical function.
     private async Task LoadSongFromDB(string dir, string? songPath, SqliteDataReader reader)
     {
         Song song = new(songPath!)
@@ -753,6 +813,7 @@ public partial class MainWindow : Window
 
     private void LoadAllPlaylists()
     {
+        Logger.Log("Loading all playlists from disk...");
         PlaylistsListPanel.Children.Clear();
         Grid grid = new Grid();
         grid.ColumnDefinitions.Add(new ColumnDefinition() { Width = new GridLength(0, GridUnitType.Auto) });
@@ -769,10 +830,15 @@ public partial class MainWindow : Window
         grid.Children.Add(addNewButton);
         PlaylistsListPanel.Children.Add(grid);
 
-        if (!Directory.Exists(PLAYLISTS_PATH)) return;
+        if (!Directory.Exists(PLAYLISTS_PATH))
+        {
+            Logger.Error($"Playlists folder ({PLAYLISTS_PATH}) does not exist! Aborting playlists loading.");
+            return;
+        }
         try
         {
             string[] allPlaylists = Directory.GetFiles(PLAYLISTS_PATH, "*.homppl");
+            Logger.Log($"Found {allPlaylists.Length} playlist files.");
             playlists.Clear();
             PlaylistSongs.Clear();
 
@@ -793,8 +859,12 @@ public partial class MainWindow : Window
 
                 foreach (string song in songs)
                 {
-                    if (!allSongsPlaylist.Songs.ContainsKey(song)) continue;
-                    playlist.AddSong(allSongsPlaylist.Songs[song]);
+                    if (!allSongsPlaylist?.Songs.ContainsKey(song) ?? false)
+                    {
+                        Logger.Warn($"Skipping song '{song}' from playlist '{playlistName}' because it was not loaded!");
+                        continue;
+                    }
+                    playlist.AddSong(allSongsPlaylist!.Songs[song]);
                 }
 
                 PlaylistElement playlistElement = new PlaylistElement(
@@ -819,15 +889,20 @@ public partial class MainWindow : Window
                 PlaylistsListPanel.Children.Add(playlistElement);
                 playlists.Add(playlistName, playlist);
             }
+
+            Logger.Log("Loaded all playlists.");
         }
-        catch
+        catch (Exception ex)
         {
+            Logger.Exception("Failed to load playlists!", ex);
             MessageBox.Show("Unable to load playlists.");
         }
     }
 
     private void LoadAllAlbums()
     {
+        Logger.Log("Loading all albums...");
+        Logger.Log($"Albums found: {albums.Count}.");
         AlbumsListPanel.Children.Clear();
         AlbumsListPanel.Children.Add(new Label() { Content = "Albums", Foreground = Brushes.WhiteSmoke, FontSize = 18, FontWeight = FontWeights.Bold });
         foreach (KeyValuePair<string, SongCollection> kvp in albums.OrderBy((kvp) => kvp.Key))
@@ -848,10 +923,13 @@ public partial class MainWindow : Window
                 Text = kvp.Key
             });
         }
+        Logger.Log("Albums loaded.");
     }
 
     private void LoadAllArtists()
     {
+        Logger.Log("Loading all artists...");
+        Logger.Log($"Artists found: {artists.Count}.");
         ArtistsListPanel.Children.Clear();
         ArtistsListPanel.Children.Add(new Label() { Content = "Artists", Foreground = Brushes.WhiteSmoke, FontSize = 18, FontWeight = FontWeights.Bold });
         foreach (KeyValuePair<string, SongCollection> kvp in artists.OrderBy((kvp) => kvp.Key))
@@ -872,10 +950,12 @@ public partial class MainWindow : Window
                 Text = kvp.Key
             });
         }
+        Logger.Log("Artists loaded.");
     }
 
     private void LoadSettings()
     {
+        Logger.Log("Loading settings...");
         VolumeSlider.Value = Properties.Settings.Default.PlayerVolume;
         mediaPlayer.Volume = Properties.Settings.Default.PlayerVolume / 100f;
         VolumeLabel.Content = $"Volume: {VolumeSlider.Value}%";
@@ -912,10 +992,12 @@ public partial class MainWindow : Window
         SettingsMiniplayerOpacitySliderLabel.Content = $"{(SettingsMiniplayerOpacitySlider.Value * 100d):0.00}%";
         SettingsMiniplayerOpacityTimeoutNumberInputBox.SetValue(Properties.Settings.Default.MiniplayerFadingTimeout);
         SettingsMiniplayerAutoAppearOnMinimizeCheckbox.IsChecked = Properties.Settings.Default.MiniplayerAppearOnMinimize;
+        Logger.Log("Settings loaded.");
     }
 
     private void UpdateLoadingLabelsToSave()
     {
+        Logger.Log("Changing loading labels to save labels.");
         AllSongsViewLoadingOverlayLabel.Content = "Loading and caching songs...";
         PlaylistsViewLoadingOverlayLabel.Content = "Waiting for songs to load...";
         AlbumsViewLoadingOverlayLabel.Content = "Waiting for songs to load...";
@@ -924,6 +1006,7 @@ public partial class MainWindow : Window
 
     private void FinishedLoading()
     {
+        Logger.Log("Finished loading everything.");
         SearchInputTextBox.IsEnabled = true;
 
         AllSongsViewLoadingOverlay.Visibility = Visibility.Collapsed;

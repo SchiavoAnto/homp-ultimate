@@ -16,8 +16,10 @@ public static class Database
     {
         try
         {
+            Logger.Log("Connecting to database...");
             connection = new SqliteConnection($"Data Source='{DB_PATH}'");
             connection.Open();
+            Logger.Log("Connected to database.");
 
             if (dbExists) return true;
             int r = ExecuteGenericQuery(@"
@@ -33,24 +35,38 @@ public static class Database
                 duration INTEGER,
                 rating INTEGER
             );");
-            if (r == -2) return false;
+            if (r == -2)
+            {
+                Logger.Error("Failed to create 'songs' table in database!");
+                return false;
+            }
             r = ExecuteGenericQuery(@"
             CREATE TABLE folders (
                 path TEXT NOT NULL PRIMARY KEY,
                 last_modified INTEGER DEFAULT 0
             );");
-            if (r == -2) return false;
+            if (r == -2)
+            {
+                Logger.Error("Failed to create 'folders' table in database!");
+                return false;
+            }
             r = ExecuteGenericQuery(@"
             CREATE TABLE homp (
                 last_db_update INTEGER NOT NULL DEFAULT 0
             );
             INSERT INTO homp (last_db_update) VALUES (0);");
-            if (r == -2) return false;
+            if (r == -2)
+            {
+                Logger.Error("Failed to create 'homp' table in database!");
+                return false;
+            }
 
+            Logger.Log("Database initialization finished.");
             return true;
         }
         catch
         {
+            Logger.Error("Database connection failed!");
             return false;
         }
     }

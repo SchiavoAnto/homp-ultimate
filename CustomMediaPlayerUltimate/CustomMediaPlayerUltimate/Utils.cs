@@ -6,7 +6,7 @@ namespace CustomMediaPlayerUltimate;
 
 internal class Utils
 {
-    public static bool GetMediaInformation(Song song)
+    public static (bool Success, Exception? Exception) GetMediaInformation(Song song)
     {
         try
         {
@@ -23,11 +23,11 @@ internal class Utils
                 song.Genres = file.Tag.Genres;
                 song.Duration = file.Properties.Duration;
             }
-            return true;
+            return (true, null);
         }
-        catch
+        catch (Exception ex)
         {
-            return false;
+            return (false, ex);
         }
     }
 
