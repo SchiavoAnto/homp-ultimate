@@ -109,10 +109,31 @@
                     </Button.Content>
                 </Button>
                 <Separator Width="4" Opacity="0"/>
-                <ToggleButton x:Name="SongLyricsRichTextBoxVisibilityButton" Style="{StaticResource ModernToggleButton}" Width="26" Height="26" ToolTip="Show/Hide lyrics" IsChecked="True" Click="SongLyricsRichTextBoxVisibilityButtonClick">
-                    <ToggleButton.Content>
-                        <ContentControl x:Name="SongLyricsRichTextBoxVisibilityButtonIcon" Content="{StaticResource LyricsShownIcon}"/>
-                    </ToggleButton.Content>
+                <ToggleButton x:Name="SongLyricsRichTextBoxVisibilityButton" Width="26" Height="26" ToolTip="Show/Hide lyrics" IsChecked="True" Click="SongLyricsRichTextBoxVisibilityButtonClick">
+                    <ToggleButton.Style>
+                        <Style BasedOn="{StaticResource ResourceKey=ModernToggleButton}" TargetType="{x:Type ToggleButton}">
+                            <Style.Triggers>
+                                <DataTrigger Binding="{Binding IsChecked, RelativeSource={RelativeSource Self}}" Value="True">
+                                    <Setter Property="ContentTemplate">
+                                        <Setter.Value>
+                                            <DataTemplate>
+                                                <ContentControl Content="{StaticResource LyricsShownIcon}"/>
+                                            </DataTemplate>
+                                        </Setter.Value>
+                                    </Setter>
+                                </DataTrigger>
+                                <DataTrigger Binding="{Binding IsChecked, RelativeSource={RelativeSource Self}}" Value="False">
+                                    <Setter Property="ContentTemplate">
+                                        <Setter.Value>
+                                            <DataTemplate>
+                                                <ContentControl Content="{StaticResource LyricsHiddenIcon}"/>
+                                            </DataTemplate>
+                                        </Setter.Value>
+                                    </Setter>
+                                </DataTrigger>
+                            </Style.Triggers>
+                        </Style>
+                    </ToggleButton.Style>
                 </ToggleButton>
                 <StackPanel Orientation="Vertical" VerticalAlignment="Center" Margin="10,5,10,5">
                     <Slider x:Name="VolumeSlider" Width="150" Maximum="100" IsSnapToTickEnabled="True" PreviewMouseLeftButtonDown="VolumeSliderMouseDown" PreviewMouseLeftButtonUp="VolumeSliderMouseUp" PreviewMouseMove="VolumeSliderMouseMove" PreviewMouseWheel="VolumeSliderMouseWheel"/>
