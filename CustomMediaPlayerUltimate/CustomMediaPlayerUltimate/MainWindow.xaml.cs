@@ -814,20 +814,6 @@ public partial class MainWindow : Window
     {
         Logger.Log("Loading all playlists from disk...");
         PlaylistsListPanel.Children.Clear();
-        Grid grid = new Grid();
-        grid.ColumnDefinitions.Add(new ColumnDefinition() { Width = new GridLength(0, GridUnitType.Auto) });
-        grid.ColumnDefinitions.Add(new ColumnDefinition() { Width = new GridLength(100, GridUnitType.Star) });
-        grid.ColumnDefinitions.Add(new ColumnDefinition() { Width = new GridLength(0, GridUnitType.Auto) });
-
-        Label titleLabel = new Label() { Content = "Playlists", Foreground = Brushes.WhiteSmoke, FontSize = 18, FontWeight = FontWeights.Bold };
-        Grid.SetColumn(titleLabel, 0);
-        grid.Children.Add(titleLabel);
-
-        Button addNewButton = new Button() { Content = "New playlist...", Height = 30d };
-        addNewButton.Click += NewPlaylistButtonClick;
-        Grid.SetColumn(addNewButton, 2);
-        grid.Children.Add(addNewButton);
-        PlaylistsListPanel.Children.Add(grid);
 
         if (!Directory.Exists(PLAYLISTS_PATH))
         {
@@ -903,7 +889,6 @@ public partial class MainWindow : Window
         Logger.Log("Loading all albums...");
         Logger.Log($"Albums found: {albums.Count}.");
         AlbumsListPanel.Children.Clear();
-        AlbumsListPanel.Children.Add(new Label() { Content = "Albums", Foreground = Brushes.WhiteSmoke, FontSize = 18, FontWeight = FontWeights.Bold });
         foreach (KeyValuePair<string, SongCollection> kvp in albums.OrderBy((kvp) => kvp.Key))
         {
             AlbumsListPanel.Children.Add(new CollectionElement(
@@ -930,7 +915,6 @@ public partial class MainWindow : Window
         Logger.Log("Loading all artists...");
         Logger.Log($"Artists found: {artists.Count}.");
         ArtistsListPanel.Children.Clear();
-        ArtistsListPanel.Children.Add(new Label() { Content = "Artists", Foreground = Brushes.WhiteSmoke, FontSize = 18, FontWeight = FontWeights.Bold });
         foreach (KeyValuePair<string, SongCollection> kvp in artists.OrderBy((kvp) => kvp.Key))
         {
             ArtistsListPanel.Children.Add(new CollectionElement(
@@ -1007,6 +991,7 @@ public partial class MainWindow : Window
     {
         Logger.Log("Finished loading everything.");
         SearchInputTextBox.IsEnabled = true;
+        NewPlaylistButton.IsEnabled = true;
 
         AllSongsViewLoadingOverlay.Visibility = Visibility.Collapsed;
         PlaylistsViewLoadingOverlay.Visibility = Visibility.Collapsed;

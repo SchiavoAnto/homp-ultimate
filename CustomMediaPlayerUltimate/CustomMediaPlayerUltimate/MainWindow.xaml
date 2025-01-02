@@ -215,16 +215,30 @@
                         <ColumnDefinition Width="400"/>
                         <ColumnDefinition Width="*"/>
                     </Grid.ColumnDefinitions>
-                    <ScrollViewer Grid.Column="0" VerticalScrollBarVisibility="Auto">
-                        <VirtualizingStackPanel x:Name="PlaylistsListPanel" Orientation="Vertical" Margin="0,0,5,0">
-                            <VirtualizingStackPanel.Resources>
-                                <Style TargetType="{x:Type local:PlaylistElement}">
-                                    <Setter Property="Margin" Value="0,5,0,0"/>
-                                </Style>
-                            </VirtualizingStackPanel.Resources>
-                            <Label Foreground="WhiteSmoke" FontSize="18" FontWeight="Bold">Loading...</Label>
-                        </VirtualizingStackPanel>
-                    </ScrollViewer>
+                    <Grid Grid.Column="0">
+                        <Grid.RowDefinitions>
+                            <RowDefinition Height="Auto"/>
+                            <RowDefinition Height="*"/>
+                        </Grid.RowDefinitions>
+                        <Grid Grid.Row="0" Margin="0,0,5,0">
+                            <Grid.ColumnDefinitions>
+                                <ColumnDefinition Width="Auto"/>
+                                <ColumnDefinition Width="*"/>
+                                <ColumnDefinition Width="Auto"/>
+                            </Grid.ColumnDefinitions>
+                            <Label Grid.Column="0" Foreground="WhiteSmoke" FontSize="18" FontWeight="Bold">Playlists</Label>
+                            <Button x:Name="NewPlaylistButton" Grid.Column="2" IsEnabled="False" Content="New playlist..." Height="30" Click="NewPlaylistButtonClick"/>
+                        </Grid>
+                        <ScrollViewer Grid.Row="1" VerticalScrollBarVisibility="Auto">
+                            <VirtualizingStackPanel x:Name="PlaylistsListPanel" Orientation="Vertical" Margin="0,0,5,0">
+                                <VirtualizingStackPanel.Resources>
+                                    <Style TargetType="{x:Type local:PlaylistElement}">
+                                        <Setter Property="Margin" Value="0,5,0,0"/>
+                                    </Style>
+                                </VirtualizingStackPanel.Resources>
+                            </VirtualizingStackPanel>
+                        </ScrollViewer>
+                    </Grid>
                     <Grid Grid.Column="1">
                         <Grid.RowDefinitions>
                             <RowDefinition Height="Auto"/>
@@ -300,16 +314,22 @@
                         <ColumnDefinition Width="400"/>
                         <ColumnDefinition Width="*"/>
                     </Grid.ColumnDefinitions>
-                    <ScrollViewer Grid.Column="0" VerticalScrollBarVisibility="Auto">
-                        <VirtualizingStackPanel x:Name="AlbumsListPanel" Orientation="Vertical" Margin="0,0,5,0">
-                            <VirtualizingStackPanel.Resources>
-                                <Style TargetType="{x:Type local:CollectionElement}">
-                                    <Setter Property="Margin" Value="0,5,0,0"/>
-                                </Style>
-                            </VirtualizingStackPanel.Resources>
-                            <Label Foreground="WhiteSmoke" FontSize="18" FontWeight="Bold">Loading...</Label>
-                        </VirtualizingStackPanel>
-                    </ScrollViewer>
+                    <Grid Grid.Column="0">
+                        <Grid.RowDefinitions>
+                            <RowDefinition Height="Auto"/>
+                            <RowDefinition Height="*"/>
+                        </Grid.RowDefinitions>
+                        <Label Grid.Row="0" Foreground="WhiteSmoke" FontSize="18" FontWeight="Bold" Margin="0,0,5,0">Albums</Label>
+                        <ScrollViewer Grid.Row="1" VerticalScrollBarVisibility="Auto">
+                            <VirtualizingStackPanel x:Name="AlbumsListPanel" Orientation="Vertical" Margin="0,0,5,0">
+                                <VirtualizingStackPanel.Resources>
+                                    <Style TargetType="{x:Type local:CollectionElement}">
+                                        <Setter Property="Margin" Value="0,5,0,0"/>
+                                    </Style>
+                                </VirtualizingStackPanel.Resources>
+                            </VirtualizingStackPanel>
+                        </ScrollViewer>
+                    </Grid>
                     <Grid Grid.Column="1">
                         <Grid.RowDefinitions>
                             <RowDefinition Height="Auto"/>
@@ -386,15 +406,22 @@
                         <ColumnDefinition Width="400"/>
                         <ColumnDefinition Width="*"/>
                     </Grid.ColumnDefinitions>
-                    <ScrollViewer Grid.Column="0" VerticalScrollBarVisibility="Auto">
-                        <VirtualizingStackPanel x:Name="ArtistsListPanel" Orientation="Vertical" Margin="0,0,5,0">
-                            <VirtualizingStackPanel.Resources>
-                                <Style TargetType="{x:Type local:CollectionElement}">
-                                    <Setter Property="Margin" Value="0,5,0,0"/>
-                                </Style>
-                            </VirtualizingStackPanel.Resources>
-                        </VirtualizingStackPanel>
-                    </ScrollViewer>
+                    <Grid Grid.Column="0">
+                        <Grid.RowDefinitions>
+                            <RowDefinition Height="Auto"/>
+                            <RowDefinition Height="*"/>
+                        </Grid.RowDefinitions>
+                        <Label Grid.Row="0" Foreground="WhiteSmoke" FontSize="18" FontWeight="Bold" Margin="0,0,5,0">Artists</Label>
+                        <ScrollViewer Grid.Row="1" VerticalScrollBarVisibility="Auto">
+                            <VirtualizingStackPanel x:Name="ArtistsListPanel" Orientation="Vertical" Margin="0,0,5,0">
+                                <VirtualizingStackPanel.Resources>
+                                    <Style TargetType="{x:Type local:CollectionElement}">
+                                        <Setter Property="Margin" Value="0,5,0,0"/>
+                                    </Style>
+                                </VirtualizingStackPanel.Resources>
+                            </VirtualizingStackPanel>
+                        </ScrollViewer>
+                    </Grid>
                     <Grid Grid.Column="1">
                         <Grid.RowDefinitions>
                             <RowDefinition Height="Auto"/>
