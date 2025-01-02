@@ -137,6 +137,7 @@ public partial class MainWindow : Window
 
         if (!dbExists)
         {
+            UpdateLoadingLabelsToSave();
             await Task.Run(SaveAllToDB);
         }
         await LoadAllFromDB();
@@ -913,9 +914,27 @@ public partial class MainWindow : Window
         SettingsMiniplayerAutoAppearOnMinimizeCheckbox.IsChecked = Properties.Settings.Default.MiniplayerAppearOnMinimize;
     }
 
+    private void UpdateLoadingLabelsToSave()
+    {
+        AllSongsViewLoadingOverlayLabel.Content = "Loading and caching songs...";
+        PlaylistsViewLoadingOverlayLabel.Content = "Waiting for songs to load...";
+        AlbumsViewLoadingOverlayLabel.Content = "Waiting for songs to load...";
+        ArtistsViewLoadingOverlayLabel.Content = "Waiting for songs to load...";
+    }
+
     private void FinishedLoading()
     {
         SearchInputTextBox.IsEnabled = true;
+
+        AllSongsViewLoadingOverlay.Visibility = Visibility.Collapsed;
+        PlaylistsViewLoadingOverlay.Visibility = Visibility.Collapsed;
+        AlbumsViewLoadingOverlay.Visibility = Visibility.Collapsed;
+        ArtistsViewLoadingOverlay.Visibility = Visibility.Collapsed;
+
+        AllSongsViewContent.Visibility = Visibility.Visible;
+        PlaylistsViewContent.Visibility = Visibility.Visible;
+        AlbumsViewContent.Visibility = Visibility.Visible;
+        ArtistsViewContent.Visibility = Visibility.Visible;
     }
 
     private void Timer_Tick(object? sender, EventArgs e)

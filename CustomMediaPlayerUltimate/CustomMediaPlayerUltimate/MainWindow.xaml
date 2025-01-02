@@ -127,88 +127,13 @@
                 <ColumnDefinition x:Name="SongLyricsRichTextBoxColumn" Width="400"/>
             </Grid.ColumnDefinitions>
             <Grid x:Name="AllSongsView" Grid.Column="0">
-                <Grid.RowDefinitions>
-                    <RowDefinition Height="Auto"/>
-                    <RowDefinition Height="*"/>
-                </Grid.RowDefinitions>
-                <Label Grid.Row="0" Content="All Songs" Foreground="WhiteSmoke" FontSize="18" FontWeight="Bold"/>
-                <ListView x:Name="AllSongsListView" Grid.Row="1">
-                    <ListView.Style>
-                        <Style TargetType="ListView">
-                            <Setter Property="Template">
-                                <Setter.Value>
-                                    <ControlTemplate TargetType="{x:Type ListView}">
-                                        <ScrollViewer CanContentScroll="True">
-                                            <!--Set to false to make it scroll like before. Loses virtualization.-->
-                                            <ItemsPresenter/>
-                                        </ScrollViewer>
-                                    </ControlTemplate>
-                                </Setter.Value>
-                            </Setter>
-                        </Style>
-                    </ListView.Style>
-                    <ListView.ItemContainerStyle>
-                        <Style TargetType="{x:Type ListViewItem}">
-                            <Setter Property="Background" Value="Transparent"/>
-                            <Setter Property="BorderBrush" Value="Transparent"/>
-                            <Setter Property="BorderThickness" Value="0"/>
-                            <Setter Property="VerticalContentAlignment" Value="Center"/>
-                            <Setter Property="Template">
-                                <Setter.Value>
-                                    <ControlTemplate TargetType="{x:Type ListViewItem}">
-                                        <ContentPresenter/>
-                                    </ControlTemplate>
-                                </Setter.Value>
-                            </Setter>
-                        </Style>
-                    </ListView.ItemContainerStyle>
-                    <ListView.ItemsPanel>
-                        <ItemsPanelTemplate>
-                            <VirtualizingStackPanel Background="#252525" VirtualizingPanel.VirtualizationMode="Recycling" VirtualizingPanel.ScrollUnit="Pixel">
-                                <VirtualizingStackPanel.Resources>
-                                    <Style TargetType="{x:Type local:CustomSongElement}">
-                                        <Setter Property="Margin" Value="0,5,0,0"/>
-                                    </Style>
-                                </VirtualizingStackPanel.Resources>
-                            </VirtualizingStackPanel>
-                        </ItemsPanelTemplate>
-                    </ListView.ItemsPanel>
-                    <ListView.ItemTemplate>
-                        <DataTemplate>
-                            <local:CustomSongElement DataContext="{Binding}" Tag="{Binding}"/>
-                        </DataTemplate>
-                    </ListView.ItemTemplate>
-                </ListView>
-            </Grid>
-            <Grid x:Name="PlaylistsView" Grid.Column="0" Visibility="Collapsed">
-                <Grid.ColumnDefinitions>
-                    <ColumnDefinition Width="400"/>
-                    <ColumnDefinition Width="*"/>
-                </Grid.ColumnDefinitions>
-                <ScrollViewer Grid.Column="0" VerticalScrollBarVisibility="Auto">
-                    <VirtualizingStackPanel x:Name="PlaylistsListPanel" Orientation="Vertical" Margin="0,0,5,0">
-                        <VirtualizingStackPanel.Resources>
-                            <Style TargetType="{x:Type local:PlaylistElement}">
-                                <Setter Property="Margin" Value="0,5,0,0"/>
-                            </Style>
-                        </VirtualizingStackPanel.Resources>
-                        <Label Foreground="WhiteSmoke" FontSize="18" FontWeight="Bold">Loading...</Label>
-                    </VirtualizingStackPanel>
-                </ScrollViewer>
-                <Grid Grid.Column="1">
+                <Grid x:Name="AllSongsViewContent" Visibility="Collapsed">
                     <Grid.RowDefinitions>
                         <RowDefinition Height="Auto"/>
                         <RowDefinition Height="*"/>
                     </Grid.RowDefinitions>
-
-                    <StackPanel Grid.Row="0" Orientation="Horizontal">
-                        <Image x:Name="PlaylistSongsListCoverImage" Visibility="Collapsed" Width="75" Height="75" Margin="0,0,6,0" RenderOptions.BitmapScalingMode="HighQuality"/>
-                        <StackPanel Orientation="Vertical">
-                            <Label x:Name="PlaylistSongsListTitleLabel" Foreground="WhiteSmoke" FontSize="18" FontWeight="Bold" Margin="0" Padding="0"/>
-                            <Label x:Name="PlaylistSongsListDurationLabel" Foreground="LightGray" FontSize="14" Margin="0" Padding="0"/>
-                        </StackPanel>
-                    </StackPanel>
-                    <ListView Grid.Row="1" ItemsSource="{Binding PlaylistSongs}">
+                    <Label Grid.Row="0" Content="All Songs" Foreground="WhiteSmoke" FontSize="18" FontWeight="Bold"/>
+                    <ListView x:Name="AllSongsListView" Grid.Row="1">
                         <ListView.Style>
                             <Style TargetType="ListView">
                                 <Setter Property="Template">
@@ -255,160 +180,266 @@
                             </DataTemplate>
                         </ListView.ItemTemplate>
                     </ListView>
+                </Grid>
+                <Grid x:Name="AllSongsViewLoadingOverlay" VerticalAlignment="Center">
+                    <StackPanel HorizontalAlignment="Center" Height="Auto">
+                        <Label x:Name="AllSongsViewLoadingOverlayLabel" Foreground="WhiteSmoke" FontSize="14">Loading songs...</Label>
+                        <local:LoadingSpinner Width="30" Height="30"/>
+                    </StackPanel>
+                </Grid>
+            </Grid>
+            <Grid x:Name="PlaylistsView" Grid.Column="0" Visibility="Collapsed">
+                <Grid x:Name="PlaylistsViewContent" Visibility="Collapsed">
+                    <Grid.ColumnDefinitions>
+                        <ColumnDefinition Width="400"/>
+                        <ColumnDefinition Width="*"/>
+                    </Grid.ColumnDefinitions>
+                    <ScrollViewer Grid.Column="0" VerticalScrollBarVisibility="Auto">
+                        <VirtualizingStackPanel x:Name="PlaylistsListPanel" Orientation="Vertical" Margin="0,0,5,0">
+                            <VirtualizingStackPanel.Resources>
+                                <Style TargetType="{x:Type local:PlaylistElement}">
+                                    <Setter Property="Margin" Value="0,5,0,0"/>
+                                </Style>
+                            </VirtualizingStackPanel.Resources>
+                            <Label Foreground="WhiteSmoke" FontSize="18" FontWeight="Bold">Loading...</Label>
+                        </VirtualizingStackPanel>
+                    </ScrollViewer>
+                    <Grid Grid.Column="1">
+                        <Grid.RowDefinitions>
+                            <RowDefinition Height="Auto"/>
+                            <RowDefinition Height="*"/>
+                        </Grid.RowDefinitions>
+
+                        <StackPanel Grid.Row="0" Orientation="Horizontal">
+                            <Image x:Name="PlaylistSongsListCoverImage" Visibility="Collapsed" Width="75" Height="75" Margin="0,0,6,0" RenderOptions.BitmapScalingMode="HighQuality"/>
+                            <StackPanel Orientation="Vertical">
+                                <Label x:Name="PlaylistSongsListTitleLabel" Foreground="WhiteSmoke" FontSize="18" FontWeight="Bold" Margin="0" Padding="0"/>
+                                <Label x:Name="PlaylistSongsListDurationLabel" Foreground="LightGray" FontSize="14" Margin="0" Padding="0"/>
+                            </StackPanel>
+                        </StackPanel>
+                        <ListView Grid.Row="1" ItemsSource="{Binding PlaylistSongs}">
+                            <ListView.Style>
+                                <Style TargetType="ListView">
+                                    <Setter Property="Template">
+                                        <Setter.Value>
+                                            <ControlTemplate TargetType="{x:Type ListView}">
+                                                <ScrollViewer CanContentScroll="True">
+                                                    <!--Set to false to make it scroll like before. Loses virtualization.-->
+                                                    <ItemsPresenter/>
+                                                </ScrollViewer>
+                                            </ControlTemplate>
+                                        </Setter.Value>
+                                    </Setter>
+                                </Style>
+                            </ListView.Style>
+                            <ListView.ItemContainerStyle>
+                                <Style TargetType="{x:Type ListViewItem}">
+                                    <Setter Property="Background" Value="Transparent"/>
+                                    <Setter Property="BorderBrush" Value="Transparent"/>
+                                    <Setter Property="BorderThickness" Value="0"/>
+                                    <Setter Property="VerticalContentAlignment" Value="Center"/>
+                                    <Setter Property="Template">
+                                        <Setter.Value>
+                                            <ControlTemplate TargetType="{x:Type ListViewItem}">
+                                                <ContentPresenter/>
+                                            </ControlTemplate>
+                                        </Setter.Value>
+                                    </Setter>
+                                </Style>
+                            </ListView.ItemContainerStyle>
+                            <ListView.ItemsPanel>
+                                <ItemsPanelTemplate>
+                                    <VirtualizingStackPanel Background="#252525" VirtualizingPanel.VirtualizationMode="Recycling" VirtualizingPanel.ScrollUnit="Pixel">
+                                        <VirtualizingStackPanel.Resources>
+                                            <Style TargetType="{x:Type local:CustomSongElement}">
+                                                <Setter Property="Margin" Value="0,5,0,0"/>
+                                            </Style>
+                                        </VirtualizingStackPanel.Resources>
+                                    </VirtualizingStackPanel>
+                                </ItemsPanelTemplate>
+                            </ListView.ItemsPanel>
+                            <ListView.ItemTemplate>
+                                <DataTemplate>
+                                    <local:CustomSongElement DataContext="{Binding}" Tag="{Binding}"/>
+                                </DataTemplate>
+                            </ListView.ItemTemplate>
+                        </ListView>
+                    </Grid>
+                </Grid>
+                <Grid x:Name="PlaylistsViewLoadingOverlay" VerticalAlignment="Center">
+                    <StackPanel HorizontalAlignment="Center" Height="Auto">
+                        <Label x:Name="PlaylistsViewLoadingOverlayLabel" Foreground="WhiteSmoke" FontSize="14">Loading playlists...</Label>
+                        <local:LoadingSpinner Width="30" Height="30"/>
+                    </StackPanel>
                 </Grid>
             </Grid>
             <Grid x:Name="AlbumsView" Grid.Column="0" Visibility="Collapsed">
-                <Grid.ColumnDefinitions>
-                    <ColumnDefinition Width="400"/>
-                    <ColumnDefinition Width="*"/>
-                </Grid.ColumnDefinitions>
-                <ScrollViewer Grid.Column="0" VerticalScrollBarVisibility="Auto">
-                    <VirtualizingStackPanel x:Name="AlbumsListPanel" Orientation="Vertical" Margin="0,0,5,0">
-                        <VirtualizingStackPanel.Resources>
-                            <Style TargetType="{x:Type local:CollectionElement}">
-                                <Setter Property="Margin" Value="0,5,0,0"/>
-                            </Style>
-                        </VirtualizingStackPanel.Resources>
-                        <Label Foreground="WhiteSmoke" FontSize="18" FontWeight="Bold">Loading...</Label>
-                    </VirtualizingStackPanel>
-                </ScrollViewer>
-                <Grid Grid.Column="1">
-                    <Grid.RowDefinitions>
-                        <RowDefinition Height="Auto"/>
-                        <RowDefinition Height="*"/>
-                    </Grid.RowDefinitions>
-                    <StackPanel Grid.Row="0" Orientation="Horizontal">
-                        <Image x:Name="AlbumSongsListCoverImage" Visibility="Collapsed" Width="75" Height="75" Margin="0,0,6,0" RenderOptions.BitmapScalingMode="HighQuality"/>
-                        <StackPanel Orientation="Vertical">
-                            <Label x:Name="AlbumSongsListTitleLabel" Foreground="WhiteSmoke" FontSize="18" FontWeight="Bold" Margin="0" Padding="0"/>
-                            <Label x:Name="AlbumSongsListDurationLabel" Foreground="LightGray" FontSize="14" Margin="0" Padding="0"/>
+                <Grid x:Name="AlbumsViewContent" Visibility="Collapsed">
+                    <Grid.ColumnDefinitions>
+                        <ColumnDefinition Width="400"/>
+                        <ColumnDefinition Width="*"/>
+                    </Grid.ColumnDefinitions>
+                    <ScrollViewer Grid.Column="0" VerticalScrollBarVisibility="Auto">
+                        <VirtualizingStackPanel x:Name="AlbumsListPanel" Orientation="Vertical" Margin="0,0,5,0">
+                            <VirtualizingStackPanel.Resources>
+                                <Style TargetType="{x:Type local:CollectionElement}">
+                                    <Setter Property="Margin" Value="0,5,0,0"/>
+                                </Style>
+                            </VirtualizingStackPanel.Resources>
+                            <Label Foreground="WhiteSmoke" FontSize="18" FontWeight="Bold">Loading...</Label>
+                        </VirtualizingStackPanel>
+                    </ScrollViewer>
+                    <Grid Grid.Column="1">
+                        <Grid.RowDefinitions>
+                            <RowDefinition Height="Auto"/>
+                            <RowDefinition Height="*"/>
+                        </Grid.RowDefinitions>
+                        <StackPanel Grid.Row="0" Orientation="Horizontal">
+                            <Image x:Name="AlbumSongsListCoverImage" Visibility="Collapsed" Width="75" Height="75" Margin="0,0,6,0" RenderOptions.BitmapScalingMode="HighQuality"/>
+                            <StackPanel Orientation="Vertical">
+                                <Label x:Name="AlbumSongsListTitleLabel" Foreground="WhiteSmoke" FontSize="18" FontWeight="Bold" Margin="0" Padding="0"/>
+                                <Label x:Name="AlbumSongsListDurationLabel" Foreground="LightGray" FontSize="14" Margin="0" Padding="0"/>
+                            </StackPanel>
                         </StackPanel>
+                        <StackPanel Grid.Row="0" Orientation="Vertical">
+                        </StackPanel>
+                        <ListView Grid.Row="1" ItemsSource="{Binding AlbumSongs}">
+                            <ListView.Style>
+                                <Style TargetType="ListView">
+                                    <Setter Property="Template">
+                                        <Setter.Value>
+                                            <ControlTemplate TargetType="{x:Type ListView}">
+                                                <ScrollViewer CanContentScroll="True">
+                                                    <!--Set to false to make it scroll like before. Loses virtualization.-->
+                                                    <ItemsPresenter/>
+                                                </ScrollViewer>
+                                            </ControlTemplate>
+                                        </Setter.Value>
+                                    </Setter>
+                                </Style>
+                            </ListView.Style>
+                            <ListView.ItemContainerStyle>
+                                <Style TargetType="{x:Type ListViewItem}">
+                                    <Setter Property="Background" Value="Transparent"/>
+                                    <Setter Property="BorderBrush" Value="Transparent"/>
+                                    <Setter Property="BorderThickness" Value="0"/>
+                                    <Setter Property="VerticalContentAlignment" Value="Center"/>
+                                    <Setter Property="Template">
+                                        <Setter.Value>
+                                            <ControlTemplate TargetType="{x:Type ListViewItem}">
+                                                <ContentPresenter/>
+                                            </ControlTemplate>
+                                        </Setter.Value>
+                                    </Setter>
+                                </Style>
+                            </ListView.ItemContainerStyle>
+                            <ListView.ItemsPanel>
+                                <ItemsPanelTemplate>
+                                    <VirtualizingStackPanel Background="#252525" VirtualizingPanel.VirtualizationMode="Recycling" VirtualizingPanel.ScrollUnit="Pixel">
+                                        <VirtualizingStackPanel.Resources>
+                                            <Style TargetType="{x:Type local:CustomSongElement}">
+                                                <Setter Property="Margin" Value="0,5,0,0"/>
+                                            </Style>
+                                        </VirtualizingStackPanel.Resources>
+                                    </VirtualizingStackPanel>
+                                </ItemsPanelTemplate>
+                            </ListView.ItemsPanel>
+                            <ListView.ItemTemplate>
+                                <DataTemplate>
+                                    <local:CustomSongElement DataContext="{Binding}" Tag="{Binding}"/>
+                                </DataTemplate>
+                            </ListView.ItemTemplate>
+                        </ListView>
+                    </Grid>
+                </Grid>
+                <Grid x:Name="AlbumsViewLoadingOverlay" VerticalAlignment="Center">
+                    <StackPanel HorizontalAlignment="Center" Height="Auto">
+                        <Label x:Name="AlbumsViewLoadingOverlayLabel" Foreground="WhiteSmoke" FontSize="14">Loading albums...</Label>
+                        <local:LoadingSpinner Width="30" Height="30"/>
                     </StackPanel>
-                    <StackPanel Grid.Row="0" Orientation="Vertical">
-                    </StackPanel>
-                    <ListView Grid.Row="1" ItemsSource="{Binding AlbumSongs}">
-                        <ListView.Style>
-                            <Style TargetType="ListView">
-                                <Setter Property="Template">
-                                    <Setter.Value>
-                                        <ControlTemplate TargetType="{x:Type ListView}">
-                                            <ScrollViewer CanContentScroll="True">
-                                                <!--Set to false to make it scroll like before. Loses virtualization.-->
-                                                <ItemsPresenter/>
-                                            </ScrollViewer>
-                                        </ControlTemplate>
-                                    </Setter.Value>
-                                </Setter>
-                            </Style>
-                        </ListView.Style>
-                        <ListView.ItemContainerStyle>
-                            <Style TargetType="{x:Type ListViewItem}">
-                                <Setter Property="Background" Value="Transparent"/>
-                                <Setter Property="BorderBrush" Value="Transparent"/>
-                                <Setter Property="BorderThickness" Value="0"/>
-                                <Setter Property="VerticalContentAlignment" Value="Center"/>
-                                <Setter Property="Template">
-                                    <Setter.Value>
-                                        <ControlTemplate TargetType="{x:Type ListViewItem}">
-                                            <ContentPresenter/>
-                                        </ControlTemplate>
-                                    </Setter.Value>
-                                </Setter>
-                            </Style>
-                        </ListView.ItemContainerStyle>
-                        <ListView.ItemsPanel>
-                            <ItemsPanelTemplate>
-                                <VirtualizingStackPanel Background="#252525" VirtualizingPanel.VirtualizationMode="Recycling" VirtualizingPanel.ScrollUnit="Pixel">
-                                    <VirtualizingStackPanel.Resources>
-                                        <Style TargetType="{x:Type local:CustomSongElement}">
-                                            <Setter Property="Margin" Value="0,5,0,0"/>
-                                        </Style>
-                                    </VirtualizingStackPanel.Resources>
-                                </VirtualizingStackPanel>
-                            </ItemsPanelTemplate>
-                        </ListView.ItemsPanel>
-                        <ListView.ItemTemplate>
-                            <DataTemplate>
-                                <local:CustomSongElement DataContext="{Binding}" Tag="{Binding}"/>
-                            </DataTemplate>
-                        </ListView.ItemTemplate>
-                    </ListView>
                 </Grid>
             </Grid>
             <Grid x:Name="ArtistsView" Grid.Column="0" Visibility="Collapsed">
-                <Grid.ColumnDefinitions>
-                    <ColumnDefinition Width="400"/>
-                    <ColumnDefinition Width="*"/>
-                </Grid.ColumnDefinitions>
-                <ScrollViewer Grid.Column="0" VerticalScrollBarVisibility="Auto">
-                    <VirtualizingStackPanel x:Name="ArtistsListPanel" Orientation="Vertical" Margin="0,0,5,0">
-                        <VirtualizingStackPanel.Resources>
-                            <Style TargetType="{x:Type local:CollectionElement}">
-                                <Setter Property="Margin" Value="0,5,0,0"/>
-                            </Style>
-                        </VirtualizingStackPanel.Resources>
-                        <Label Foreground="WhiteSmoke" FontSize="18" FontWeight="Bold">Loading...</Label>
-                    </VirtualizingStackPanel>
-                </ScrollViewer>
-                <Grid Grid.Column="1">
-                    <Grid.RowDefinitions>
-                        <RowDefinition Height="Auto"/>
-                        <RowDefinition Height="*"/>
-                    </Grid.RowDefinitions>
-                    <StackPanel Grid.Row="0" Orientation="Horizontal">
-                        <Image x:Name="ArtistSongsListCoverImage" Visibility="Collapsed" Width="75" Height="75" Margin="0,0,6,0" RenderOptions.BitmapScalingMode="HighQuality"/>
-                        <StackPanel Orientation="Vertical">
-                            <Label x:Name="ArtistSongsListTitleLabel" Foreground="WhiteSmoke" FontSize="18" FontWeight="Bold" Margin="0" Padding="0"/>
-                            <Label x:Name="ArtistSongsListDurationLabel" Foreground="LightGray" FontSize="14" Margin="0" Padding="0"/>
+                <Grid x:Name="ArtistsViewContent" Visibility="Collapsed">
+                    <Grid.ColumnDefinitions>
+                        <ColumnDefinition Width="400"/>
+                        <ColumnDefinition Width="*"/>
+                    </Grid.ColumnDefinitions>
+                    <ScrollViewer Grid.Column="0" VerticalScrollBarVisibility="Auto">
+                        <VirtualizingStackPanel x:Name="ArtistsListPanel" Orientation="Vertical" Margin="0,0,5,0">
+                            <VirtualizingStackPanel.Resources>
+                                <Style TargetType="{x:Type local:CollectionElement}">
+                                    <Setter Property="Margin" Value="0,5,0,0"/>
+                                </Style>
+                            </VirtualizingStackPanel.Resources>
+                        </VirtualizingStackPanel>
+                    </ScrollViewer>
+                    <Grid Grid.Column="1">
+                        <Grid.RowDefinitions>
+                            <RowDefinition Height="Auto"/>
+                            <RowDefinition Height="*"/>
+                        </Grid.RowDefinitions>
+                        <StackPanel Grid.Row="0" Orientation="Horizontal">
+                            <Image x:Name="ArtistSongsListCoverImage" Visibility="Collapsed" Width="75" Height="75" Margin="0,0,6,0" RenderOptions.BitmapScalingMode="HighQuality"/>
+                            <StackPanel Orientation="Vertical">
+                                <Label x:Name="ArtistSongsListTitleLabel" Foreground="WhiteSmoke" FontSize="18" FontWeight="Bold" Margin="0" Padding="0"/>
+                                <Label x:Name="ArtistSongsListDurationLabel" Foreground="LightGray" FontSize="14" Margin="0" Padding="0"/>
+                            </StackPanel>
                         </StackPanel>
+                        <ListView Grid.Row="1" ItemsSource="{Binding ArtistSongs}">
+                            <ListView.Style>
+                                <Style TargetType="ListView">
+                                    <Setter Property="Template">
+                                        <Setter.Value>
+                                            <ControlTemplate TargetType="{x:Type ListView}">
+                                                <ScrollViewer CanContentScroll="True">
+                                                    <!--Set to false to make it scroll like before. Loses virtualization.-->
+                                                    <ItemsPresenter/>
+                                                </ScrollViewer>
+                                            </ControlTemplate>
+                                        </Setter.Value>
+                                    </Setter>
+                                </Style>
+                            </ListView.Style>
+                            <ListView.ItemContainerStyle>
+                                <Style TargetType="{x:Type ListViewItem}">
+                                    <Setter Property="Background" Value="Transparent"/>
+                                    <Setter Property="BorderBrush" Value="Transparent"/>
+                                    <Setter Property="BorderThickness" Value="0"/>
+                                    <Setter Property="VerticalContentAlignment" Value="Center"/>
+                                    <Setter Property="Template">
+                                        <Setter.Value>
+                                            <ControlTemplate TargetType="{x:Type ListViewItem}">
+                                                <ContentPresenter/>
+                                            </ControlTemplate>
+                                        </Setter.Value>
+                                    </Setter>
+                                </Style>
+                            </ListView.ItemContainerStyle>
+                            <ListView.ItemsPanel>
+                                <ItemsPanelTemplate>
+                                    <VirtualizingStackPanel Background="#252525" VirtualizingPanel.VirtualizationMode="Recycling" VirtualizingPanel.ScrollUnit="Pixel">
+                                        <VirtualizingStackPanel.Resources>
+                                            <Style TargetType="{x:Type local:CustomSongElement}">
+                                                <Setter Property="Margin" Value="0,5,0,0"/>
+                                            </Style>
+                                        </VirtualizingStackPanel.Resources>
+                                    </VirtualizingStackPanel>
+                                </ItemsPanelTemplate>
+                            </ListView.ItemsPanel>
+                            <ListView.ItemTemplate>
+                                <DataTemplate>
+                                    <local:CustomSongElement DataContext="{Binding}" Tag="{Binding}"/>
+                                </DataTemplate>
+                            </ListView.ItemTemplate>
+                        </ListView>
+                    </Grid>
+                </Grid>
+                <Grid x:Name="ArtistsViewLoadingOverlay" VerticalAlignment="Center">
+                    <StackPanel HorizontalAlignment="Center" Height="Auto">
+                        <Label x:Name="ArtistsViewLoadingOverlayLabel" Foreground="WhiteSmoke" FontSize="14">Loading artists...</Label>
+                        <local:LoadingSpinner Width="30" Height="30"/>
                     </StackPanel>
-                    <ListView Grid.Row="1" ItemsSource="{Binding ArtistSongs}">
-                        <ListView.Style>
-                            <Style TargetType="ListView">
-                                <Setter Property="Template">
-                                    <Setter.Value>
-                                        <ControlTemplate TargetType="{x:Type ListView}">
-                                            <ScrollViewer CanContentScroll="True">
-                                                <!--Set to false to make it scroll like before. Loses virtualization.-->
-                                                <ItemsPresenter/>
-                                            </ScrollViewer>
-                                        </ControlTemplate>
-                                    </Setter.Value>
-                                </Setter>
-                            </Style>
-                        </ListView.Style>
-                        <ListView.ItemContainerStyle>
-                            <Style TargetType="{x:Type ListViewItem}">
-                                <Setter Property="Background" Value="Transparent"/>
-                                <Setter Property="BorderBrush" Value="Transparent"/>
-                                <Setter Property="BorderThickness" Value="0"/>
-                                <Setter Property="VerticalContentAlignment" Value="Center"/>
-                                <Setter Property="Template">
-                                    <Setter.Value>
-                                        <ControlTemplate TargetType="{x:Type ListViewItem}">
-                                            <ContentPresenter/>
-                                        </ControlTemplate>
-                                    </Setter.Value>
-                                </Setter>
-                            </Style>
-                        </ListView.ItemContainerStyle>
-                        <ListView.ItemsPanel>
-                            <ItemsPanelTemplate>
-                                <VirtualizingStackPanel Background="#252525" VirtualizingPanel.VirtualizationMode="Recycling" VirtualizingPanel.ScrollUnit="Pixel">
-                                    <VirtualizingStackPanel.Resources>
-                                        <Style TargetType="{x:Type local:CustomSongElement}">
-                                            <Setter Property="Margin" Value="0,5,0,0"/>
-                                        </Style>
-                                    </VirtualizingStackPanel.Resources>
-                                </VirtualizingStackPanel>
-                            </ItemsPanelTemplate>
-                        </ListView.ItemsPanel>
-                        <ListView.ItemTemplate>
-                            <DataTemplate>
-                                <local:CustomSongElement DataContext="{Binding}" Tag="{Binding}"/>
-                            </DataTemplate>
-                        </ListView.ItemTemplate>
-                    </ListView>
                 </Grid>
             </Grid>
             <Grid x:Name="SearchResultsView" Grid.Column="0" Visibility="Collapsed">
