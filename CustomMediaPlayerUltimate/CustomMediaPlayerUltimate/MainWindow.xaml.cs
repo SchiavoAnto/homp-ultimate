@@ -146,8 +146,6 @@ public partial class MainWindow : Window
         }
         await LoadAllFromDB();
 
-        // TODO: Load playlists from DB
-        LoadAllPlaylists();
         LoadAllAlbums();
         LoadAllArtists();
 
@@ -394,120 +392,319 @@ public partial class MainWindow : Window
         NextSongInPlaylist();
     }
 
+    public void PlaylistElementClick(PlaylistElement element)
+    {
+        if (currentlySelectedPlaylistElement == element) return;
+        if (currentlySelectedPlaylistElement is not null)
+            currentlySelectedPlaylistElement.Focused = false;
+        LoadPlaylistSongsInView(playlists[element.Text]);
+        currentlySelectedPlaylistElement = element;
+    }
+
+    public void PlaylistElementDoubleClick(PlaylistElement element)
+    {
+        PlayCollection(element.Playlist);
+    }
+
+    public void PlaylistElementManageClick(PlaylistElement element)
+    {
+        ManagePlaylistSongs(element.Playlist);
+    }
+
+    public void PlaylistElementRenameClick(PlaylistElement element)
+    {
+        RenamePlaylist(element.Playlist);
+    }
+
+    public void PlaylistElementDeleteClick(PlaylistElement element)
+    {
+        DeletePlaylist(element.Playlist);
+    }
+
     private void NewPlaylistButtonClick(object sender, RoutedEventArgs e)
     {
+        Logger.Log("Creating new playlist...");
         InputBox ib = new InputBox("Insert playlist name", "Type the name you want to give to the playlist:");
-        if (ib.ShowDialog() == true)
+        if (ib.ShowDialog() != true)
         {
-            string name = ib.InputTextBox.Text.Trim();
-            if (playlists.ContainsKey(name))
-            {
-                MessageBox.Show($"A playlist called '{name}' already exists!");
-                return;
-            }
-            if (string.IsNullOrEmpty(name))
-            {
-                MessageBox.Show($"You need to specify a valid name for the playlist.");
-                return;
-            }
-            string path = $"{PLAYLISTS_PATH}\\{name}.homppl";
-            try
-            {
-                using (StreamWriter sw = new StreamWriter(path))
-                {
-                    sw.Write("");
-                    sw.Close();
-                    sw.Dispose();
-                }
-                playlists.Add(name, new SongCollection(name));
-                PlaylistsListPanel.Children.Add(new PlaylistElement(
-                    (self) =>
-                    {
-                        LoadPlaylistSongsInView(playlists[name]);
-                    },
-                    (self) =>
-                    {
-                        PlayCollection(playlists[name]);
-                    },
-                    () => { ManagePlaylistSongs(playlists[name]); },
-                    () => { RenamePlaylist(playlists[name]); },
-                    () => { DeletePlaylist(playlists[name]); }
-                )
-                {
-                    Text = name,
-                });
-            }
-            catch
-            {
-                MessageBox.Show("An error occurred while trying to create the new playlist.");
-            }
+            Logger.Log("New playlist creation canceled.");
+            return;
         }
+
+        string name = ib.InputTextBox.Text.Trim();
+        Logger.Log($"New playlist name: '{name}'.");
+        if (string.IsNullOrEmpty(name))
+        {
+            Logger.Log("Playlist creation aborted: chosen name is null or empty.");
+            MessageBox.Show($"The name you chose is not valid. Choose a valid name.");
+            return;
+        }
+        if (Database.DoesPlaylistExist(name) ?? true || playlists.ContainsKey(name))
+        {
+            Logger.Error($"Cannot create playlist! A playlist with the name '{name}' already exists.");
+            MessageBox.Show($"Cannot create playlist. A playlist with the name '{name}' already exists.");
+            return;
+        }
+
+        if (!Database.AddPlaylist(name))
+        {
+            Logger.Error("Cannot create playlist! Failed to save data in table 'playlists'.");
+            MessageBox.Show("An error occurred while creating the playlist.");
+            return;
+        }
+        Logger.Log("Playlist saved to database.");
+
+        // We can add the new playlist to the playlists list.
+        // We are sure it exists in the DB now.
+        playlists.Add(name, new SongCollection(name, SongCollectionType.Playlist));
+        PlaylistsListPanel.Children.Add(new PlaylistElement(playlists[name]) { Text = name });
+        Logger.Log("Playlist added to UI.");
     }
 
     private void RenamePlaylist(SongCollection playlist)
     {
-        if (playlist.Equals(SongCollection.Empty)) return;
-        string oldPath = $"{PLAYLISTS_PATH}\\{playlist.Name}.homppl";
-        InputBox ib = new InputBox("Insert playlist name", "Type the new name you want to give to the playlist:");
-        if (ib.ShowDialog() == true)
+        string oldName = playlist.Name;
+        bool wasPlaying = currentCollection == playlist;
+        Logger.Log($"Renaming playlist '{oldName}'...");
+        if (playlist.Equals(SongCollection.EmptyPlaylist))
         {
-            string newName = ib.InputTextBox.Text;
-            string newPath = $"{PLAYLISTS_PATH}\\{newName}.homppl";
-            try
-            {
-                File.Move(oldPath, newPath);
+            Logger.Warn($"Skipping playlist renaming: playlist is SongCollection.Empty!");
+            return;
+        }
+        InputBox ib = new InputBox("Insert playlist name", "Type the new name you want to give to the playlist:");
+        if (ib.ShowDialog() != true)
+        {
+            Logger.Log("Playlist renaming canceled.");
+            return;
+        }
 
-                LoadAllPlaylists();
-            }
-            catch
+        string newName = ib.InputTextBox.Text.Trim();
+        if (string.IsNullOrEmpty(newName))
+        {
+            Logger.Log("Playlist renaming aborted: chosen name is null or empty.");
+            MessageBox.Show($"The name you chose is not valid. Choose a valid name.", "HOMP", MessageBoxButton.OK, MessageBoxImage.Error);
+            return;
+        }
+        if (oldName == newName)
+        {
+            Logger.Log("Playlist renaming aborted: new name is the same as the old one.");
+            MessageBox.Show("The name you chose is the same as the current one. Choose a different name.", "HOMP", MessageBoxButton.OK, MessageBoxImage.Error);
+            return;
+        }
+        if (Database.DoesPlaylistExist(newName) ?? true || playlists.ContainsKey(newName))
+        {
+            Logger.Error($"Cannot rename playlist! A playlist with the name '{newName}' already exists.");
+            MessageBox.Show($"Cannot rename playlist. A playlist with the name '{newName}' already exists.", "HOMP", MessageBoxButton.OK, MessageBoxImage.Error);
+            return;
+        }
+        int renameResult = Database.ExecuteGenericQuery("UPDATE playlists SET name = @_newName WHERE name = @_oldName;",
+            [("@_newName", newName), ("@_oldName", oldName)]);
+        if (renameResult == -2)
+        {
+            Logger.Error("Cannot rename playlist! Failed to update 'name' in table 'playlists'.");
+            MessageBox.Show("An error occurred while renaming the playlist.", "HOMP", MessageBoxButton.OK, MessageBoxImage.Error);
+            return;
+        }
+        // We update the playlist's name here because we are sure
+        // that the name in the DB has actually been changed.
+        playlist.Name = newName;
+
+        // Maybe do the inverse?
+        playlists.Remove(oldName);
+        playlists.Add(newName, playlist);
+        if (wasPlaying)
+        {
+            ResetPlayback();
+        }
+
+        PlaylistElement? oldPlaylistElement = PlaylistsListPanel.Children
+            .OfType<PlaylistElement>()
+            .Where(el => el.Text == oldName)
+            .FirstOrDefault();
+        if (oldPlaylistElement == default(PlaylistElement))
+        {
+            Logger.Warn("Playlist to be renamed is not the same as the currently focused one.");
+        }
+        else
+        {
+            bool wasElementFocused = oldPlaylistElement.Focused;
+            PlaylistsListPanel.Children.Remove(oldPlaylistElement);
+            PlaylistElement newElement = new PlaylistElement(playlists[newName]) { Text = newName };
+            PlaylistsListPanel.Children.Add(newElement);
+            if (wasElementFocused)
             {
-                MessageBox.Show("An error occurred while trying to rename the playlist.");
+                PlaylistElementClick(newElement);
+                newElement.Focused = true;
             }
         }
+        Logger.Log("Playlist renamed.");
     }
 
     private void DeletePlaylist(SongCollection playlist)
     {
-        if (playlist.Equals(SongCollection.Empty)) return;
-        string path = $"{PLAYLISTS_PATH}\\{playlist.Name}.homppl";
-        if (MessageBox.Show($"Are you sure to delete the playlist \"{playlist.Name}\"?", "Confirmation", MessageBoxButton.YesNo, MessageBoxImage.Question) == MessageBoxResult.Yes)
+        Logger.Log($"Deleting playlist with name '{playlist.Name}'...");
+        if (playlist.Equals(SongCollection.EmptyPlaylist))
         {
-            try
-            {
-                File.Delete(path);
-
-                LoadAllPlaylists();
-            }
-            catch
-            {
-                MessageBox.Show("An error occurred while trying to delete the selected playlist.");
-            }
+            Logger.Warn("Skipping playlist deletion: playlist is SongCollection.Empty!");
+            return;
         }
+        if (MessageBox.Show($"Are you sure to delete the playlist \"{playlist.Name}\"?", "Confirmation", MessageBoxButton.YesNo, MessageBoxImage.Question) == MessageBoxResult.No)
+        {
+            Logger.Log("Playlist deletion canceled.");
+            return;
+        }
+
+        using SqliteDataReader? r = Database.ExecuteSelectQuery("SELECT id FROM playlists WHERE name = @_name;",
+            [("@_name", playlist.Name)]);
+        if (r is null)
+        {
+            Logger.Error("Cannot delete playlist! Failed to obtain data from 'playlists' table.");
+            MessageBox.Show("An error occurred while deleting the playlist.", "HOMP", MessageBoxButton.OK, MessageBoxImage.Error);
+            return;
+        }
+        if (r.IsClosed)
+        {
+            Logger.Error("Cannot delete playlist! Database reader is closed.");
+            MessageBox.Show("An error occurred while deleting the playlist.", "HOMP", MessageBoxButton.OK, MessageBoxImage.Error);
+            return;
+        }
+        int playlistId = -1;
+        if (!r.Read())
+        {
+            Logger.Error("Cannot delete playlist! Failed to read playlist id from database.");
+            MessageBox.Show("An error occurred while deleting the playlist.", "HOMP", MessageBoxButton.OK, MessageBoxImage.Error);
+            return;
+        }
+        playlistId = r.GetInt32(0);
+
+        if (!Database.StartTransaction())
+        {
+            Logger.Log("Playlist deletion aborted: cannot start database transaction.");
+            MessageBox.Show("An error occurred while deleting the playlist.", "HOMP", MessageBoxButton.OK, MessageBoxImage.Error);
+            return;
+        }
+        int result = Database.ExecuteGenericQuery("DELETE FROM playlist_songs WHERE playlist_id = @_id;",
+            [("@_id", playlistId)]);
+        if (result == -2)
+        {
+            Logger.Error("Cannot delete playlist! Failed to delete data from 'playlist_songs' table.");
+            MessageBox.Show("An error occurred while deleting the playlist.", "HOMP", MessageBoxButton.OK, MessageBoxImage.Error);
+            Database.CancelTransaction();
+            return;
+        }
+        result = Database.ExecuteGenericQuery("DELETE FROM playlists WHERE id = @_id", [("@_id", playlistId)]);
+        if (result == -2)
+        {
+            Logger.Error("Cannot delete playlist! Failed to delete data from 'playlists' table.");
+            MessageBox.Show("An error occurred while deleting the playlist.", "HOMP", MessageBoxButton.OK, MessageBoxImage.Error);
+            Database.CancelTransaction();
+            return;
+        }
+        if (!Database.EndTransaction())
+        {
+            Logger.Log("Playlist deletion failed: cannot commit database transaction.");
+            MessageBox.Show("An error occurred while deleting the playlist.", "HOMP", MessageBoxButton.OK, MessageBoxImage.Error);
+            return;
+        }
+        if (currentCollection == playlist)
+        {
+            ResetPlayback();
+        }
+        playlists.Remove(playlist.Name);
+        PlaylistElement? playlistElement = PlaylistsListPanel.Children
+            .OfType<PlaylistElement>()
+            .Where(el => el.Text == playlist.Name)
+            .FirstOrDefault();
+        if (currentlySelectedPlaylistElement == playlistElement)
+        {
+            PlaylistsListPanel.Children.Remove(playlistElement);
+            ClearPlaylistSongsView();
+        }
+        Logger.Log("Playlist deleted.");
     }
 
     private void ManagePlaylistSongs(SongCollection playlist)
     {
-        if (playlist.Equals(SongCollection.Empty)) return;
+        Logger.Log($"Managing songs in playlist with name '{playlist.Name}'...");
+        if (playlist.Equals(SongCollection.EmptyPlaylist))
+        {
+            Logger.Warn("Skipping playlist management: playlist is SongCollection.Empty!");
+            return;
+        }
         SongsChooserDialog scd = new SongsChooserDialog(allSongsPlaylist!, playlist);
-        if (scd.ShowDialog() != true) return;
-        var result = scd.Result;
-        string path = $"{PLAYLISTS_PATH}\\{playlist.Name}.homppl";
-        try
+        if (scd.ShowDialog() != true)
         {
-            using (StreamWriter sw = new StreamWriter(path, false))
+            Logger.Log("Playlist management canceled.");
+            return;
+        }
+
+        List<Song> result = scd.Result;
+        using SqliteDataReader? r = Database.ExecuteSelectQuery("SELECT id FROM playlists WHERE name = @_name;",
+            [("@_name", playlist.Name)]);
+        if (r is null)
+        {
+            Logger.Error("Cannot manage playlist! Failed to obtain data from 'playlists' table.");
+            MessageBox.Show("An error occurred.", "HOMP", MessageBoxButton.OK, MessageBoxImage.Error);
+            return;
+        }
+        if (r.IsClosed)
+        {
+            Logger.Error("Cannot manage playlist! Database reader is closed.");
+            MessageBox.Show("An error occurred.", "HOMP", MessageBoxButton.OK, MessageBoxImage.Error);
+            return;
+        }
+        int playlistId = -1;
+        if (!r.Read())
+        {
+            Logger.Error("Cannot manage playlist! Failed to read playlist id from database.");
+            MessageBox.Show("An error occurred.", "HOMP", MessageBoxButton.OK, MessageBoxImage.Error);
+            return;
+        }
+        playlistId = r.GetInt32(0);
+
+        int status = Database.ExecuteGenericQuery("DELETE FROM playlist_songs WHERE playlist_id = @_id;",
+            [("@_id", playlistId)]);
+        if (status == -2)
+        {
+            Logger.Error("Cannot manage playlist! Failed to delete data from 'playlist_songs' table.");
+            MessageBox.Show("An error occurred while saving changes to the playlist.", "HOMP", MessageBoxButton.OK, MessageBoxImage.Error);
+            return;
+        }
+        if (!Database.StartTransaction())
+        {
+            Logger.Log("Playlist management aborted: cannot start database transaction.");
+            MessageBox.Show("An error occurred while saving changes to the playlist.", "HOMP", MessageBoxButton.OK, MessageBoxImage.Error);
+            return;
+        }
+        for (int i = 0; i < result.Count; i++)
+        {
+            if (!Database.AddSongToPlaylist(result[i].FilePath, playlistId))
             {
-                foreach (Song song in result)
-                {
-                    sw.Write($"{song.FilePath}|");
-                }
-                sw.Close();
+                Logger.Warn($"Playlist management: skipped song '{result[i].FilePath}' in playlist {playlistId}.");
             }
-            LoadAllPlaylists();
         }
-        catch
+        if (!Database.EndTransaction())
         {
-            MessageBox.Show("An error occurred while saving changes to the playlist.");
+            Logger.Log("Playlist management failed: cannot commit database transaction.");
+            MessageBox.Show("An error occurred while saving changes to the playlist.", "HOMP", MessageBoxButton.OK, MessageBoxImage.Error);
+            return;
         }
+
+        playlists[playlist.Name].Songs.Clear();
+        for (int i = 0; i < result.Count; i++)
+        {
+            playlists[playlist.Name].AddSong(result[i]);
+        }
+
+        PlaylistElement? playlistElement = PlaylistsListPanel.Children
+            .OfType<PlaylistElement>()
+            .Where(el => el.Text == playlist.Name)
+            .FirstOrDefault();
+        if (currentlySelectedPlaylistElement == playlistElement)
+        {
+            LoadPlaylistSongsInView(playlists[playlist.Name]);
+        }
+        Logger.Log("Finished playlist management.");
     }
 
     public void LoadLyricsInView()
@@ -534,9 +731,18 @@ public partial class MainWindow : Window
         }
     }
 
+    private void ClearPlaylistSongsView()
+    {
+        PlaylistSongs.Clear();
+        PlaylistSongsListCoverImage.Source = null;
+        PlaylistSongsListTitleLabel.Content = string.Empty;
+        PlaylistSongsListDurationLabel.Content = string.Empty;
+        currentlySelectedPlaylistElement = null;
+    }
+
     private void LoadPlaylistSongsInView(SongCollection playlist)
     {
-        if (playlist.Equals(SongCollection.Empty)) return;
+        if (playlist.Equals(SongCollection.EmptyPlaylist)) return;
         PlaylistSongs.Clear();
         PlaylistSongsListTitleLabel.Content = playlist.Name;
         TimeSpan totalTime = playlist.TotalTime;
@@ -586,7 +792,7 @@ public partial class MainWindow : Window
             SongCollection playlist = allSongsPlaylist;
             if (Properties.Settings.Default.UseSearchResultsAsShuffleSource)
             {
-                playlist = new SongCollection("__HOMP_SEARCH_RESULTS_PLAYLIST__");
+                playlist = new SongCollection("__HOMP_SEARCH_RESULTS_PLAYLIST__", SongCollectionType.Playlist);
                 foreach (Song song in results)
                 {
                     playlist.AddSong(song);
@@ -666,6 +872,11 @@ public partial class MainWindow : Window
             Logger.Error("Cannot load files from database! Failed to obtain data from 'folders' table.");
             return;
         }
+        if (dirReader.IsClosed)
+        {
+            Logger.Error("Cannot load files from database! Database reader is closed.");
+            return;
+        }
         while (dirReader.Read())
         {
             dirs.Add(dirReader.GetString(0));
@@ -722,7 +933,7 @@ public partial class MainWindow : Window
         int songCount = Database.GetRowCount("songs");
         Logger.Log($"Got {songCount} songs from database. Initializing songs collections.");
         AllSongs = new(songCount <= 0 ? 32 : songCount);
-        allSongsPlaylist = new SongCollection("__HOMP_ALL_SONGS_PLAYLIST__");
+        allSongsPlaylist = new SongCollection("__HOMP_ALL_SONGS_PLAYLIST__", SongCollectionType.Playlist);
 
         // Songs
         Logger.Log("Loading all songs from database...");
@@ -747,6 +958,56 @@ public partial class MainWindow : Window
                 }
             }
         }
+        Logger.Log("Finished loading all songs from database.");
+
+        // Playlists
+        Logger.Log("Loading all playlists from database...");
+        List<(int Id, string? Name)> dbPlaylists = new(8); // Arbitrary number, seems fine
+        using (var playlistsReader = Database.ExecuteSelectQuery("SELECT * FROM playlists;"))
+        {
+            if (playlistsReader is not null)
+            {
+                while (playlistsReader.Read())
+                {
+                    dbPlaylists.Add(new(playlistsReader.GetInt32(0), playlistsReader.GetString(1)));
+                }
+            }
+            else
+            {
+                Logger.Error("Cannot load playlists from database! Failed to obtain data from 'playlists' table.");
+            }
+        }
+        for (int i = 0; i < dbPlaylists.Count; i++)
+        {
+            if (dbPlaylists[i].Name is null)
+            {
+                Logger.Error($"Skipping playlist '{dbPlaylists[i].Name}' (from database): playlist name is null!");
+                continue;
+            }
+            using (SqliteDataReader? plReader =
+                Database.ExecuteSelectQuery("SELECT song_path FROM playlist_songs WHERE playlist_id = @_id",
+                [("@_id", dbPlaylists[i].Id)]))
+            {
+                if (plReader is null)
+                {
+                    Logger.Error($"Cannot load playlist {dbPlaylists[i].Name} from database! Failed to obtain data from 'playlist_songs' table.");
+                    continue;
+                }
+                SongCollection playlist = new(dbPlaylists[i].Name!, SongCollectionType.Playlist);
+                while (plReader!.Read())
+                {
+                    string songPath = plReader!.GetString(0);
+                    if (allSongsPlaylist.Songs.ContainsKey(songPath))
+                    {
+                        playlist.AddSong(allSongsPlaylist.Songs[songPath]);
+                    }
+                }
+                playlists.Add(playlist.Name, playlist);
+                PlaylistsListPanel.Children.Add(new PlaylistElement(playlist) { Text = playlist.Name });
+            }
+        }
+        Logger.Log($"Finished loading all playlists from database.");
+
         Logger.Log($"Finished loading all files from database.");
         Logger.Log("Now showing all songs...");
         AllSongsListView.ItemsSource = new ObservableCollection<CustomSongElement.CustomSongElementInfo>(AllSongs);
@@ -779,12 +1040,12 @@ public partial class MainWindow : Window
         foreach (string artist in song.Artists)
         {
             if (!artists.ContainsKey(artist))
-                artists[artist] = new SongCollection(artist);
+                artists[artist] = new SongCollection(artist, SongCollectionType.Artist);
             artists[artist].AddSong(song);
         }
         // Combined artists
         if (!artists.ContainsKey(song.Artist))
-            artists[song.Artist] = new SongCollection(song.Artist);
+            artists[song.Artist] = new SongCollection(song.Artist, SongCollectionType.Artist);
 
         // If the song has a single artist, this would have caused problems.
         // So we check before adding it.
@@ -793,7 +1054,7 @@ public partial class MainWindow : Window
 
         // Create the album if it does not exist yet.
         if (!albums.ContainsKey(song.Album ?? UNKNOWN_ALBUM))
-            albums[song.Album ?? UNKNOWN_ALBUM] = new SongCollection(song.Album ?? UNKNOWN_ALBUM);
+            albums[song.Album ?? UNKNOWN_ALBUM] = new SongCollection(song.Album ?? UNKNOWN_ALBUM, SongCollectionType.Album);
 
         // TODO: Slow. Maybe convert to ID3 cover tag?
         //if (File.Exists($"{COVERS_PATH}\\{song.FileName}.mp3[Cover].png"))
@@ -808,80 +1069,6 @@ public partial class MainWindow : Window
         {
             AllSongs?.Add(new(song, allSongsPlaylist!));
         });
-    }
-
-    private void LoadAllPlaylists()
-    {
-        Logger.Log("Loading all playlists from disk...");
-        PlaylistsListPanel.Children.Clear();
-
-        if (!Directory.Exists(PLAYLISTS_PATH))
-        {
-            Logger.Error($"Playlists folder ({PLAYLISTS_PATH}) does not exist! Aborting playlists loading.");
-            return;
-        }
-        try
-        {
-            string[] allPlaylists = Directory.GetFiles(PLAYLISTS_PATH, "*.homppl");
-            Logger.Log($"Found {allPlaylists.Length} playlist files.");
-            playlists.Clear();
-            PlaylistSongs.Clear();
-
-            foreach (string p in allPlaylists)
-            {
-                string playlistName = p.Replace($"{PLAYLISTS_PATH}\\", "").Replace(".homppl", "");
-                SongCollection playlist = new SongCollection(playlistName);
-                string[] songs = new string[] { };
-                using (StreamReader sr = new StreamReader(p))
-                {
-                    string allSongs = sr.ReadToEnd().Trim();
-                    if (!string.IsNullOrEmpty(allSongs) && !string.IsNullOrWhiteSpace(allSongs))
-                    {
-                        songs = allSongs.Contains("|") ? allSongs.Split("|") : new string[] { allSongs };
-                    }
-                    sr.Close();
-                }
-
-                foreach (string song in songs)
-                {
-                    if (!allSongsPlaylist?.Songs.ContainsKey(song) ?? false)
-                    {
-                        Logger.Warn($"Skipping song '{song}' from playlist '{playlistName}' because it was not loaded!");
-                        continue;
-                    }
-                    playlist.AddSong(allSongsPlaylist!.Songs[song]);
-                }
-
-                PlaylistElement playlistElement = new PlaylistElement(
-                    (self) =>
-                    {
-                        if (currentlySelectedPlaylistElement == self) return;
-                        if (currentlySelectedPlaylistElement is not null) currentlySelectedPlaylistElement.Focused = false;
-                        LoadPlaylistSongsInView(playlists[playlistName]);
-                        currentlySelectedPlaylistElement = self;
-                    },
-                    (self) =>
-                    {
-                        PlayCollection(playlist);
-                    },
-                    () => { ManagePlaylistSongs(playlist); },
-                    () => { RenamePlaylist(playlist); },
-                    () => { DeletePlaylist(playlist); }
-                )
-                {
-                    Text = playlistName,
-                };
-                PlaylistsListPanel.Children.Add(playlistElement);
-                playlists.Add(playlistName, playlist);
-            }
-
-            Logger.Log("Loaded all playlists.");
-        }
-        catch (Exception ex)
-        {
-            Logger.Exception("Failed to load playlists!", ex);
-            MessageBox.Show("Unable to load playlists.");
-        }
     }
 
     private void LoadAllAlbums()
@@ -1064,6 +1251,32 @@ public partial class MainWindow : Window
         ProgressSlider.Value = 0;
 
         LoadLyricsInView();
+    }
+
+    /// <summary>
+    /// Stops the playback.
+    /// </summary>
+    private void StopPlayback()
+    {
+        mediaPlayer.Close();
+        mediaPlayer.Stop();
+        IsPlaying = false;
+    }
+
+    /// <summary>
+    /// Resets the playback.
+    /// </summary>
+    private void ResetPlayback()
+    {
+        StopPlayback();
+        songQueue.Clear();
+        currentCollection = null;
+        IsPlaying = false;
+        ProgressLabel.Content = "00:00 / 00:00";
+        ProgressSlider.Value = 0d;
+        CurrentSongTitleLabel.Content = "No song playing";
+        CurrentSongArtistAlbumLabel.Content = "Artist - Album";
+        SetSongLyricsRichTextBoxText(string.Empty);
     }
 
     public void PreviousSongInPlaylist()

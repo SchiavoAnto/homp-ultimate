@@ -1,18 +1,14 @@
-﻿using System;
-using System.Windows;
+﻿using System.Windows;
 using System.Windows.Input;
 using System.Windows.Controls;
 using System.Collections.Generic;
+using CustomMediaPlayerUltimate.DataStructures;
 
 namespace CustomMediaPlayerUltimate.Elements;
 
 public partial class PlaylistElement : UserControl
 {
-    public Action<PlaylistElement> OnClickDelegate;
-    public Action<PlaylistElement> OnDoubleClickDelegate;
-    public Action OnManageSongsCtxClickedDelegate;
-    public Action OnRenameCtxClickedDelegate;
-    public Action OnDeleteCtxClickedDelegate;
+    public SongCollection Playlist { get; private set; }
 
     private string _text = string.Empty;
     public string Text
@@ -35,63 +31,48 @@ public partial class PlaylistElement : UserControl
         }
     }
 
-    private bool _focused = false;
     public bool Focused
     {
-        get { return _focused; }
-        set
-        {
-            _focused = value;
-            FocusedIndicatorIcon.Visibility = value ? Visibility.Visible : Visibility.Collapsed;
-            //GridContainer.Background = value ? Brushes.Gray : new SolidColorBrush(Color.FromRgb(48, 48, 48));
-        }
+        get { return (bool)GetValue(FocusedProperty); }
+        set { SetValue(FocusedProperty, value); }
     }
-    public bool FocusedProperty
-    {
-        get { return (bool)GetValue(FocusedPropertyProperty); }
-        set { SetValue(FocusedPropertyProperty, value); }
-    }
-    public static readonly DependencyProperty FocusedPropertyProperty =
-        DependencyProperty.Register("FocusedProperty", typeof(bool), typeof(PlaylistElement), new PropertyMetadata(false));
+    public static readonly DependencyProperty FocusedProperty =
+        DependencyProperty.Register("Focused", typeof(bool), typeof(PlaylistElement), new PropertyMetadata(false));
 
-    public PlaylistElement(Action<PlaylistElement> onClickDelegate, Action<PlaylistElement> onDoubleClickDelegate, Action onManageSongsCtxClickedDelegate, Action onRenameCtxClickedDelegate, Action onDeleteCtxClickedDelegate)
+    public PlaylistElement(SongCollection playlist)
     {
         InitializeComponent();
-        OnClickDelegate = onClickDelegate;
-        OnDoubleClickDelegate = onDoubleClickDelegate;
-        OnManageSongsCtxClickedDelegate = onManageSongsCtxClickedDelegate;
-        OnRenameCtxClickedDelegate = onRenameCtxClickedDelegate;
-        OnDeleteCtxClickedDelegate = onDeleteCtxClickedDelegate;
+        Playlist = playlist;
     }
 
     private void ElementMouseUp(object sender, MouseButtonEventArgs e)
     {
-        OnClickDelegate.Invoke(this);
         Focused = true;
+        MainWindow.Instance.PlaylistElementClick(this);
     }
 
     private void ElementMouseDoubleClick(object sender, MouseButtonEventArgs e)
     {
-        OnDoubleClickDelegate.Invoke(this);
+        MainWindow.Instance.PlaylistElementDoubleClick(this);
     }
 
     private void PlayCtxClicked(object sender, RoutedEventArgs e)
     {
-        OnDoubleClickDelegate.Invoke(this);
+        MainWindow.Instance.PlaylistElementDoubleClick(this);
     }
 
     private void ManageSongsCtxClicked(object sender, RoutedEventArgs e)
     {
-        OnManageSongsCtxClickedDelegate.Invoke();
+        MainWindow.Instance.PlaylistElementManageClick(this);
     }
 
     private void RenameCtxClicked(object sender, RoutedEventArgs e)
     {
-        OnRenameCtxClickedDelegate.Invoke();
+        MainWindow.Instance.PlaylistElementRenameClick(this);
     }
 
     private void DeleteCtxClicked(object sender, RoutedEventArgs e)
     {
-        OnDeleteCtxClickedDelegate.Invoke();
+        MainWindow.Instance.PlaylistElementDeleteClick(this);
     }
 }

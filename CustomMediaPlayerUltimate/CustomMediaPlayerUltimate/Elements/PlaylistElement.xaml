@@ -6,13 +6,38 @@
              xmlns:local="clr-namespace:CustomMediaPlayerUltimate.Elements"
              mc:Ignorable="d" 
              d:DesignHeight="40" d:DesignWidth="200" MouseUp="ElementMouseUp" MouseDoubleClick="ElementMouseDoubleClick">
-    <Grid x:Name="GridContainer" Style="{StaticResource PlaylistElement}">
+    <Grid x:Name="GridContainer">
+        <Grid.Style>
+            <Style TargetType="Grid">
+                <Setter Property="Background" Value="#303030"/>
+                <Style.Triggers>
+                    <Trigger Property="IsMouseOver" Value="True">
+                        <Setter Property="Background" Value="#353535"/>
+                    </Trigger>
+                    <DataTrigger Binding="{Binding Focused, RelativeSource={RelativeSource AncestorType=local:PlaylistElement}}" Value="True">
+                        <Setter Property="Background" Value="#404040"/>
+                    </DataTrigger>
+                </Style.Triggers>
+            </Style>
+        </Grid.Style>
+        
         <Grid.ColumnDefinitions>
             <ColumnDefinition Width="*"/>
             <ColumnDefinition Width="16"/>
         </Grid.ColumnDefinitions>
         <Label x:Name="ItemTextLabel" Grid.Column="0" VerticalAlignment="Center" Foreground="WhiteSmoke"/>
-        <ContentControl x:Name="FocusedIndicatorIcon" Grid.Column="1" Margin="0,0,4,0" Content="{StaticResource SelectedMarkIcon}" Visibility="Collapsed"/>
+        <ContentControl x:Name="FocusedIndicatorIcon" Grid.Column="1" Margin="0,0,4,0" Content="{StaticResource SelectedMarkIcon}">
+            <ContentControl.Style>
+                <Style TargetType="ContentControl">
+                    <Setter Property="Visibility" Value="Collapsed"/>
+                    <Style.Triggers>
+                        <DataTrigger Binding="{Binding Focused, RelativeSource={RelativeSource AncestorType=local:PlaylistElement}}" Value="True">
+                            <Setter Property="Visibility" Value="Visible"/>
+                        </DataTrigger>
+                    </Style.Triggers>
+                </Style>
+            </ContentControl.Style>
+        </ContentControl>
 
         <Grid.ContextMenu>
             <ContextMenu>

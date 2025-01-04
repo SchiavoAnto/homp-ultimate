@@ -21,9 +21,8 @@ public static class Database
             connection.Open();
             Logger.Log("Connected to database.");
 
-            if (dbExists) return true;
             int r = ExecuteGenericQuery(@"
-            CREATE TABLE songs (
+            CREATE TABLE IF NOT EXISTS songs (
                 path TEXT NOT NULL PRIMARY KEY,
                 title TEXT,
                 artists TEXT,
@@ -41,7 +40,7 @@ public static class Database
                 return false;
             }
             r = ExecuteGenericQuery(@"
-            CREATE TABLE folders (
+            CREATE TABLE IF NOT EXISTS folders (
                 path TEXT NOT NULL PRIMARY KEY,
                 last_modified INTEGER DEFAULT 0
             );");
@@ -51,14 +50,36 @@ public static class Database
                 return false;
             }
             r = ExecuteGenericQuery(@"
-            CREATE TABLE homp (
+            CREATE TABLE IF NOT EXISTS homp (
                 last_db_update INTEGER NOT NULL DEFAULT 0
-            );
-            INSERT INTO homp (last_db_update) VALUES (0);");
+            );");
             if (r == -2)
             {
                 Logger.Error("Failed to create 'homp' table in database!");
                 return false;
+            }
+            r = ExecuteGenericQuery(@"
+            CREATE TABLE IF NOT EXISTS playlists (
+                id INTEGER NOT NULL PRIMARY KEY,
+                name TEXT NOT NULL
+            );
+            CREATE TABLE IF NOT EXISTS playlist_songs (
+                playlist_id INTEGER NOT NULL,
+                song_path TEXT
+            );");
+            if (r == -2)
+            {
+                Logger.Error("Failed to create 'playlists', 'playlist_songs' tables in database!");
+                return false;
+            }
+            if (!dbExists)
+            {
+                r = ExecuteGenericQuery("INSERT INTO homp (last_db_update) VALUES (0);");
+                if (r == -2)
+                {
+                    Logger.Error("Failed to insert base 'last_db_update' value in database!");
+                    return false;
+                }
             }
 
             Logger.Log("Database initialization finished.");
@@ -94,6 +115,15 @@ public static class Database
         return true;
     }
 
+    public static bool CancelTransaction()
+    {
+        if (connection?.State != System.Data.ConnectionState.Open) return false;
+        if (currentTransaction is null) return false;
+        currentTransaction.Rollback();
+        currentTransaction = null;
+        return true;
+    }
+
     /// <returns>-2 if fail</returns>
     public static int ExecuteGenericQuery(string query, List<(string paramName, object paramValue)>? parameters = null)
     {
@@ -108,7 +138,15 @@ public static class Database
                     cmd.Parameters.AddWithValue(pName, pVal);
                 }
             }
-            return cmd.ExecuteNonQuery();
+            try
+            {
+                return cmd.ExecuteNonQuery();
+            }
+            catch (Exception ex)
+            {
+                Logger.Exception("Exception in Database.ExecuteGenericQuery!", ex);
+                return -2;
+            }
         }
     }
 
@@ -124,7 +162,6 @@ public static class Database
                 cmd.Parameters.AddWithValue(pName, pVal ?? DBNull.Value);
             }
         }
-        cmd.CommandType = System.Data.CommandType.Text;
         try
         {
             return cmd.ExecuteReader();
@@ -194,6 +231,39 @@ public static class Database
         return r != -2;
     }
 
+    public static bool AddSongToPlaylist(string songPath, int playlistId)
+    {
+        int r = ExecuteGenericQuery(@"
+            INSERT INTO playlist_songs (
+                playlist_id,
+                song_path
+            ) VALUES (
+                @_id,
+                @_path
+            );",
+            [
+                ("@_id", playlistId),
+                ("@_path", songPath)
+            ]
+        );
+        return r != -2;
+    }
+
+    public static bool AddPlaylist(string name)
+    {
+        int r = ExecuteGenericQuery(@"
+            INSERT INTO playlists (
+                name
+            ) VALUES (
+                @_name
+            );",
+            [
+                ("@_name", name)
+            ]
+        );
+        return r != -2;
+    }
+
     public static int GetRowCount(string tableName)
     {
         // TODO: Probably should use proper parameter insertion
@@ -204,6 +274,18 @@ public static class Database
             return reader.GetInt32(0);
         }
         return -1;
+    }
+
+    public static bool? DoesPlaylistExist(string playlistName)
+    {
+        var reader = ExecuteSelectQuery($"SELECT count(*) FROM playlists WHERE name = @_name;",
+            [("@_name", playlistName)]);
+        if (reader is null) return null;
+        if (reader.Read())
+        {
+            return reader.GetInt32(0) > 0;
+        }
+        return null;
     }
 
     public static void SetLastUpdate(long dateTicks)

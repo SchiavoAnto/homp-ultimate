@@ -10,7 +10,11 @@ public class SongCollection
     /// <summary>
     /// The name of the collection.
     /// </summary>
-    public string Name { get; private set; } = string.Empty;
+    public string Name { get; set; } = string.Empty;
+    /// <summary>
+    /// The type of the collection.
+    /// </summary>
+    public SongCollectionType Type { get; init; }
     /// <summary>
     /// The songs in this collection.
     /// </summary>
@@ -23,13 +27,19 @@ public class SongCollection
     public TimeSpan TotalTime =>
         TimeSpan.FromTicks(Songs.Values.Sum(song => song.Duration.Ticks));
 
-    public static readonly SongCollection Empty = new SongCollection();
+    public static readonly SongCollection EmptyPlaylist =
+        new SongCollection(string.Empty, SongCollectionType.Playlist);
+    public static readonly SongCollection EmptyAlbum =
+        new SongCollection(string.Empty, SongCollectionType.Album);
+    public static readonly SongCollection EmptyArtist =
+        new SongCollection(string.Empty, SongCollectionType.Artist);
 
     private SongCollection() { }
 
-    public SongCollection(string name)
+    public SongCollection(string name, SongCollectionType type)
     {
         Name = name;
+        Type = type;
     }
 
     public void AddSong(Song song)
@@ -51,7 +61,8 @@ public class SongCollection
         if (obj is null) return false;
         if (obj is SongCollection coll)
         {
-            return Name == coll.Name;
+            return Type == coll.Type
+                && Name == coll.Name;
         }
         return false;
     }
@@ -60,4 +71,11 @@ public class SongCollection
     {
         return Name.GetHashCode();
     }
+}
+
+public enum SongCollectionType
+{
+    Playlist,
+    Album,
+    Artist
 }
