@@ -22,6 +22,14 @@ public partial class MiniPlayerWindow : Window
     private Timer artistTimer = new Timer(10);
     private Timer opacityTimer = new Timer(10);
 
+    public bool ControlsHidden
+    {
+        get { return (bool)GetValue(ControlsHiddenProperty); }
+        set { SetValue(ControlsHiddenProperty, value); }
+    }
+    public static readonly DependencyProperty ControlsHiddenProperty =
+        DependencyProperty.Register("ControlsHidden", typeof(bool), typeof(MiniPlayerWindow), new PropertyMetadata(false));
+
     [DllImport("user32.dll")]
     public static extern IntPtr SetWindowLong(IntPtr hWnd, int nIndex, int dwNewLong);
 
@@ -91,10 +99,13 @@ public partial class MiniPlayerWindow : Window
                 if (Opacity > Properties.Settings.Default.MiniplayerMinimumOpacity)
                 {
                     Opacity -= 0.01f;
+                    if (Properties.Settings.Default.MiniplayerHideControls)
+                        ControlsGrid.Opacity -= 0.01f;
                 }
                 else
                 {
                     opacityTimer.Stop();
+                    ControlsHidden = Properties.Settings.Default.MiniplayerHideControls;
                 }
             });
         };
@@ -137,6 +148,8 @@ public partial class MiniPlayerWindow : Window
     {
         opacityTimer.Stop();
         Opacity = 1f;
+        ControlsGrid.Opacity = 1f;
+        ControlsHidden = false;
     }
 
     private void WindowMouseLeave(object sender, RoutedEventArgs e)

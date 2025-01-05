@@ -285,5 +285,17 @@ namespace CustomMediaPlayerUltimate.Properties {
                 this["SwitchMiniplayerShortcutKey"] = value;
             }
         }
+        
+        [global::System.Configuration.UserScopedSettingAttribute()]
+        [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
+        [global::System.Configuration.DefaultSettingValueAttribute("True")]
+        public bool MiniplayerHideControls {
+            get {
+                return ((bool)(this["MiniplayerHideControls"]));
+            }
+            set {
+                this["MiniplayerHideControls"] = value;
+            }
+        }
     }
 }

@@ -3,6 +3,7 @@
         xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
         xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
         xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+        xmlns:local="clr-namespace:CustomMediaPlayerUltimate"
         mc:Ignorable="d"
         Title="MiniPlayerWindow" Width="275" Height="55" MaxWidth="275" MaxHeight="55"
         WindowStyle="None" Topmost="True" AllowsTransparency="True" ShowInTaskbar="False" BorderThickness="0"
@@ -30,7 +31,18 @@
         
         <Grid Background="#252525" Grid.IsSharedSizeScope="True">
             <Grid.ColumnDefinitions>
-                <ColumnDefinition Width="Auto"/>
+                <ColumnDefinition>
+                    <ColumnDefinition.Style>
+                        <Style TargetType="ColumnDefinition">
+                            <Setter Property="Width" Value="Auto"/>
+                            <Style.Triggers>
+                                <DataTrigger Binding="{Binding ControlsHidden, RelativeSource={RelativeSource AncestorType=local:MiniPlayerWindow}}" Value="True">
+                                    <Setter Property="Width" Value="0"/>
+                                </DataTrigger>
+                            </Style.Triggers>
+                        </Style>
+                    </ColumnDefinition.Style>
+                </ColumnDefinition>
                 <ColumnDefinition Width="Auto"/>
                 <ColumnDefinition Width="Auto"/>
                 <ColumnDefinition Width="*"/>
@@ -40,7 +52,7 @@
                 <ColumnDefinition Width="Auto"/>
             </Grid.ColumnDefinitions>
 
-            <Grid Grid.Column="0">
+            <Grid x:Name="ControlsGrid" Grid.Column="0">
                 <Grid.RowDefinitions>
                     <RowDefinition Height="Auto"/>
                     <RowDefinition Height="Auto"/>

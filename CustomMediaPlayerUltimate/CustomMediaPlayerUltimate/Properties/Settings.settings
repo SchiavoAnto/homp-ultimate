@@ -68,5 +68,8 @@
     <Setting Name="SwitchMiniplayerShortcutKey" Type="System.Int16" Scope="User">
       <Value Profile="(Default)">56</Value>
     </Setting>
+    <Setting Name="MiniplayerHideControls" Type="System.Boolean" Scope="User">
+      <Value Profile="(Default)">True</Value>
+    </Setting>
   </Settings>
 </SettingsFile>

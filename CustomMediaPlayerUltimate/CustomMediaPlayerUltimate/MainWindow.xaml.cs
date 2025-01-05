@@ -1195,6 +1195,7 @@ public partial class MainWindow : Window
         SettingsMiniplayerOpacitySliderLabel.Content = $"{(SettingsMiniplayerOpacitySlider.Value * 100d):0.00}%";
         SettingsMiniplayerOpacityTimeoutNumberInputBox.SetValue(Properties.Settings.Default.MiniplayerFadingTimeout);
         SettingsMiniplayerAutoAppearOnMinimizeCheckbox.IsChecked = Properties.Settings.Default.MiniplayerAppearOnMinimize;
+        SettingsMiniplayerHideControlsCheckbox.IsChecked = Properties.Settings.Default.MiniplayerHideControls;
         Logger.Log("Settings loaded.");
     }
 
@@ -1728,5 +1729,15 @@ public partial class MainWindow : Window
     private void SettingsMiniplayerAutoAppearOnMinimizeCheckboxUnchecked(object sender, RoutedEventArgs e)
     {
         Properties.Settings.Default.MiniplayerAppearOnMinimize = false;
+    }
+
+    private void SettingsMiniplayerHideControlsCheckboxChecked(object sender, RoutedEventArgs e)
+    {
+        Properties.Settings.Default.MiniplayerHideControls = true;
+    }
+
+    private void SettingsMiniplayerHideControlsCheckboxUnchecked(object sender, RoutedEventArgs e)
+    {
+        Properties.Settings.Default.MiniplayerHideControls = false;
     }
 }
