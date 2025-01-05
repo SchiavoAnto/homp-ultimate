@@ -918,13 +918,46 @@ public partial class MainWindow : Window
                     .GetFiles()
                     .Where(i => i.LastWriteTime.Ticks > lastUpdate || i.CreationTime.Ticks > lastUpdate)
                     .ToArray();
-                Logger.Log($"Obtained {newFiles.Length} new/modified files from '{dirs[i]}'");
+                Logger.Log($"Obtained {newFiles.Length} new/modified files from '{dirs[i]}'.");
                 // If there are any new files, we read them back from
                 // disk and save them to the DB.
+                Logger.Log("Saving them to database...");
                 if (newFiles.Length != 0)
                 {
                     // Read each new file from disk
                     // and save it to DB.
+                    int cachedFiles = 0;
+                    int updatedFiles = 0;
+                    for (int j = 0; j < newFiles.Length; j++)
+                    {
+                        Song song = new(newFiles[j].FullName);
+                        var mediaState = Utils.GetMediaInformation(song);
+                        if (!mediaState.Success)
+                        {
+                            Logger.Exception($"Skipped new/modified file '{newFiles[j].FullName}': error while trying to retrieve media information", mediaState.Exception!);
+                            continue;
+                        }
+
+                        if (Database.DoesSongExist(song.FilePath) ?? true)
+                        {
+                            if (!Database.UpdateSong(song))
+                            {
+                                Logger.Log($"Failed to update new/modified file '{newFiles[j].FullName}'.");
+                                continue;
+                            }
+                            updatedFiles++;
+                        }
+                        else
+                        {
+                            if (!Database.AddSong(song))
+                            {
+                                Logger.Log($"Failed to cache new/modified file '{newFiles[j].FullName}'.");
+                                continue;
+                            }
+                            cachedFiles++;
+                        }
+                    }
+                    Logger.Log($"Successfully cached {cachedFiles} file(s) and updated {updatedFiles} file(s).");
                 }
             }
         }

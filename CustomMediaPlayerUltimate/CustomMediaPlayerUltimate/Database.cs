@@ -264,6 +264,36 @@ public static class Database
         return r != -2;
     }
 
+    public static bool UpdateSong(Song song)
+    {
+        int r = ExecuteGenericQuery(@"
+            UPDATE songs SET
+                title = @_title,
+                artists = @_artists,
+                album_artist = @_album_artist,
+                album_title = @_album_title,
+                year = @_year,
+                track_number = @_track_number,
+                genres = @_genres,
+                duration = @_duration,
+                rating = @_rating
+            WHERE path = @_path;",
+            [
+                ("@_title", song.Title),
+                ("@_artists", song.Artist),
+                ("@_album_artist", song.AlbumArtist),
+                ("@_album_title", song.Album ?? MainWindow.UNKNOWN_ALBUM),
+                ("@_year", song.Year),
+                ("@_track_number", song.TrackNumber),
+                ("@_genres", string.Join(',', song.Genres)),
+                ("@_duration", song.Duration.Ticks),
+                ("@_rating", song.Rating),
+                ("@_path", song.FilePath)
+            ]
+        );
+        return r != -2;
+    }
+
     public static int GetRowCount(string tableName)
     {
         // TODO: Probably should use proper parameter insertion
@@ -280,6 +310,18 @@ public static class Database
     {
         var reader = ExecuteSelectQuery($"SELECT count(*) FROM playlists WHERE name = @_name;",
             [("@_name", playlistName)]);
+        if (reader is null) return null;
+        if (reader.Read())
+        {
+            return reader.GetInt32(0) > 0;
+        }
+        return null;
+    }
+
+    public static bool? DoesSongExist(string songPath)
+    {
+        var reader = ExecuteSelectQuery($"SELECT count(*) FROM songs WHERE path = @_path;",
+            [("@_path", songPath)]);
         if (reader is null) return null;
         if (reader.Read())
         {
