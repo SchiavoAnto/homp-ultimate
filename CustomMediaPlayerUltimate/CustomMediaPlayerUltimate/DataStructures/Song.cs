@@ -18,6 +18,7 @@ public class Song
     public int TrackNumber { get; set; } = 0;
     public string[] Genres { get; set; } = Array.Empty<string>();
     public TimeSpan Duration { get; set; } = TimeSpan.Zero;
+    public byte Rating { get; set; } = 0;
     public string DurationString => Duration.ToString(MainWindow.TIME_FORMAT);
     public BitmapImage? Cover { get; set; } = null;
 
@@ -34,6 +35,7 @@ public class Song
             Artist.ToLower().Contains(query) ||
             (Album ?? MainWindow.UNKNOWN_ALBUM).ToLower().Contains(query) ||
             Year.ToString().Contains(query) ||
-            Duration.ToString(MainWindow.TIME_FORMAT).Contains(query);
+            Duration.ToString(MainWindow.TIME_FORMAT).Contains(query) ||
+            Rating.ToString() == query;
     }
 }

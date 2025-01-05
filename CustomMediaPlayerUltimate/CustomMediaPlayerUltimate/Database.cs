@@ -41,8 +41,7 @@ public static class Database
             }
             r = ExecuteGenericQuery(@"
             CREATE TABLE IF NOT EXISTS folders (
-                path TEXT NOT NULL PRIMARY KEY,
-                last_modified INTEGER DEFAULT 0
+                path TEXT NOT NULL PRIMARY KEY
             );");
             if (r == -2)
             {
@@ -51,7 +50,8 @@ public static class Database
             }
             r = ExecuteGenericQuery(@"
             CREATE TABLE IF NOT EXISTS homp (
-                last_db_update INTEGER NOT NULL DEFAULT 0
+                last_db_update INTEGER NOT NULL DEFAULT 0,
+                db_version INTEGER NOT NULL
             );");
             if (r == -2)
             {
@@ -74,10 +74,10 @@ public static class Database
             }
             if (!dbExists)
             {
-                r = ExecuteGenericQuery("INSERT INTO homp (last_db_update) VALUES (0);");
+                r = ExecuteGenericQuery("INSERT INTO homp (last_db_update, db_version) VALUES (0, 1);");
                 if (r == -2)
                 {
-                    Logger.Error("Failed to insert base 'last_db_update' value in database!");
+                    Logger.Error("Failed to insert base 'last_db_update' and 'db_version' values in database!");
                     return false;
                 }
             }
@@ -225,7 +225,7 @@ public static class Database
                 ("@_track_number", song.TrackNumber),
                 ("@_genres", string.Join(',', song.Genres)),
                 ("@_duration", song.Duration.Ticks),
-                ("@_rating", 0) // TODO
+                ("@_rating", song.Rating)
             ]
         );
         return r != -2;

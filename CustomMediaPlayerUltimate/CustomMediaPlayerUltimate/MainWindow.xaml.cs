@@ -1027,7 +1027,7 @@ public partial class MainWindow : Window
             Year = reader.GetInt32(5),
             TrackNumber = reader.GetInt32(6),
             Duration = TimeSpan.FromTicks(reader.GetInt64(8)),
-            // Rating = reader?.GetByte(9) ?? 0,
+            Rating = reader.GetByte(9),
         };
 
         song.Artists = song.Artist.Split(',', StringSplitOptions.TrimEntries);

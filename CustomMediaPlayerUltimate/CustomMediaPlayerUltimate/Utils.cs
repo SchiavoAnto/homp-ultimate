@@ -1,4 +1,7 @@
 ﻿using System;
+using System.Linq;
+using TagLib.Id3v2;
+using System.Collections.Generic;
 using System.Windows.Media.Imaging;
 using CustomMediaPlayerUltimate.DataStructures;
 
@@ -22,6 +25,14 @@ internal class Utils
                 song.TrackNumber = (int)file.Tag.Track;
                 song.Genres = file.Tag.Genres;
                 song.Duration = file.Properties.Duration;
+
+                IEnumerable<PopularimeterFrame>? popms =
+                    ((Tag)file.GetTag(TagLib.TagTypes.Id3v2)).GetFrames<PopularimeterFrame>();
+                if (popms is not null)
+                {
+                    if (popms.Count() > 0)
+                        song.Rating = popms.Max(popm => popm.Rating);
+                }
             }
             return (true, null);
         }
