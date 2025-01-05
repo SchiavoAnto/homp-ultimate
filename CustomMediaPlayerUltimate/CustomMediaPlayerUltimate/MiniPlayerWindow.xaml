@@ -23,125 +23,134 @@
             <MenuItem Header="Quit HOMP" Click="QuitCtxClicked"/>
         </ContextMenu>
     </Window.ContextMenu>
-    
-    <Border Padding="5" Margin="2" CornerRadius="5" BorderThickness="1" BorderBrush="#252525" Background="#252525">
-        <Border.Effect>
-            <DropShadowEffect BlurRadius="6" Direction="-90" RenderingBias="Quality" ShadowDepth="1"/>
-        </Border.Effect>
-        
-        <Grid Background="#252525" Grid.IsSharedSizeScope="True">
-            <Grid.ColumnDefinitions>
-                <ColumnDefinition>
-                    <ColumnDefinition.Style>
-                        <Style TargetType="ColumnDefinition">
-                            <Setter Property="Width" Value="Auto"/>
-                            <Style.Triggers>
-                                <DataTrigger Binding="{Binding ControlsHidden, RelativeSource={RelativeSource AncestorType=local:MiniPlayerWindow}}" Value="True">
-                                    <Setter Property="Width" Value="0"/>
-                                </DataTrigger>
-                            </Style.Triggers>
-                        </Style>
-                    </ColumnDefinition.Style>
-                </ColumnDefinition>
-                <ColumnDefinition Width="Auto"/>
-                <ColumnDefinition Width="Auto"/>
-                <ColumnDefinition Width="*"/>
-                <ColumnDefinition Width="Auto"/>
-                <ColumnDefinition Width="Auto"/>
-                <ColumnDefinition Width="Auto"/>
-                <ColumnDefinition Width="Auto"/>
-            </Grid.ColumnDefinitions>
 
-            <Grid x:Name="ControlsGrid" Grid.Column="0">
-                <Grid.RowDefinitions>
-                    <RowDefinition Height="Auto"/>
-                    <RowDefinition Height="Auto"/>
-                    <RowDefinition Height="*"/>
-                </Grid.RowDefinitions>
+    <Grid>
+        <Border Padding="5" Margin="2" CornerRadius="5" BorderThickness="1" BorderBrush="#252525" Background="#252525">
+            <Border.Effect>
+                <DropShadowEffect BlurRadius="6" Direction="-90" RenderingBias="Quality" ShadowDepth="1"/>
+            </Border.Effect>
 
-                <Button Grid.Row="0" Width="12" Height="12" Padding="0" Margin="0" Click="CloseButtonClick">
-                    <Button.Style>
-                        <Style TargetType="Button">
-                            <Setter Property="Background" Value="#CC0000" />
-                            <Setter Property="Foreground" Value="WhiteSmoke"/>
-                            <Setter Property="Template">
-                                <Setter.Value>
-                                    <ControlTemplate TargetType="Button">
-                                        <Border Background="{TemplateBinding Background}" BorderBrush="#BB0030" BorderThickness="2" Padding="0" Margin="0" CornerRadius="4">
-                                            <ContentPresenter HorizontalAlignment="Center" VerticalAlignment="Center" />
-                                        </Border>
-                                    </ControlTemplate>
-                                </Setter.Value>
-                            </Setter>
-                            <Style.Triggers>
-                                <Trigger Property="IsMouseOver" Value="True">
-                                    <Setter Property="Background" Value="#BB0000" />
-                                </Trigger>
-                                <Trigger Property="IsPressed" Value="True">
-                                    <Setter Property="Background" Value="#AA0000" />
-                                </Trigger>
-                            </Style.Triggers>
-                        </Style>
-                    </Button.Style>
-                </Button>
-                <Separator Grid.Row="1" Opacity="0" Height="2"/>
-                <Grid Grid.Row="2">
-                    <StackPanel Orientation="Horizontal" HorizontalAlignment="Center" IsHitTestVisible="False">
-                        <Rectangle VerticalAlignment="Stretch" Width="1" Margin="2" Stroke="DimGray" IsHitTestVisible="False"/>
-                        <Rectangle VerticalAlignment="Stretch" Width="1" Margin="2" Stroke="DimGray" IsHitTestVisible="False"/>
-                    </StackPanel>
-                    <Rectangle x:Name="WindowGrabber" Fill="Transparent" MouseMove="WindowGrabberMouseMove" MouseUp="WindowGrabberMouseUp" IsHitTestVisible="True"/>
-                </Grid>
-            </Grid>
-            <Separator x:Name="SongCoverImageSeparator" Grid.Column="1" Opacity="0" Width="5" Visibility="Collapsed"/>
-            <Image x:Name="SongCoverImage" Grid.Column="2" Width="40" Height="40" RenderOptions.BitmapScalingMode="HighQuality" Visibility="Collapsed"/>
-            <Grid Grid.Column="3" Margin="8,0,0,0">
-                <Grid.RowDefinitions>
-                    <RowDefinition Height="Auto"/>
-                    <RowDefinition Height="Auto"/>
-                </Grid.RowDefinitions>
-
-                <ScrollViewer x:Name="SongTitleLabelContainer" Grid.Row="0" HorizontalScrollBarVisibility="Hidden" VerticalScrollBarVisibility="Hidden" Focusable="False">
-                    <Label x:Name="SongTitleLabel" Margin="0" Padding="0" Foreground="WhiteSmoke" FontSize="14" FontWeight="Medium">Song Title</Label>
-                </ScrollViewer>
-                <ScrollViewer x:Name="SongArtistLabelContainer" Grid.Row="1" HorizontalScrollBarVisibility="Hidden" VerticalScrollBarVisibility="Hidden" Focusable="False">
-                    <Label x:Name="SongArtistLabel" Margin="0" Padding="0" Foreground="LightGray">Song Artist</Label>
-                </ScrollViewer>
-            </Grid>
-            <Grid Grid.Column="4" Margin="0,4,0,0">
-                <Grid.RowDefinitions>
-                    <RowDefinition Height="*"/>
-                    <RowDefinition Height="*"/>
-                </Grid.RowDefinitions>
+            <Grid Background="#252525" Grid.IsSharedSizeScope="True">
                 <Grid.ColumnDefinitions>
+                    <ColumnDefinition>
+                        <ColumnDefinition.Style>
+                            <Style TargetType="ColumnDefinition">
+                                <Setter Property="Width" Value="Auto"/>
+                                <Style.Triggers>
+                                    <DataTrigger Binding="{Binding ControlsHidden, RelativeSource={RelativeSource AncestorType=local:MiniPlayerWindow}}" Value="True">
+                                        <Setter Property="Width" Value="0"/>
+                                    </DataTrigger>
+                                </Style.Triggers>
+                            </Style>
+                        </ColumnDefinition.Style>
+                    </ColumnDefinition>
+                    <ColumnDefinition Width="Auto"/>
+                    <ColumnDefinition Width="Auto"/>
                     <ColumnDefinition Width="*"/>
+                    <ColumnDefinition Width="Auto"/>
+                    <ColumnDefinition Width="Auto"/>
+                    <ColumnDefinition Width="Auto"/>
                     <ColumnDefinition Width="Auto"/>
                 </Grid.ColumnDefinitions>
 
-                <Border Grid.Row="0" Grid.Column="1" BorderThickness="1" BorderBrush="#252525">
-                    <Border.Effect>
-                        <DropShadowEffect x:Name="SongTitleLabelOverflowShadow" BlurRadius="6" Direction="180" RenderingBias="Quality" ShadowDepth="4" Color="Black" Opacity="1"/>
-                    </Border.Effect>
-                    <Rectangle Width="1"/>
-                </Border>
-                <Border Grid.Row="1" Grid.Column="1" BorderThickness="1" BorderBrush="#252525">
-                    <Border.Effect>
-                        <DropShadowEffect x:Name="SongArtistLabelOverflowShadow" BlurRadius="6" Direction="180" RenderingBias="Quality" ShadowDepth="4" Color="Black" Opacity="1"/>
-                    </Border.Effect>
-                    <Rectangle Width="1"/>
-                </Border>
+                <Grid x:Name="ControlsGrid" Grid.Column="0">
+                    <Grid.RowDefinitions>
+                        <RowDefinition Height="Auto"/>
+                        <RowDefinition Height="Auto"/>
+                        <RowDefinition Height="*"/>
+                    </Grid.RowDefinitions>
+
+                    <Button Grid.Row="0" Width="12" Height="12" Padding="0" Margin="0" Click="CloseButtonClick">
+                        <Button.Style>
+                            <Style TargetType="Button">
+                                <Setter Property="Background" Value="#CC0000" />
+                                <Setter Property="Foreground" Value="WhiteSmoke"/>
+                                <Setter Property="Template">
+                                    <Setter.Value>
+                                        <ControlTemplate TargetType="Button">
+                                            <Border Background="{TemplateBinding Background}" BorderBrush="#BB0030" BorderThickness="2" Padding="0" Margin="0" CornerRadius="4">
+                                                <ContentPresenter HorizontalAlignment="Center" VerticalAlignment="Center" />
+                                            </Border>
+                                        </ControlTemplate>
+                                    </Setter.Value>
+                                </Setter>
+                                <Style.Triggers>
+                                    <Trigger Property="IsMouseOver" Value="True">
+                                        <Setter Property="Background" Value="#BB0000" />
+                                    </Trigger>
+                                    <Trigger Property="IsPressed" Value="True">
+                                        <Setter Property="Background" Value="#AA0000" />
+                                    </Trigger>
+                                </Style.Triggers>
+                            </Style>
+                        </Button.Style>
+                    </Button>
+                    <Separator Grid.Row="1" Opacity="0" Height="2"/>
+                    <Grid Grid.Row="2">
+                        <StackPanel Orientation="Horizontal" HorizontalAlignment="Center" IsHitTestVisible="False">
+                            <Rectangle VerticalAlignment="Stretch" Width="1" Margin="2" Stroke="DimGray" IsHitTestVisible="False"/>
+                            <Rectangle VerticalAlignment="Stretch" Width="1" Margin="2" Stroke="DimGray" IsHitTestVisible="False"/>
+                        </StackPanel>
+                        <Rectangle x:Name="WindowGrabber" Fill="Transparent" MouseMove="WindowGrabberMouseMove" MouseUp="WindowGrabberMouseUp" IsHitTestVisible="True"/>
+                    </Grid>
+                </Grid>
+                <Separator x:Name="SongCoverImageSeparator" Grid.Column="1" Opacity="0" Width="5" Visibility="Collapsed"/>
+                <Image x:Name="SongCoverImage" Grid.Column="2" Width="40" Height="40" RenderOptions.BitmapScalingMode="HighQuality" Visibility="Collapsed"/>
+                <Grid Grid.Column="3" Margin="8,0,0,0">
+                    <Grid.RowDefinitions>
+                        <RowDefinition Height="Auto"/>
+                        <RowDefinition Height="Auto"/>
+                    </Grid.RowDefinitions>
+
+                    <ScrollViewer x:Name="SongTitleLabelContainer" Grid.Row="0" HorizontalScrollBarVisibility="Hidden" VerticalScrollBarVisibility="Hidden" Focusable="False">
+                        <Label x:Name="SongTitleLabel" Margin="0" Padding="0" Foreground="WhiteSmoke" FontSize="14" FontWeight="Medium">Song Title</Label>
+                    </ScrollViewer>
+                    <ScrollViewer x:Name="SongArtistLabelContainer" Grid.Row="1" HorizontalScrollBarVisibility="Hidden" VerticalScrollBarVisibility="Hidden" Focusable="False">
+                        <Label x:Name="SongArtistLabel" Margin="0" Padding="0" Foreground="LightGray">Song Artist</Label>
+                    </ScrollViewer>
+                </Grid>
+                <Grid Grid.Column="4" Margin="0,4,0,0">
+                    <Grid.RowDefinitions>
+                        <RowDefinition Height="*"/>
+                        <RowDefinition Height="*"/>
+                    </Grid.RowDefinitions>
+                    <Grid.ColumnDefinitions>
+                        <ColumnDefinition Width="*"/>
+                        <ColumnDefinition Width="Auto"/>
+                    </Grid.ColumnDefinitions>
+
+                    <Border Grid.Row="0" Grid.Column="1" BorderThickness="1" BorderBrush="#252525">
+                        <Border.Effect>
+                            <DropShadowEffect x:Name="SongTitleLabelOverflowShadow" BlurRadius="6" Direction="180" RenderingBias="Quality" ShadowDepth="4" Color="Black" Opacity="1"/>
+                        </Border.Effect>
+                        <Rectangle Width="1"/>
+                    </Border>
+                    <Border Grid.Row="1" Grid.Column="1" BorderThickness="1" BorderBrush="#252525">
+                        <Border.Effect>
+                            <DropShadowEffect x:Name="SongArtistLabelOverflowShadow" BlurRadius="6" Direction="180" RenderingBias="Quality" ShadowDepth="4" Color="Black" Opacity="1"/>
+                        </Border.Effect>
+                        <Rectangle Width="1"/>
+                    </Border>
+                </Grid>
+                <Button Style="{StaticResource ModernButton}" Grid.Column="5" Width="25" Height="25" Click="PlayPauseButtonClick">
+                    <Button.Content>
+                        <ContentControl x:Name="PlayPauseButtonIcon" Content="{StaticResource PlayIcon}"/>
+                    </Button.Content>
+                </Button>
+                <Separator Grid.Column="6" Opacity="0" Width="2"/>
+                <Button Style="{StaticResource ModernButton}" Grid.Column="7" Width="25" Height="25" Click="NextSongButtonClick">
+                    <Button.Content>
+                        <ContentControl Content="{StaticResource ForwardIcon}"/>
+                    </Button.Content>
+                </Button>
             </Grid>
-            <Button Style="{StaticResource ModernButton}" Grid.Column="5" Width="25" Height="25" Click="PlayPauseButtonClick">
-                <Button.Content>
-                    <ContentControl x:Name="PlayPauseButtonIcon" Content="{StaticResource PlayIcon}"/>
-                </Button.Content>
-            </Button>
-            <Separator Grid.Column="6" Opacity="0" Width="2"/>
-            <Button Style="{StaticResource ModernButton}" Grid.Column="7" Width="25" Height="25" Click="NextSongButtonClick">
-                <Button.Content>
-                    <ContentControl Content="{StaticResource ForwardIcon}"/>
-                </Button.Content>
-            </Button>
-        </Grid>
-    </Border>
+        </Border>
+
+        <Border Width="272" Height="52" BorderThickness="1" BorderBrush="Transparent">
+            <Border.Clip>
+                <RectangleGeometry Rect="0,0,272,51.5" RadiusX="6" RadiusY="6"/>
+            </Border.Clip>
+            <ProgressBar x:Name="ProgressProgressBar" Margin="0,48,0,0" Height="4" Width="271" Background="#555" BorderBrush="#555" Foreground="#999"/>
+        </Border>
+    </Grid>
 </Window>

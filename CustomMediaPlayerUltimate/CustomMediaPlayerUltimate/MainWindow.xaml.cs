@@ -1232,6 +1232,7 @@ public partial class MainWindow : Window
         if (!isProgressSliderBeingDragged)
         {
             ProgressSlider.Value = mediaPlayer.Position.TotalSeconds;
+            MiniPlayerWindow.Instance?.SetProgress(ProgressSlider.Value);
         }
         if (!mediaPlayer.NaturalDuration.HasTimeSpan) return;
         if (mediaPlayer.Position.TotalMilliseconds >= mediaPlayer.NaturalDuration.TimeSpan.TotalMilliseconds - 1500)
@@ -1257,12 +1258,9 @@ public partial class MainWindow : Window
         string title = (song.Title == string.Empty) ? "Generic Song" : song.Title;
         string artist = song.Artist;
 
-        if (MiniPlayerWindow.Instance is not null)
-        {
-            MiniPlayerWindow.Instance.SetTitleText(title);
-            MiniPlayerWindow.Instance.SetArtistText(artist);
-            MiniPlayerWindow.Instance.SetCover(song.Cover);
-        }
+        MiniPlayerWindow.Instance?.SetTitleText(title);
+        MiniPlayerWindow.Instance?.SetArtistText(artist);
+        MiniPlayerWindow.Instance?.SetCover(song.Cover);
 
         if (song.Album is not null)
         {
@@ -1308,6 +1306,7 @@ public partial class MainWindow : Window
         IsPlaying = false;
         ProgressLabel.Content = "00:00 / 00:00";
         ProgressSlider.Value = 0d;
+        MiniPlayerWindow.Instance?.SetProgress(0d);
         CurrentSongTitleLabel.Content = "No song playing";
         CurrentSongArtistAlbumLabel.Content = "Artist - Album";
         SetSongLyricsRichTextBoxText(string.Empty);
@@ -1370,6 +1369,8 @@ public partial class MainWindow : Window
         if (!mediaPlayer.NaturalDuration.HasTimeSpan) return;
         ProgressSlider.Maximum = mediaPlayer.NaturalDuration.TimeSpan.TotalSeconds;
         ProgressSlider.Value = 0;
+        MiniPlayerWindow.Instance?.SetMaximumProgress(ProgressSlider.Maximum);
+        MiniPlayerWindow.Instance?.SetProgress(0d);
         mediaAvailable = true;
         IsPlaying = true;
     }
@@ -1652,6 +1653,8 @@ public partial class MainWindow : Window
         MiniPlayerWindow.Instance?.SetArtistText(currentSong?.Artist ?? "Song artist");
         MiniPlayerWindow.Instance?.SetPlayPauseImage(IsPlaying);
         MiniPlayerWindow.Instance?.SetCover(currentSong?.Cover);
+        MiniPlayerWindow.Instance?.SetMaximumProgress(ProgressSlider.Maximum);
+        MiniPlayerWindow.Instance?.SetProgress(ProgressSlider.Value);
         Hide();
     }
 

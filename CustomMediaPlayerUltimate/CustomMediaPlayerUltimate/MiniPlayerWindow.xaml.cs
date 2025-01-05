@@ -255,4 +255,14 @@ public partial class MiniPlayerWindow : Window
     {
         PlayPauseButtonIcon.Content = playing ? Application.Current.FindResource("PauseIcon") : Application.Current.FindResource("PlayIcon");
     }
+
+    public void SetMaximumProgress(double max)
+    {
+        ProgressProgressBar.Maximum = max;
+    }
+
+    public void SetProgress(double value)
+    {
+        ProgressProgressBar.Value = value;
+    }
 }
