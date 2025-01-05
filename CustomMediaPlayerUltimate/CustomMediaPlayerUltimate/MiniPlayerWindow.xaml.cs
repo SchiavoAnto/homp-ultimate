@@ -106,6 +106,7 @@ public partial class MiniPlayerWindow : Window
                 {
                     opacityTimer.Stop();
                     ControlsHidden = Properties.Settings.Default.MiniplayerHideControls;
+                    CheckForLabelsOverflow();
                 }
             });
         };
@@ -150,6 +151,7 @@ public partial class MiniPlayerWindow : Window
         Opacity = 1f;
         ControlsGrid.Opacity = 1f;
         ControlsHidden = false;
+        CheckForLabelsOverflow();
     }
 
     private void WindowMouseLeave(object sender, RoutedEventArgs e)
@@ -209,10 +211,33 @@ public partial class MiniPlayerWindow : Window
         ShuffleCtxMenuItem.IsChecked = Properties.Settings.Default.PlayerShuffle;
     }
 
-    public void SetTitleText(string title)
+    private void CheckForLabelsOverflow()
+    {
+        SongTitleLabel.UpdateLayout();
+        SongArtistLabel.UpdateLayout();
+        bool titleOverflow = SongTitleLabel.ActualWidth > SongTitleLabelContainer.ActualWidth;
+        bool artistOverflow = SongArtistLabel.ActualWidth > SongArtistLabelContainer.ActualWidth;
+        SongTitleLabelOverflowShadow.Opacity = titleOverflow ? 1f : 0f;
+        SongArtistLabelOverflowShadow.Opacity = artistOverflow ? 1f : 0f;
+
+        Dispatcher.Invoke(() =>
+        {
+            SongTitleLabelContainer.ScrollToHorizontalOffset(0f);
+        });
+        Dispatcher.Invoke(() =>
+        {
+            SongArtistLabelContainer.ScrollToHorizontalOffset(0f);
+        });
+        titleTimer.Start();
+        artistTimer.Start();
+    }
+
+    public void SetTitleText(string? title)
     {
         titleTimer.Stop();
-        SongTitleLabel.Content = title;
+        if (title is not null)
+            SongTitleLabel.Content = title;
+        CheckForLabelsOverflow();
         SongTitleLabel.UpdateLayout();
         bool overflow = SongTitleLabel.ActualWidth > SongTitleLabelContainer.ActualWidth;
         SongTitleLabelOverflowShadow.Opacity = overflow ? 1f : 0f;
@@ -224,10 +249,12 @@ public partial class MiniPlayerWindow : Window
         titleTimer.Start();
     }
 
-    public void SetArtistText(string artist)
+    public void SetArtistText(string? artist)
     {
         artistTimer.Stop();
-        SongArtistLabel.Content = artist;
+        if (artist is not null)
+            SongArtistLabel.Content = artist;
+        CheckForLabelsOverflow();
         SongArtistLabel.UpdateLayout();
         bool overflow = SongArtistLabel.ActualWidth > SongArtistLabelContainer.ActualWidth;
         SongArtistLabelOverflowShadow.Opacity = overflow ? 1f : 0f;

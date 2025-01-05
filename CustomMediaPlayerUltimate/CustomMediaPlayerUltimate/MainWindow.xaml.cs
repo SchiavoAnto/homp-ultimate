@@ -1649,8 +1649,8 @@ public partial class MainWindow : Window
     private void ShowMiniplayer()
     {
         new MiniPlayerWindow()?.Show();
-        MiniPlayerWindow.Instance?.SetTitleText(currentSong?.Title ?? "Song title");
-        MiniPlayerWindow.Instance?.SetArtistText(currentSong?.Artist ?? "Song artist");
+        MiniPlayerWindow.Instance?.SetTitleText(currentSong?.Title);
+        MiniPlayerWindow.Instance?.SetArtistText(currentSong?.Artist);
         MiniPlayerWindow.Instance?.SetPlayPauseImage(IsPlaying);
         MiniPlayerWindow.Instance?.SetCover(currentSong?.Cover);
         MiniPlayerWindow.Instance?.SetMaximumProgress(ProgressSlider.Maximum);
