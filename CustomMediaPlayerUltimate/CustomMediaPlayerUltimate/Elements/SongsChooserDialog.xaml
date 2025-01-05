@@ -4,22 +4,106 @@
         xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
         xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
         xmlns:local="clr-namespace:CustomMediaPlayerUltimate.Elements"
-        mc:Ignorable="d"
-        Title="Choose songs..." Height="500" Width="500" WindowStartupLocation="CenterScreen" Background="#252525">
+        mc:Ignorable="d" DataContext="{Binding RelativeSource={RelativeSource Self}}"
+        Title="Choose songs..." Height="500" Width="500" MinWidth="500" MinHeight="500"
+        WindowStartupLocation="CenterOwner" Background="#252525">
     <Grid>
         <Grid.RowDefinitions>
+            <RowDefinition Height="Auto"/>
             <RowDefinition Height="*"/>
             <RowDefinition Height="Auto"/>
         </Grid.RowDefinitions>
-        <ScrollViewer Grid.Row="0" VerticalScrollBarVisibility="Auto">
-            <StackPanel x:Name="ContainerPanel" Margin="0,0,0,5" Orientation="Vertical"/>
-        </ScrollViewer>
-        <Grid Grid.Row="1">
+
+        <Grid Grid.Row="0" Margin="4">
             <Grid.ColumnDefinitions>
+                <ColumnDefinition Width="Auto"/>
                 <ColumnDefinition Width="*"/>
                 <ColumnDefinition Width="Auto"/>
             </Grid.ColumnDefinitions>
-            <StackPanel Grid.Column="1" Orientation="Horizontal" Margin="5">
+
+            <Label Grid.Column="0" Content="Manage playlist" Foreground="WhiteSmoke" FontSize="18" FontWeight="Bold"/>
+            <Grid Grid.Column="2">
+                <TextBox x:Name="SearchInputTextBox" Width="200" TextChanged="SearchInputTextBoxTextChanged"/>
+                <TextBlock IsHitTestVisible="False" Text="Search..." VerticalAlignment="Center" HorizontalAlignment="Left" Margin="10,0,0,0">
+                    <TextBlock.Style>
+                        <Style TargetType="{x:Type TextBlock}">
+                            <Setter Property="Visibility" Value="Collapsed"/>
+                            <Setter Property="Foreground" Value="DarkGray"/>
+                            <Style.Triggers>
+                                <DataTrigger Binding="{Binding Text, ElementName=SearchInputTextBox}" Value="">
+                                    <Setter Property="Visibility" Value="Visible"/>
+                                </DataTrigger>
+                            </Style.Triggers>
+                        </Style>
+                    </TextBlock.Style>
+                </TextBlock>
+            </Grid>
+        </Grid>
+        <ListView x:Name="SongsListView" Grid.Row="1" Margin="4">
+            <ListView.Style>
+                <Style TargetType="ListView">
+                    <Setter Property="Template">
+                        <Setter.Value>
+                            <ControlTemplate TargetType="{x:Type ListView}">
+                                <ScrollViewer CanContentScroll="True">
+                                    <ItemsPresenter/>
+                                </ScrollViewer>
+                            </ControlTemplate>
+                        </Setter.Value>
+                    </Setter>
+                </Style>
+            </ListView.Style>
+            <ListView.ItemContainerStyle>
+                <Style TargetType="{x:Type ListViewItem}">
+                    <Setter Property="Background" Value="Transparent"/>
+                    <Setter Property="BorderBrush" Value="Transparent"/>
+                    <Setter Property="BorderThickness" Value="0"/>
+                    <Setter Property="VerticalContentAlignment" Value="Center"/>
+                    <Setter Property="Template">
+                        <Setter.Value>
+                            <ControlTemplate TargetType="{x:Type ListViewItem}">
+                                <ContentPresenter/>
+                            </ControlTemplate>
+                        </Setter.Value>
+                    </Setter>
+                </Style>
+            </ListView.ItemContainerStyle>
+            <ListView.ItemsPanel>
+                <ItemsPanelTemplate>
+                    <VirtualizingStackPanel Background="#252525" VirtualizingPanel.VirtualizationMode="Recycling" VirtualizingPanel.ScrollUnit="Pixel">
+                        <VirtualizingStackPanel.Resources>
+                            <Style TargetType="{x:Type Grid}">
+                                <Setter Property="Margin" Value="0,5,0,0"/>
+                            </Style>
+                        </VirtualizingStackPanel.Resources>
+                    </VirtualizingStackPanel>
+                </ItemsPanelTemplate>
+            </ListView.ItemsPanel>
+            <ListView.ItemTemplate>
+                <DataTemplate>
+                    <Grid Background="#303030" Margin="0,4,0,0" VerticalAlignment="Center">
+                        <CheckBox DataContext="{Binding}" Tag="{Binding}" IsChecked="{Binding IsSelected}" Checked="SongItemChecked" Unchecked="SongItemUnchecked" Margin="5,0,5,0" Padding="5" VerticalContentAlignment="Center">
+                            <CheckBox.Content>
+                                <StackPanel Orientation="Vertical">
+                                    <Label Content="{Binding Song.Title}" Foreground="WhiteSmoke" Padding="0" Margin="2"/>
+                                    <Label Content="{Binding Song.Artist}" Foreground="LightGray" Padding="0" Margin="2"/>
+                                    <TextBlock Text="{Binding Song.FileName, StringFormat=File name: {0}.mp3}" FontSize="9" Foreground="Gray" Padding="0" Margin="2"/>
+                                </StackPanel>
+                            </CheckBox.Content>
+                        </CheckBox>
+                    </Grid>
+                </DataTemplate>
+            </ListView.ItemTemplate>
+        </ListView>
+        <Grid Grid.Row="2" Margin="4">
+            <Grid.ColumnDefinitions>
+                <ColumnDefinition Width="Auto"/>
+                <ColumnDefinition Width="*"/>
+                <ColumnDefinition Width="Auto"/>
+            </Grid.ColumnDefinitions>
+
+            <Label x:Name="SelectedSongsLabel" Grid.Column="0" Foreground="WhiteSmoke">0 songs selected</Label>
+            <StackPanel Grid.Column="2" Orientation="Horizontal">
                 <Button Click="CancelButtonClick">Cancel</Button>
                 <Separator Width="5" Background="Transparent"/>
                 <Button Click="ConfirmButtonClick">Confirm</Button>
