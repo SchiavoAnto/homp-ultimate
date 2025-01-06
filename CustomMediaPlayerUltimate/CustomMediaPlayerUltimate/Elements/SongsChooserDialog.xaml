@@ -82,7 +82,7 @@
             <ListView.ItemTemplate>
                 <DataTemplate>
                     <Grid Background="#303030" Margin="0,4,0,0" VerticalAlignment="Center">
-                        <CheckBox DataContext="{Binding}" Tag="{Binding}" IsChecked="{Binding IsSelected}" Checked="SongItemChecked" Unchecked="SongItemUnchecked" Margin="5,0,5,0" Padding="5" VerticalContentAlignment="Center">
+                        <CheckBox DataContext="{Binding}" Tag="{Binding}" IsChecked="{Binding IsSelected}" Click="SongItemClick" Margin="5,0,5,0" Padding="5" VerticalContentAlignment="Center">
                             <CheckBox.Content>
                                 <StackPanel Orientation="Vertical">
                                     <Label Content="{Binding Song.Title}" Foreground="WhiteSmoke" Padding="0" Margin="2"/>

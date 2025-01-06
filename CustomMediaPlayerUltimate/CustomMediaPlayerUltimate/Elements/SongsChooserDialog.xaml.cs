@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Linq;
 using System.Windows;
+using System.Windows.Input;
 using System.Windows.Interop;
 using System.Windows.Controls;
 using System.Collections.Generic;
@@ -14,7 +15,8 @@ public partial class SongsChooserDialog : Window
 {
     public List<Song> Result { get; set; } = new List<Song>();
     public List<Song> AllSongs;
-    public ObservableCollection<SongItem> FilteredSongs = new();
+    public ObservableCollection<SongItem> FilteredSongs { get; set; } = new();
+    private SongItem? lastSelected = null;
 
     private const int GWL_STYLE = -16;
     private const int WS_MINIMIZE = 0x20000;
@@ -66,6 +68,7 @@ public partial class SongsChooserDialog : Window
             bool isAlreadyPresent = Result.Contains(song);
             FilteredSongs.Add(new(isAlreadyPresent, song));
         }
+        lastSelected = null;
     }
 
     private void CancelButtonClick(object? sender, RoutedEventArgs e)
@@ -80,25 +83,83 @@ public partial class SongsChooserDialog : Window
         Close();
     }
 
-    private void SongItemChecked(object sender, RoutedEventArgs e)
+    private void SongItemClick(object sender, RoutedEventArgs e)
     {
-        if (sender is null) return;
-        SongItem? item = ((sender as CheckBox)?.Tag as SongItem);
+        CheckBox? cb = sender as CheckBox;
+        if (cb is null) return;
+        if (cb.IsChecked == true)
+        {
+            SongItemChecked(cb);
+        }
+        else if (cb.IsChecked == false)
+        {
+            SongItemUnchecked(cb);
+        }
+    }
+
+    private void SongItemChecked(CheckBox cb)
+    {
+        SongItem? item = (cb.Tag as SongItem);
         if (item is null) return;
-        Song? song = AllSongs.Find(s => s.FilePath == item.Song.FilePath);
-        if (song is null) return;
-        Result.Add(song);
+
+        if (Keyboard.IsKeyDown(Key.LeftShift))
+        {
+            if (lastSelected is not null)
+            {
+                int item1 = FilteredSongs.IndexOf(lastSelected);
+                int item2 = FilteredSongs.IndexOf(item);
+                if (item2 - item1 <= 0) return;
+
+                for (int i = item1 + 1; i <= item2; i++)
+                {
+                    if (!FilteredSongs[i].IsSelected || i == item2)
+                        Result.Add(FilteredSongs[i].Song);
+                    FilteredSongs[i].IsSelected = true;
+                }
+                lastSelected = null;
+                SongsListView.Items.Refresh();
+            }
+        }
+        else
+        {
+            Song? song = AllSongs.Find(s => s.FilePath == item.Song.FilePath);
+            if (song is null) return;
+            Result.Add(song);
+            lastSelected = item;
+        }
         SelectedSongsLabel.Content = Utils.Pluralize(Result.Count, "song selected", "songs selected");
     }
 
-    private void SongItemUnchecked(object sender, RoutedEventArgs e)
+    private void SongItemUnchecked(CheckBox cb)
     {
-        if (sender is null) return;
-        SongItem? item = ((sender as CheckBox)?.Tag as SongItem);
+        SongItem? item = (cb.Tag as SongItem);
         if (item is null) return;
-        Song? song = Result.Find(s => s.FilePath == item.Song.FilePath);
-        if (song is null) return;
-        Result.Remove(song);
+
+        if (Keyboard.IsKeyDown(Key.LeftShift))
+        {
+            if (lastSelected is not null)
+            {
+                int item1 = FilteredSongs.IndexOf(lastSelected);
+                int item2 = FilteredSongs.IndexOf(item);
+                if (item2 - item1 <= 0) return;
+
+                for (int i = item1 + 1; i <= item2; i++)
+                {
+                    if (FilteredSongs[i].IsSelected || i == item2)
+                        Result.Remove(FilteredSongs[i].Song);
+                    FilteredSongs[i].IsSelected = false;
+                }
+                lastSelected = null;
+                SongsListView.Items.Refresh();
+            }
+        }
+        else
+        {
+            Song? song = Result.Find(s => s.FilePath == item.Song.FilePath);
+            if (song is null) return;
+            Result.Remove(song);
+            lastSelected = item;
+        }
         SelectedSongsLabel.Content = Utils.Pluralize(Result.Count, "song selected", "songs selected");
     }
 }
