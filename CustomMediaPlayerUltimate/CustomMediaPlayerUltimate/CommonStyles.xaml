@@ -92,6 +92,31 @@
         </Style.Triggers>
     </Style>
 
+    <Style x:Key="TabButton" TargetType="Button">
+        <Setter Property="Background" Value="Transparent" />
+        <Setter Property="Foreground" Value="DarkGray"/>
+        <Setter Property="BorderBrush" Value="#11FFFFFF"/>
+        <Setter Property="Template">
+            <Setter.Value>
+                <ControlTemplate TargetType="Button">
+                    <Border Background="{TemplateBinding Background}" BorderBrush="{TemplateBinding BorderBrush}" BorderThickness="0 0 0 2" Padding="8 0">
+                        <ContentPresenter HorizontalAlignment="Center" VerticalAlignment="Center" />
+                    </Border>
+                </ControlTemplate>
+            </Setter.Value>
+        </Setter>
+        <Style.Triggers>
+            <Trigger Property="IsMouseOver" Value="True">
+                <!--<Setter Property="BorderBrush" Value="#00AAAA"/>-->
+                <Setter Property="Foreground" Value="WhiteSmoke"/>
+            </Trigger>
+            <Trigger Property="Tag" Value="Focused">
+                <Setter Property="BorderBrush" Value="#00AAAA"/>
+                <Setter Property="Foreground" Value="WhiteSmoke"/>
+            </Trigger>
+        </Style.Triggers>
+    </Style>
+
     <Style TargetType="TextBox">
         <Setter Property="Padding" Value="5" />
         <Setter Property="TextWrapping" Value="NoWrap"/>

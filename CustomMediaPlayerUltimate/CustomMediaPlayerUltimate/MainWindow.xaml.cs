@@ -261,42 +261,55 @@ public partial class MainWindow : Window
         SearchResultsView.Visibility = Visibility.Collapsed;
         SettingsView.Visibility = Visibility.Collapsed;
         AllSongsView.Visibility = Visibility.Collapsed;
+
+        AllSongsTabButton.Tag = null;
+        PlaylistsTabButton.Tag = null;
+        AlbumsTabButton.Tag = null;
+        ArtistsTabButton.Tag = null;
+        SearchResultsTabButton.Tag = null;
+        SettingsTabButton.Tag = null;
     }
 
     private void SwitchToAllSongsView(object sender, RoutedEventArgs e)
     {
         HideAllViews();
         AllSongsView.Visibility = Visibility.Visible;
+        AllSongsTabButton.Tag = "Focused";
     }
 
     private void SwitchToPlaylistsView(object sender, RoutedEventArgs e)
     {
         HideAllViews();
         PlaylistsView.Visibility = Visibility.Visible;
+        PlaylistsTabButton.Tag = "Focused";
     }
 
     private void SwitchToAlbumsView(object sender, RoutedEventArgs e)
     {
         HideAllViews();
         AlbumsView.Visibility = Visibility.Visible;
+        AlbumsTabButton.Tag = "Focused";
     }
 
     private void SwitchToArtistsView(object sender, RoutedEventArgs e)
     {
         HideAllViews();
         ArtistsView.Visibility = Visibility.Visible;
+        ArtistsTabButton.Tag = "Focused";
     }
 
     private void SwitchToSearchResultsView(object sender, RoutedEventArgs e)
     {
         HideAllViews();
         SearchResultsView.Visibility = Visibility.Visible;
+        SearchResultsTabButton.Tag = "Focused";
     }
 
     private void SwitchToSettingsView(object sender, RoutedEventArgs e)
     {
         HideAllViews();
         SettingsView.Visibility = Visibility.Visible;
+        SettingsTabButton.Tag = "Focused";
     }
 
     private void PlayPauseButtonClick(object sender, RoutedEventArgs e)
