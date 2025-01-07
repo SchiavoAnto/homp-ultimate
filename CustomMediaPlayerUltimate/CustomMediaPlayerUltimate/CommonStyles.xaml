@@ -107,7 +107,6 @@
         </Setter>
         <Style.Triggers>
             <Trigger Property="IsMouseOver" Value="True">
-                <!--<Setter Property="BorderBrush" Value="#00AAAA"/>-->
                 <Setter Property="Foreground" Value="WhiteSmoke"/>
             </Trigger>
             <Trigger Property="Tag" Value="Focused">
@@ -161,6 +160,54 @@
         <Style.Triggers>
             <Trigger Property="IsMouseOver" Value="True">
                 <Setter Property="Background" Value="#404040"/>
+            </Trigger>
+        </Style.Triggers>
+    </Style>
+
+    <Style TargetType="CheckBox">
+        <Setter Property="Background" Value="#303030"/>
+        <Setter Property="Template">
+            <Setter.Value>
+                <ControlTemplate TargetType="CheckBox">
+                    <StackPanel Orientation="Horizontal">
+                        <Grid>
+                            <Border Background="{TemplateBinding Background}" BorderThickness="2" BorderBrush="#00AAAA" CornerRadius="2" Width="16" Height="16">
+                                <Rectangle Fill="{TemplateBinding Background}" Width="16" Height="16"/>
+                            </Border>
+                            <Rectangle Fill="WhiteSmoke" SnapsToDevicePixels="True" Width="8" Height="8">
+                                <Rectangle.Style>
+                                    <Style TargetType="Rectangle">
+                                        <Setter Property="Visibility" Value="Hidden"/>
+                                        <Style.Triggers>
+                                            <DataTrigger Binding="{Binding IsChecked, RelativeSource={RelativeSource TemplatedParent}}" Value="{x:Null}">
+                                                <Setter Property="Visibility" Value="Visible"/>
+                                            </DataTrigger>
+                                        </Style.Triggers>
+                                    </Style>
+                                </Rectangle.Style>
+                            </Rectangle>
+                            <Viewbox Stretch="Uniform" Width="10" Height="10">
+                                <Viewbox.Style>
+                                    <Style TargetType="Viewbox">
+                                        <Setter Property="Visibility" Value="Hidden"/>
+                                        <Style.Triggers>
+                                            <DataTrigger Binding="{Binding IsChecked, RelativeSource={RelativeSource TemplatedParent}}" Value="True">
+                                                <Setter Property="Visibility" Value="Visible"/>
+                                            </DataTrigger>
+                                        </Style.Triggers>
+                                    </Style>
+                                </Viewbox.Style>
+                                <Path StrokeThickness="32" StrokeEndLineCap="Round" StrokeStartLineCap="Round" Stroke="WhiteSmoke" Data="M16 110.046L92.7819 197L240 58"/>
+                            </Viewbox>
+                        </Grid>
+                        <ContentPresenter Margin="4,0,0,0"/>
+                    </StackPanel>
+                </ControlTemplate>
+            </Setter.Value>
+        </Setter>
+        <Style.Triggers>
+            <Trigger Property="IsMouseOver" Value="True">
+                <Setter Property="Background" Value="#454545"/>
             </Trigger>
         </Style.Triggers>
     </Style>
