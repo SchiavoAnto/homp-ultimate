@@ -970,6 +970,7 @@ public partial class MainWindow : Window
                             cachedFiles++;
                         }
                     }
+                    Database.SetLastUpdate(DateTime.Now.Ticks);
                     Logger.Log($"Successfully cached {cachedFiles} file(s) and updated {updatedFiles} file(s).");
                 }
             }
