@@ -934,9 +934,9 @@ public partial class MainWindow : Window
                 Logger.Log($"Obtained {newFiles.Length} new/modified files from '{dirs[i]}'.");
                 // If there are any new files, we read them back from
                 // disk and save them to the DB.
-                Logger.Log("Saving them to database...");
                 if (newFiles.Length != 0)
                 {
+                    Logger.Log("Saving them to database...");
                     // Read each new file from disk
                     // and save it to DB.
                     int cachedFiles = 0;
