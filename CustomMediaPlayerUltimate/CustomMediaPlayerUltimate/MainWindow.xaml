@@ -155,7 +155,7 @@
                                 <Setter Property="Template">
                                     <Setter.Value>
                                         <ControlTemplate TargetType="{x:Type ListView}">
-                                            <ScrollViewer CanContentScroll="True">
+                                            <ScrollViewer CanContentScroll="True" HorizontalScrollBarVisibility="Disabled">
                                                 <!--Set to false to make it scroll like before. Loses virtualization.-->
                                                 <ItemsPresenter/>
                                             </ScrollViewer>
@@ -253,7 +253,7 @@
                                     <Setter Property="Template">
                                         <Setter.Value>
                                             <ControlTemplate TargetType="{x:Type ListView}">
-                                                <ScrollViewer CanContentScroll="True">
+                                                <ScrollViewer CanContentScroll="True" HorizontalScrollBarVisibility="Disabled">
                                                     <!--Set to false to make it scroll like before. Loses virtualization.-->
                                                     <ItemsPresenter/>
                                                 </ScrollViewer>
@@ -345,7 +345,7 @@
                                     <Setter Property="Template">
                                         <Setter.Value>
                                             <ControlTemplate TargetType="{x:Type ListView}">
-                                                <ScrollViewer CanContentScroll="True">
+                                                <ScrollViewer CanContentScroll="True" HorizontalScrollBarVisibility="Disabled">
                                                     <!--Set to false to make it scroll like before. Loses virtualization.-->
                                                     <ItemsPresenter/>
                                                 </ScrollViewer>
@@ -435,7 +435,7 @@
                                     <Setter Property="Template">
                                         <Setter.Value>
                                             <ControlTemplate TargetType="{x:Type ListView}">
-                                                <ScrollViewer CanContentScroll="True">
+                                                <ScrollViewer CanContentScroll="True" HorizontalScrollBarVisibility="Disabled">
                                                     <!--Set to false to make it scroll like before. Loses virtualization.-->
                                                     <ItemsPresenter/>
                                                 </ScrollViewer>
@@ -499,7 +499,7 @@
                             <Setter Property="Template">
                                 <Setter.Value>
                                     <ControlTemplate TargetType="{x:Type ListView}">
-                                        <ScrollViewer CanContentScroll="True">
+                                        <ScrollViewer CanContentScroll="True" HorizontalScrollBarVisibility="Disabled">
                                             <!--Set to false to make it scroll like before. Loses virtualization.-->
                                             <ItemsPresenter/>
                                         </ScrollViewer>

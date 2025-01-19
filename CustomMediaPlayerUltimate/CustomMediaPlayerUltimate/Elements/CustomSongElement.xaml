@@ -52,12 +52,12 @@
                 <RowDefinition Height="Auto"/>
                 <RowDefinition Height="Auto"/>
             </Grid.RowDefinitions>
-            
-            <Label x:Name="SongTitleLabel" Grid.Row="0" VerticalAlignment="Center" Foreground="WhiteSmoke" Padding="0" FontWeight="Medium" Content="{Binding Song.Title}"/>
+
+            <TextBlock x:Name="SongTitleLabel" Grid.Row="0" VerticalAlignment="Center" HorizontalAlignment="Left" Foreground="WhiteSmoke" Padding="0" FontWeight="Medium" TextTrimming="CharacterEllipsis" Text="{Binding Song.Title}"/>
             <Separator Grid.Row="1" Height="3" Opacity="0" Padding="0" Margin="0"/>
-            <Label x:Name="SongArtistLabel" Grid.Row="2" VerticalAlignment="Center" Foreground="LightGray" Padding="0" FontSize="11" Content="{Binding Song.Artist}"/>
+            <TextBlock x:Name="SongArtistLabel" Grid.Row="2" VerticalAlignment="Center" Foreground="LightGray" Padding="0" FontSize="11" TextTrimming="CharacterEllipsis" Text="{Binding Song.Artist}"/>
         </Grid>
-        <Label x:Name="SongDurationLabel" Grid.Column="2" VerticalAlignment="Center" Foreground="LightGray" FontSize="11" Content="{Binding Song.DurationString}"/>
+        <Label x:Name="SongDurationLabel" Grid.Column="2" VerticalAlignment="Center" Foreground="LightGray" FontSize="11" Margin="16,0,0,0" Content="{Binding Song.DurationString}"/>
 
         <Grid.ContextMenu>
             <ContextMenu>
