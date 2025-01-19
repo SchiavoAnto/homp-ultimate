@@ -371,6 +371,7 @@ public partial class MainWindow : Window
     private void VolumeSliderMouseUp(object sender, RoutedEventArgs e)
     {
         isVolumeSliderBeingDragged = false;
+        Properties.Settings.Default.Save();
     }
 
     private void VolumeSliderMouseWheel(object sender, MouseWheelEventArgs e)
@@ -388,11 +389,13 @@ public partial class MainWindow : Window
     private void LoopToggleButtonClick(object sender, RoutedEventArgs e)
     {
         Properties.Settings.Default.PlayerLoop = (bool)LoopToggleButton.IsChecked!;
+        Properties.Settings.Default.Save();
     }
 
     private void ShuffleToggleButtonClick(object sender, RoutedEventArgs e)
     {
         Properties.Settings.Default.PlayerShuffle = (bool)ShuffleToggleButton.IsChecked!;
+        Properties.Settings.Default.Save();
     }
 
     private void BackwardButtonClick(object sender, RoutedEventArgs e)
@@ -1439,6 +1442,7 @@ public partial class MainWindow : Window
         VolumeSlider.Value += VOLUME_STEP;
         VolumeLabel.Content = $"Volume: {VolumeSlider.Value}%";
         Properties.Settings.Default.PlayerVolume = VolumeSlider.Value;
+        Properties.Settings.Default.Save();
     }
 
     private void DecreaseVolume()
@@ -1447,18 +1451,21 @@ public partial class MainWindow : Window
         VolumeSlider.Value -= VOLUME_STEP;
         VolumeLabel.Content = $"Volume: {VolumeSlider.Value}%";
         Properties.Settings.Default.PlayerVolume = VolumeSlider.Value;
+        Properties.Settings.Default.Save();
     }
 
     private void ToggleLoop()
     {
         LoopToggleButton.IsChecked = !LoopToggleButton.IsChecked;
         Properties.Settings.Default.PlayerLoop = (bool)LoopToggleButton.IsChecked!;
+        Properties.Settings.Default.Save();
     }
 
     private void ToggleShuffle()
     {
         ShuffleToggleButton.IsChecked = !ShuffleToggleButton.IsChecked;
         Properties.Settings.Default.PlayerShuffle = (bool)ShuffleToggleButton.IsChecked!;
+        Properties.Settings.Default.Save();
     }
 
     private void GoToBeginningOfSong()
@@ -1487,6 +1494,7 @@ public partial class MainWindow : Window
             Key key = icb.KeyResult;
             button.Content = $"{key}";
             Properties.Settings.Default[settingName] = (short)key;
+            Properties.Settings.Default.Save();
         }
     }
 
@@ -1538,21 +1546,25 @@ public partial class MainWindow : Window
     private void OnSettingsEnableFadeInCheckboxChecked(object sender, RoutedEventArgs e)
     {
         Properties.Settings.Default.PlaybackFadeIn = true;
+        Properties.Settings.Default.Save();
     }
 
     private void OnSettingsEnableFadeInCheckboxUnchecked(object sender, RoutedEventArgs e)
     {
         Properties.Settings.Default.PlaybackFadeIn = false;
+        Properties.Settings.Default.Save();
     }
 
     private void OnSettingsEnableFadeOutCheckboxChecked(object sender, RoutedEventArgs e)
     {
         Properties.Settings.Default.PlaybackFadeOut = true;
+        Properties.Settings.Default.Save();
     }
 
     private void OnSettingsEnableFadeOutCheckboxUnchecked(object sender, RoutedEventArgs e)
     {
         Properties.Settings.Default.PlaybackFadeOut = false;
+        Properties.Settings.Default.Save();
     }
 
     private void PlayerFadeIn()
@@ -1691,14 +1703,16 @@ public partial class MainWindow : Window
 
     public void UpdateLoop(bool enabled)
     {
-        Properties.Settings.Default.PlayerLoop = enabled;
         LoopToggleButton.IsChecked = enabled;
+        Properties.Settings.Default.PlayerLoop = enabled;
+        Properties.Settings.Default.Save();
     }
 
     public void UpdateShuffle(bool enabled)
     {
-        Properties.Settings.Default.PlayerShuffle = enabled;
         ShuffleToggleButton.IsChecked = enabled;
+        Properties.Settings.Default.PlayerShuffle = enabled;
+        Properties.Settings.Default.Save();
     }
 
     private void SongLyricsRichTextBoxVisibilityButtonClick(object sender, RoutedEventArgs e)
@@ -1709,11 +1723,13 @@ public partial class MainWindow : Window
     private void OnSettingsMiniplayerAutoOpacityCheckboxChecked(object sender, RoutedEventArgs e)
     {
         Properties.Settings.Default.MiniplayerAutoOpacity = true;
+        Properties.Settings.Default.Save();
     }
 
     private void OnSettingsMiniplayerAutoOpacityCheckboxUnchecked(object sender, RoutedEventArgs e)
     {
         Properties.Settings.Default.MiniplayerAutoOpacity = false;
+        Properties.Settings.Default.Save();
     }
 
     private void SettingsMiniplayerOpacitySliderMouseMove(object sender, RoutedEventArgs e)
@@ -1731,30 +1747,36 @@ public partial class MainWindow : Window
     private void SettingsMiniplayerOpacitySliderMouseUp(object sender, RoutedEventArgs e)
     {
         isSettingsMiniplayerOpacitySliderBeingDragged = false;
+        Properties.Settings.Default.Save();
     }
 
     private void SettingsMiniplayerOpacityTimeoutNumberInputBoxFinishedEditing(object sender, RoutedEventArgs e)
     {
         Properties.Settings.Default.MiniplayerFadingTimeout = (int)SettingsMiniplayerOpacityTimeoutNumberInputBox.NumericValue;
+        Properties.Settings.Default.Save();
     }
 
     private void SettingsMiniplayerAutoAppearOnMinimizeCheckboxChecked(object sender, RoutedEventArgs e)
     {
         Properties.Settings.Default.MiniplayerAppearOnMinimize = true;
+        Properties.Settings.Default.Save();
     }
 
     private void SettingsMiniplayerAutoAppearOnMinimizeCheckboxUnchecked(object sender, RoutedEventArgs e)
     {
         Properties.Settings.Default.MiniplayerAppearOnMinimize = false;
+        Properties.Settings.Default.Save();
     }
 
     private void SettingsMiniplayerHideControlsCheckboxChecked(object sender, RoutedEventArgs e)
     {
         Properties.Settings.Default.MiniplayerHideControls = true;
+        Properties.Settings.Default.Save();
     }
 
     private void SettingsMiniplayerHideControlsCheckboxUnchecked(object sender, RoutedEventArgs e)
     {
         Properties.Settings.Default.MiniplayerHideControls = false;
+        Properties.Settings.Default.Save();
     }
 }
