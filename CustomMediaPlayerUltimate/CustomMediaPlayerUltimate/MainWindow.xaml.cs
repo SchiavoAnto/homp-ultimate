@@ -28,6 +28,7 @@ public partial class MainWindow : Window
     public const string TOTAL_TIME_FORMAT = "m'min 'ss's'";
     public const string TOTAL_TIME_FORMAT_HOURS = $"h'h '{TOTAL_TIME_FORMAT}";
     private const int VOLUME_STEP = 2;
+    private static readonly string[] ALLOWED_EXTENSIONS = { ".mp3", ".flac" };
     private static bool dbExists = false;
     public static MainWindow Instance = null!;
 
@@ -845,15 +846,15 @@ public partial class MainWindow : Window
             Database.AddFolder(path);
             int songsCached = 0;
 
-            string[] songPaths = Directory.GetFiles(path, "*.mp3", SearchOption.TopDirectoryOnly);
-            Logger.Log($"Got {songPaths.Length} song files from '{path}'.");
-            for (int i = 0; i < songPaths.Length; i++)
+            var songPaths = Directory.EnumerateFiles(path, "*", SearchOption.TopDirectoryOnly);
+            foreach (string songPath in songPaths)
             {
-                Song song = new(songPaths[i]);
+                if (!ALLOWED_EXTENSIONS.Contains(new FileInfo(songPath).Extension)) continue;
+                Song song = new(songPath);
                 var mediaState = Utils.GetMediaInformation(song);
                 if (!mediaState.Success)
                 {
-                    Logger.Exception($"Skipped {songPaths[i]}: error while trying to retrieve media information", mediaState.Exception!);
+                    Logger.Exception($"Skipped {songPath}: error while trying to retrieve media information", mediaState.Exception!);
                     continue;
                 }
                 if (Database.AddSong(song))
@@ -862,7 +863,7 @@ public partial class MainWindow : Window
                 }
                 else
                 {
-                    Logger.Error($"Caching of song {songPaths[i]} failed!");
+                    Logger.Error($"Caching of song {songPath} failed!");
                 }
             }
             Logger.Log($"Finished caching folder '{path}', cached {songsCached} song files.");
@@ -933,6 +934,7 @@ public partial class MainWindow : Window
                 FileInfo[] newFiles = new DirectoryInfo(dirs[i]!)
                     .GetFiles()
                     .Where(i => i.LastWriteTime.Ticks > lastUpdate || i.CreationTime.Ticks > lastUpdate)
+                    .Where(i => ALLOWED_EXTENSIONS.Contains(i.Extension))
                     .ToArray();
                 Logger.Log($"Obtained {newFiles.Length} new/modified files from '{dirs[i]}'.");
                 // If there are any new files, we read them back from
