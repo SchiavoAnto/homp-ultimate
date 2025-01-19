@@ -61,8 +61,9 @@ public partial class NumberInputBox : UserControl
         UpdateValue(NumericValue);
     }
 
-    private (bool Allowed, float Value) IsValueAllowed(string value)
+    private bool IsStringAllowed(string value)
     {
+        if (string.IsNullOrEmpty(value.Trim())) return false;
         for (int i = 0; i < value.Length; i++)
         {
             char c = value[i];
@@ -76,9 +77,15 @@ public partial class NumberInputBox : UserControl
                 {
                     continue;
                 }
-                return (false, 0f);
+                return false;
             }
         }
+        return true;
+    }
+
+    private (bool Allowed, float Value) IsValueAllowed(string value)
+    {
+        if (!IsStringAllowed(value)) return (false, 0f);
 
         if (value.Length == 1 && value[0] == '-') return (true, NumericValue);
 
@@ -97,13 +104,12 @@ public partial class NumberInputBox : UserControl
 
     private void TextBoxPreviewInput(object sender, TextCompositionEventArgs e)
     {
-        (bool valid, float val) = IsValueAllowed($"{InputTextBox.Text}{e.Text}");
-        if (valid)
+        if (IsStringAllowed($"{InputTextBox.Text}{e.Text}"))
         {
-            updateDisplayedValue = false;
-            NumericValue = val;
+            InputTextBox.AppendText($"{e.Text}");
+            InputTextBox.CaretIndex = InputTextBox.Text.Length;
         }
-        e.Handled = !valid;
+        e.Handled = true;
     }
 
     private void TextBoxPasting(object sender, DataObjectPastingEventArgs e)
@@ -182,7 +188,7 @@ public partial class NumberInputBox : UserControl
 
     private void EnsureMinimumValue()
     {
-        if (InputTextBox.Text.Length == 0)
+        if (InputTextBox.Text.Length == 0 || !IsValueAllowed(InputTextBox.Text).Allowed)
         {
             NumericValue = Minimum;
             UpdateValue(Minimum);

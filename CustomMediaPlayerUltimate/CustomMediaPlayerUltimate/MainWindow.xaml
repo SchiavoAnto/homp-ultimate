@@ -653,7 +653,7 @@
                                 <Label Margin="-4,0,0,0" Foreground="WhiteSmoke">Trigger time</Label>
                                 <TextBlock Foreground="LightGray" Margin="10,0,0,5" TextWrapping="Wrap">Changes how much time the cursor needs to be out of the miniplayer for it to start fading.</TextBlock>
                                 <StackPanel Margin="8,0,0,0" Orientation="Horizontal">
-                                    <local:NumberInputBox x:Name="SettingsMiniplayerOpacityTimeoutNumberInputBox" Minimum="1" Maximum="10000" FinishedEditing="SettingsMiniplayerOpacityTimeoutNumberInputBoxFinishedEditing"/>
+                                    <local:NumberInputBox x:Name="SettingsMiniplayerOpacityTimeoutNumberInputBox" Minimum="50" Maximum="10000" FinishedEditing="SettingsMiniplayerOpacityTimeoutNumberInputBoxFinishedEditing"/>
                                     <Label Foreground="WhiteSmoke">milliseconds</Label>
                                 </StackPanel>
                             </StackPanel>
