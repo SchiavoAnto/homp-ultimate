@@ -342,7 +342,7 @@ public partial class MainWindow : Window
     private void ProgressSliderMouseMove(object sender, RoutedEventArgs e)
     {
         if (!isProgressSliderBeingDragged) return;
-        mediaPlayer.Position = TimeSpan.FromSeconds(ProgressSlider.Value);
+        mediaPlayer.Position = TimeSpan.FromMilliseconds(ProgressSlider.Value);
     }
 
     private void ProgressSliderMouseDown(object sender, RoutedEventArgs e)
@@ -1245,7 +1245,7 @@ public partial class MainWindow : Window
         if (!mediaAvailable) return;
         if (!isProgressSliderBeingDragged)
         {
-            ProgressSlider.Value = mediaPlayer.Position.TotalSeconds;
+            ProgressSlider.Value = mediaPlayer.Position.TotalMilliseconds;
             MiniPlayerWindow.Instance?.SetProgress(ProgressSlider.Value);
         }
         if (!mediaPlayer.NaturalDuration.HasTimeSpan) return;
@@ -1381,7 +1381,7 @@ public partial class MainWindow : Window
     private void MediaPlayer_MediaOpened(object? sender, EventArgs e)
     {
         if (!mediaPlayer.NaturalDuration.HasTimeSpan) return;
-        ProgressSlider.Maximum = mediaPlayer.NaturalDuration.TimeSpan.TotalSeconds;
+        ProgressSlider.Maximum = mediaPlayer.NaturalDuration.TimeSpan.TotalMilliseconds;
         ProgressSlider.Value = 0;
         MiniPlayerWindow.Instance?.SetMaximumProgress(ProgressSlider.Maximum);
         MiniPlayerWindow.Instance?.SetProgress(0d);

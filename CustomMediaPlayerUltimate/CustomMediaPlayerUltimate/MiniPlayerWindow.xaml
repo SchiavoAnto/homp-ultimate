@@ -150,7 +150,7 @@
             <Border.Clip>
                 <RectangleGeometry Rect="0,0,272,51.5" RadiusX="6" RadiusY="6"/>
             </Border.Clip>
-            <ProgressBar x:Name="ProgressProgressBar" Margin="0,48,0,0" Height="4" Width="271" Background="#444" BorderBrush="#444" Foreground="#888" SnapsToDevicePixels="True"/>
+            <ProgressBar x:Name="ProgressProgressBar" Margin="0,48,0,0" Height="4" Width="271" Background="#444" BorderBrush="#444" Foreground="#888" SnapsToDevicePixels="False"/>
         </Border>
     </Grid>
 </Window>
