@@ -14,6 +14,7 @@ using System.Collections.Specialized;
 using System.Collections.ObjectModel;
 using CustomMediaPlayerUltimate.Elements;
 using CustomMediaPlayerUltimate.DataStructures;
+using System.Drawing.Text;
 
 namespace CustomMediaPlayerUltimate;
 
@@ -83,6 +84,8 @@ public partial class MainWindow : Window
     private bool isVolumeSliderBeingDragged = false;
     private bool isSettingsMiniplayerOpacitySliderBeingDragged = false;
     public Song? currentSong = null;
+    private CustomSongElement.CustomSongElementInfo? currentSongElementInfo = null;
+    private ListView? currentSongElementInfoListView = null;
     private int currentSongIndex = -1;
     private Song? prioritySong = null;
     private PlaylistElement? currentlySelectedPlaylistElement;
@@ -1284,6 +1287,8 @@ public partial class MainWindow : Window
         }
 
         Song song = allSongsPlaylist!.Songs[songFile];
+        UpdatePlayingSongElement(song, songCollection);
+
         string title = (song.Title == string.Empty) ? "Generic Song" : song.Title;
         string artist = song.Artist;
 
@@ -1297,7 +1302,6 @@ public partial class MainWindow : Window
         }
         CurrentSongTitleLabel.Content = title;
         CurrentSongArtistAlbumLabel.Content = artist;
-
 
         mediaPlayer.Open(new Uri(songFile));
         mediaPlayer.Play();
@@ -1725,6 +1729,39 @@ public partial class MainWindow : Window
         ShuffleToggleButton.IsChecked = enabled;
         Properties.Settings.Default.PlayerShuffle = enabled;
         Properties.Settings.Default.Save();
+    }
+
+    private void UpdatePlayingSongElement(Song song, SongCollection? songCollection)
+    {
+        if (songCollection is null) return;
+        if (currentSongElementInfo is not null) currentSongElementInfo.IsPlaying = false;
+        if (currentSongElementInfoListView is not null) currentSongElementInfoListView.Items.Refresh();
+
+        if (songCollection == allSongsPlaylist)
+        {
+            currentSongElementInfoListView = AllSongsListView;
+        }
+        else if (songCollection.Type == SongCollectionType.Playlist && songCollection.Name == "__HOMP_SEARCH_RESULTS_PLAYLIST__")
+        {
+            currentSongElementInfoListView = SearchResultsSongsListView;
+        }
+        else
+        {
+            currentSongElementInfoListView = songCollection.Type switch
+            {
+                SongCollectionType.Playlist => PlaylistSongsListView,
+                SongCollectionType.Album => AlbumSongsListView,
+                SongCollectionType.Artist => ArtistSongsListView,
+                _ => null
+            };
+        }
+
+        currentSongElementInfo = currentSongElementInfoListView?.ItemsSource
+            .OfType<CustomSongElement.CustomSongElementInfo>()
+            .Where(a => a.Song == song)
+            .FirstOrDefault();
+        if (currentSongElementInfo is not null) currentSongElementInfo.IsPlaying = true;
+        currentSongElementInfoListView?.Items.Refresh();
     }
 
     private void SongLyricsRichTextBoxVisibilityButtonClick(object sender, RoutedEventArgs e)

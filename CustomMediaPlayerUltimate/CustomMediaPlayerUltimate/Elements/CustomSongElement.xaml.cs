@@ -11,6 +11,7 @@ public partial class CustomSongElement : UserControl
     public class CustomSongElementInfo
     {
         public Song Song { get; private init; }
+        public bool IsPlaying { get; set; } = false;
         public SongCollection Collection { get; private init; }
 
         public CustomSongElementInfo(Song song, SongCollection collection)
