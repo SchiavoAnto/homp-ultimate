@@ -1010,6 +1010,16 @@ public partial class MainWindow : Window
                 }
             }
         }
+        AllSongs.Sort((a, b) =>
+        {
+            if (a is null || b is null) return 0;
+            // Get sort based on artist name
+            int fs = a.Song.Artist.CompareTo(b.Song.Artist);
+            // If same artist, return comparison based on title
+            if (fs == 0) return a.Song.Title.CompareTo(b.Song.Title);
+            // Else return artist sort
+            return fs;
+        });
         Logger.Log("Finished loading all songs from database.");
 
         // Playlists
