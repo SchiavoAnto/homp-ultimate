@@ -14,7 +14,6 @@ using System.Collections.Specialized;
 using System.Collections.ObjectModel;
 using CustomMediaPlayerUltimate.Elements;
 using CustomMediaPlayerUltimate.DataStructures;
-using System.Drawing.Text;
 
 namespace CustomMediaPlayerUltimate;
 
@@ -96,13 +95,13 @@ public partial class MainWindow : Window
     public ObservableCollection<CustomSongElement.CustomSongElementInfo> PlaylistSongs { get; set; } = new();
     public ObservableCollection<CustomSongElement.CustomSongElementInfo> AlbumSongs { get; set; } = new();
     public ObservableCollection<CustomSongElement.CustomSongElementInfo> ArtistSongs { get; set; } = new();
+    public ObservableCollection<CustomSongElement.CustomSongElementInfo> QueueSongs { get; set; } = new();
     public ObservableCollection<CustomSongElement.CustomSongElementInfo> SearchSongs { get; set; } = new();
     private SongCollection? currentCollection;
     private SongCollection? allSongsPlaylist;
     private Dictionary<string, SongCollection> playlists = new Dictionary<string, SongCollection>();
     private Dictionary<string, SongCollection> albums = new Dictionary<string, SongCollection>();
     private Dictionary<string, SongCollection> artists = new Dictionary<string, SongCollection>();
-    private List<Song> songQueue = new();
 
     public MainWindow()
     {
@@ -262,6 +261,7 @@ public partial class MainWindow : Window
         AlbumsView.Visibility = Visibility.Collapsed;
         ArtistsView.Visibility = Visibility.Collapsed;
         PlaylistsView.Visibility = Visibility.Collapsed;
+        QueueView.Visibility = Visibility.Collapsed;
         SearchResultsView.Visibility = Visibility.Collapsed;
         SettingsView.Visibility = Visibility.Collapsed;
         AllSongsView.Visibility = Visibility.Collapsed;
@@ -270,6 +270,7 @@ public partial class MainWindow : Window
         PlaylistsTabButton.Tag = null;
         AlbumsTabButton.Tag = null;
         ArtistsTabButton.Tag = null;
+        QueueTabButton.Tag = null;
         SearchResultsTabButton.Tag = null;
         SettingsTabButton.Tag = null;
     }
@@ -300,6 +301,13 @@ public partial class MainWindow : Window
         HideAllViews();
         ArtistsView.Visibility = Visibility.Visible;
         ArtistsTabButton.Tag = "Focused";
+    }
+
+    private void SwitchToQueueView(object sender, RoutedEventArgs e)
+    {
+        HideAllViews();
+        QueueView.Visibility = Visibility.Visible;
+        QueueTabButton.Tag = "Focused";
     }
 
     private void SwitchToSearchResultsView(object sender, RoutedEventArgs e)
@@ -1250,11 +1258,13 @@ public partial class MainWindow : Window
         PlaylistsViewLoadingOverlay.Visibility = Visibility.Collapsed;
         AlbumsViewLoadingOverlay.Visibility = Visibility.Collapsed;
         ArtistsViewLoadingOverlay.Visibility = Visibility.Collapsed;
+        QueueViewLoadingOverlay.Visibility = Visibility.Collapsed;
 
         AllSongsViewContent.Visibility = Visibility.Visible;
         PlaylistsViewContent.Visibility = Visibility.Visible;
         AlbumsViewContent.Visibility = Visibility.Visible;
         ArtistsViewContent.Visibility = Visibility.Visible;
+        QueueViewContent.Visibility = Visibility.Visible;
     }
 
     private void Timer_Tick(object? sender, EventArgs e)
@@ -1306,7 +1316,7 @@ public partial class MainWindow : Window
         mediaPlayer.Open(new Uri(songFile));
         mediaPlayer.Play();
         mediaPlayer.Volume = VolumeSlider.Value / 100f;
-        if (currentCollection != songCollection || songQueue.Count != currentCollection.Songs.Count)
+        if (currentCollection != songCollection || QueueSongs.Count != currentCollection.Songs.Count)
         {
             currentCollection = songCollection;
             PopulateSongQueueFromSongAndCollection(song, currentCollection);
@@ -1334,7 +1344,7 @@ public partial class MainWindow : Window
     private void ResetPlayback()
     {
         StopPlayback();
-        songQueue.Clear();
+        QueueSongs.Clear();
         currentCollection = null;
         IsPlaying = false;
         ProgressLabel.Content = "00:00 / 00:00";
@@ -1348,13 +1358,13 @@ public partial class MainWindow : Window
     public void PreviousSongInPlaylist()
     {
         if (currentCollection is null) return;
-        if (songQueue.Count == 0)
+        if (QueueSongs.Count == 0)
         {
             PopulateSongQueueFromCollection(currentCollection);
         }
         currentSongIndex--;
-        if (currentSongIndex < 0) currentSongIndex = songQueue.Count - 1;
-        PlaySong(songQueue[currentSongIndex].FilePath, currentCollection);
+        if (currentSongIndex < 0) currentSongIndex = QueueSongs.Count - 1;
+        PlaySong(QueueSongs[currentSongIndex].Song.FilePath, currentCollection);
     }
 
     public void NextSongInPlaylist()
@@ -1367,34 +1377,49 @@ public partial class MainWindow : Window
         }
 
         if (currentCollection is null) return;
-        if (songQueue.Count == 0)
+        if (QueueSongs.Count == 0)
         {
             PopulateSongQueueFromCollection(currentCollection);
         }
         currentSongIndex++;
-        if (currentSongIndex >= songQueue.Count) currentSongIndex = 0;
-        PlaySong(songQueue[currentSongIndex].FilePath, currentCollection);
+        if (currentSongIndex >= QueueSongs.Count) currentSongIndex = 0;
+        PlaySong(QueueSongs[currentSongIndex].Song.FilePath, currentCollection);
     }
 
     private void PopulateSongQueueFromCollection(SongCollection collection)
     {
-        songQueue.Clear();
-        songQueue.EnsureCapacity(collection.Songs.Count);
+        QueueSongs.Clear();
+        //QueueSongs.EnsureCapacity(collection.Songs.Count);
         currentSongIndex = -1;
         Song[] qSongs = collection.Songs.Values.ToArray();
         random.Shuffle(qSongs);
-        songQueue.AddRange(qSongs);
+        for (int i = 0; i < qSongs.Length; i++)
+        {
+            var songCsei = AllSongs?.Where(csei => csei.Song == qSongs[i]).First();
+            if (songCsei is null) continue;
+            QueueSongs.Add(songCsei);
+        }
     }
 
     private void PopulateSongQueueFromSongAndCollection(Song song, SongCollection collection)
     {
-        songQueue.Clear();
-        songQueue.EnsureCapacity(collection.Songs.Count);
-        songQueue.Add(song);
+        QueueSongs.Clear();
+        //songQueue.EnsureCapacity(collection.Songs.Count);
         currentSongIndex = -1;
         Song[] qSongs = (from s in collection.Songs.Values.ToArray() where !s.Equals(song) select s).ToArray();
         random.Shuffle(qSongs);
-        songQueue.AddRange(qSongs);
+
+        var scsei = AllSongs?.Where(csei => csei.Song == song).FirstOrDefault();
+        if (scsei is not null)
+        {
+            QueueSongs.Add(scsei);
+        }
+        for (int i = 0; i < qSongs.Length; i++)
+        {
+            var songCsei = AllSongs?.Where(csei => csei.Song == qSongs[i]).FirstOrDefault();
+            if (songCsei is null) continue;
+            QueueSongs.Add(songCsei);
+        }
     }
 
     private void MediaPlayer_MediaOpened(object? sender, EventArgs e)
@@ -1827,5 +1852,37 @@ public partial class MainWindow : Window
     {
         Properties.Settings.Default.MiniplayerHideControls = false;
         Properties.Settings.Default.Save();
+    }
+
+    public void QueueDropEvent(object sender, DragEventArgs e)
+    {
+        // Current problems:
+        //      - current queue position is not updated, so wrong song on next/previous
+
+        CustomSongElement.CustomSongElementInfo? data =
+            e.Data.GetData(typeof(CustomSongElement.CustomSongElementInfo))
+            as CustomSongElement.CustomSongElementInfo;
+        CustomSongElement.CustomSongElementInfo? target =
+            ((CustomSongElement)sender)?.DataContext as CustomSongElement.CustomSongElementInfo;
+
+        if (data is null || target is null) return;
+
+        int removedIndex = QueueListView.Items.IndexOf(data);
+        int targetIndex = QueueListView.Items.IndexOf(target);
+
+        if (removedIndex < targetIndex)
+        {
+            QueueSongs.Insert(targetIndex + 1, data);
+            QueueSongs.RemoveAt(removedIndex);
+        }
+        else
+        {
+            int remIndex = removedIndex + 1;
+            if (QueueSongs.Count + 1 > remIndex)
+            {
+                QueueSongs.Insert(targetIndex, data);
+                QueueSongs.RemoveAt(remIndex);
+            }
+        }
     }
 }

@@ -98,4 +98,19 @@ public partial class CustomSongElement : UserControl
     {
         MainWindow.Instance.PlaySong(Info!.Song.FilePath, Info.Collection);
     }
+
+    private void CustomSongElementPreviewMouseMove(object sender, MouseEventArgs e)
+    {
+        if (e.LeftButton != MouseButtonState.Pressed) return;
+        //MessageBox.Show(sender.GetType().FullName);
+        if (sender is CustomSongElement cse)
+        {
+            DragDrop.DoDragDrop(cse, cse.DataContext, DragDropEffects.Move);
+        }
+    }
+
+    private void CustomSongElementDrop(object sender, DragEventArgs e)
+    {
+        MainWindow.Instance.QueueDropEvent(sender, e);
+    }
 }

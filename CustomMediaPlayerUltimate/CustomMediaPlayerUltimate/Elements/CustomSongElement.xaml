@@ -4,8 +4,9 @@
              xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006" 
              xmlns:d="http://schemas.microsoft.com/expression/blend/2008" 
              xmlns:local="clr-namespace:CustomMediaPlayerUltimate.Elements"
-             mc:Ignorable="d" 
-             Height="40" d:DesignWidth="200" Loaded="CustomSongElementLoaded" MouseDoubleClick="CustomSongElementDoubleClick">
+             mc:Ignorable="d" Drop="CustomSongElementDrop"
+             Height="40" d:DesignWidth="200" Loaded="CustomSongElementLoaded" MouseDoubleClick="CustomSongElementDoubleClick"
+             PreviewMouseMove="CustomSongElementPreviewMouseMove">
     <Grid x:Name="GridContainer" Style="{StaticResource CustomSongElement}">
         <Grid.ColumnDefinitions>
             <ColumnDefinition Width="Auto"/>
