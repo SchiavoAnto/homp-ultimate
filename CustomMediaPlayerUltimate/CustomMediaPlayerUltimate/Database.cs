@@ -231,6 +231,13 @@ public static class Database
         return r != -2;
     }
 
+    public static bool DeleteSong(Song song)
+    {
+        int r = ExecuteGenericQuery(@"DELETE FROM songs WHERE path = @_path;", [("@_path", song.FilePath)]);
+        if (r == -2) return false;
+        return RemoveSongFromAllPlaylists(song.FilePath);
+    }
+
     public static bool AddSongToPlaylist(string songPath, int playlistId)
     {
         int r = ExecuteGenericQuery(@"
@@ -246,6 +253,12 @@ public static class Database
                 ("@_path", songPath)
             ]
         );
+        return r != -2;
+    }
+
+    public static bool RemoveSongFromAllPlaylists(string songPath)
+    {
+        int r = ExecuteGenericQuery(@"DELETE FROM playlist_songs WHERE song_path = @_path;", [("@_path", songPath)]);
         return r != -2;
     }
 

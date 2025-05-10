@@ -75,8 +75,11 @@
             <ContextMenu>
                 <ContextMenu.Items>
                     <MenuItem Header="Play" Click="PlayMenuItemClick"/>
-                    <MenuItem Header="Edit lyrics..." Click="EditLyricsMenuItemClick"/>
                     <MenuItem Header="Play as next song" Click="PlayAsNextSongMenuItemClick"/>
+                    <Separator/>
+                    <MenuItem Header="Edit lyrics..." Click="EditLyricsMenuItemClick"/>
+                    <Separator/>
+                    <MenuItem Header="Delete" Click="DeleteMenuItemClick"/>
                 </ContextMenu.Items>
             </ContextMenu>
         </Grid.ContextMenu>

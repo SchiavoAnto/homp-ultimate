@@ -94,6 +94,11 @@ public partial class CustomSongElement : UserControl
         MainWindow.Instance.SetPrioritySong(Info!.Song);
     }
 
+    private void DeleteMenuItemClick(object sender, RoutedEventArgs e)
+    {
+        MainWindow.Instance.DeleteSong(Info!.Song);
+    }
+
     private void PlayButtonClick(object sender, RoutedEventArgs e)
     {
         MainWindow.Instance.PlaySong(Info!.Song.FilePath, Info.Collection);
