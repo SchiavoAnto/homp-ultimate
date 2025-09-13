@@ -111,6 +111,15 @@
 
         <Grid.ContextMenu>
             <ContextMenu>
+                <ContextMenu.ItemContainerStyle>
+                    <Style TargetType="Control">
+                        <Style.Triggers>
+                            <DataTrigger Binding="{Binding RelativeSource={RelativeSource AncestorLevel=1, AncestorType=local:CustomSongElement}, Path=HoverEffects}" Value="False">
+                                <Setter Property="IsEnabled" Value="False"/>
+                            </DataTrigger>
+                        </Style.Triggers>
+                    </Style>
+                </ContextMenu.ItemContainerStyle>
                 <ContextMenu.Items>
                     <MenuItem Header="Play" Click="PlayMenuItemClick"/>
                     <MenuItem Header="Make first in queue" Click="MakeFirstInQueueMenuItemClick"/>
