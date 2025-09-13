@@ -1265,6 +1265,12 @@ public partial class MainWindow : Window
         AlbumsViewContent.Visibility = Visibility.Visible;
         ArtistsViewContent.Visibility = Visibility.Visible;
         QueueViewContent.Visibility = Visibility.Visible;
+
+        QueueCurrentSongCSE.SetSongInfo(new(new("")
+        {
+            Title = "No song playing",
+            Artist = ""
+        }, null!));
     }
 
     private void Timer_Tick(object? sender, EventArgs e)
