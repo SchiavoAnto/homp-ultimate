@@ -113,8 +113,11 @@
             <ContextMenu>
                 <ContextMenu.Items>
                     <MenuItem Header="Play" Click="PlayMenuItemClick"/>
-                    <MenuItem Header="Edit lyrics..." Click="EditLyricsMenuItemClick"/>
                     <MenuItem Header="Make first in queue" Click="MakeFirstInQueueMenuItemClick"/>
+                    <Separator/>
+                    <MenuItem Header="Edit lyrics..." Click="EditLyricsMenuItemClick"/>
+                    <Separator/>
+                    <MenuItem Header="Delete" Click="DeleteMenuItemClick"/>
                 </ContextMenu.Items>
             </ContextMenu>
         </Grid.ContextMenu>

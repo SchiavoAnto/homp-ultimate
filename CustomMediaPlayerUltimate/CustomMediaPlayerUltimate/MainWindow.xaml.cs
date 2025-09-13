@@ -90,6 +90,7 @@ public partial class MainWindow : Window
     private CollectionElement? currentlySelectedArtistElement;
 
     public List<CustomSongElement.CustomSongElementInfo>? AllSongs { get; set; }
+    public ObservableCollection<CustomSongElement.CustomSongElementInfo> AllSongsSource { get; set; } = new();
     public ObservableCollection<CustomSongElement.CustomSongElementInfo> PlaylistSongs { get; set; } = new();
     public ObservableCollection<CustomSongElement.CustomSongElementInfo> AlbumSongs { get; set; } = new();
     public ObservableCollection<CustomSongElement.CustomSongElementInfo> ArtistSongs { get; set; } = new();
@@ -1081,7 +1082,8 @@ public partial class MainWindow : Window
 
         Logger.Log($"Finished loading all files from database.");
         Logger.Log("Now showing all songs...");
-        AllSongsListView.ItemsSource = new ObservableCollection<CustomSongElement.CustomSongElementInfo>(AllSongs);
+        AllSongsSource = new(AllSongs);
+        AllSongsListView.ItemsSource = AllSongsSource;
         Logger.Log("Songs are now shown in the UI.");
     }
 
@@ -1701,6 +1703,85 @@ public partial class MainWindow : Window
         int songIndex = QueueSongs.IndexOf(info);
         if (songIndex != -1)
             QueueSongs.Move(songIndex, 0);
+    }
+
+    public void DeleteSong(Song song)
+    {
+        if (MessageBox.Show($"Are you sure you want to delete song '{song.Artist} - {song.Title}'? This cannot be undone.", "HOMP", MessageBoxButton.YesNo) == MessageBoxResult.Yes)
+        {
+            Logger.Log($"Deleting song '{song.FilePath}'...");
+            if (song.FilePath == currentSong?.FilePath)
+            {
+                ResetPlayback();
+            }
+            if (Database.DeleteSong(song))
+            {
+                try
+                {
+                    File.Delete(song.FilePath);
+                    string lyricsFileName = $"{LYRICS_PATH}\\{song.FileName}.mp3[Lyrics].txt";
+                    File.Delete(lyricsFileName);
+                    string coverFileName = $"{COVERS_PATH}\\{song.FileName}.mp3[Cover].png";
+                    File.Delete(coverFileName);
+
+                    List<string> playlistsWithSong = [];
+                    foreach (SongCollection playlist in playlists.Values)
+                    {
+                        if (playlist.RemoveSong(song))
+                            playlistsWithSong.Add(playlist.Name);
+                    }
+                    albums[song.Album ?? UNKNOWN_ALBUM].RemoveSong(song);
+                    foreach (SongCollection artist in artists.Values)
+                    {
+                        artist.RemoveSong(song);
+                    }
+
+                    if (currentlySelectedPlaylistElement is not null &&
+                        playlistsWithSong.Contains(currentlySelectedPlaylistElement.Playlist.Name))
+                    {
+                        LoadPlaylistSongsInView(currentlySelectedPlaylistElement.Playlist);
+                    }
+                    if (currentlySelectedAlbumElement is not null &&
+                        (song.Album ?? UNKNOWN_ALBUM) == currentlySelectedAlbumElement.Text)
+                    {
+                        LoadAlbumSongsInView(currentlySelectedAlbumElement.Text);
+                    }
+                    if (currentlySelectedArtistElement is not null &&
+                        song.Artists.Contains(currentlySelectedArtistElement.Text))
+                    {
+                        LoadArtistSongsInView(currentlySelectedArtistElement.Text);
+                    }
+                    currentCollection?.RemoveSong(song);
+                    allSongsPlaylist?.RemoveSong(song);
+                    AllSongs!.Remove(AllSongs.First(e => e.Song.FilePath == song.FilePath));
+                    AllSongsSource.Remove(AllSongsSource.First(e => e.Song.FilePath == song.FilePath));
+                    CustomSongElement.CustomSongElementInfo? searchSong = SearchSongs.FirstOrDefault(e => e.Song.FilePath == song.FilePath);
+                    if (searchSong is not null)
+                        SearchSongs.Remove(searchSong);
+                    songQueue.Remove(song);
+                    if (prioritySong?.FilePath == song.FilePath)
+                        prioritySong = null;
+                    Logger.Log($"Song '{song.FilePath}' deleted.");
+                    return;
+                }
+                catch (Exception ex)
+                {
+                    Logger.Exception($"Deletion of song '{song.FilePath}' failed.", ex);
+                    goto failure;
+                }
+            }
+            else
+            {
+                Logger.Log($"Deletion of song '{song.FilePath}' from database failed.");
+                goto failure;
+            }
+
+            failure:
+            {
+                MessageBox.Show($"Deletion of song '{song.Artist} - {song.Title}' failed.", "HOMP", MessageBoxButton.OK, MessageBoxImage.Error);
+                return;
+            }
+        }
     }
 
     public void BackFromMiniplayer()
