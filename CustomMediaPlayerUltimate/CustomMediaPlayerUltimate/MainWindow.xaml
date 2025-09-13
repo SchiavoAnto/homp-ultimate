@@ -490,10 +490,16 @@
                 <Grid x:Name="QueueViewContent" Visibility="Collapsed">
                     <Grid.RowDefinitions>
                         <RowDefinition Height="Auto"/>
+                        <RowDefinition Height="Auto"/>
+                        <RowDefinition Height="Auto"/>
+                        <RowDefinition Height="Auto"/>
                         <RowDefinition Height="*"/>
                     </Grid.RowDefinitions>
                     <Label Grid.Row="0" Content="Queue" Foreground="WhiteSmoke" FontSize="18" FontWeight="Bold"/>
-                    <ListView x:Name="QueueListView" Grid.Row="1" ItemsSource="{Binding QueueSongs}">
+                    <Label Grid.Row="1" Content="Current song" Foreground="WhiteSmoke" FontSize="12" FontWeight="Bold"/>
+                    <local:CustomSongElement x:Name="QueueCurrentSongCSE" Grid.Row="2" HoverEffects="False"/>
+                    <Label Grid.Row="3" Content="Upcoming songs" Foreground="WhiteSmoke" FontSize="12" FontWeight="Bold"/>
+                    <ListView x:Name="QueueListView" Grid.Row="4" ItemsSource="{Binding QueueSongs}">
                         <ListView.Style>
                             <Style TargetType="ListView">
                                 <Setter Property="Template">
@@ -525,11 +531,12 @@
                         </ListView.ItemContainerStyle>
                         <ListView.ItemsPanel>
                             <ItemsPanelTemplate>
-                                <VirtualizingStackPanel Background="Red" VirtualizingPanel.VirtualizationMode="Recycling" VirtualizingPanel.ScrollUnit="Pixel">
+                                <VirtualizingStackPanel Background="#252525" VirtualizingPanel.VirtualizationMode="Recycling" VirtualizingPanel.ScrollUnit="Pixel">
                                     <VirtualizingStackPanel.Resources>
                                         <Style TargetType="{x:Type local:CustomSongElement}">
                                             <Setter Property="Margin" Value="0,5,0,0"/>
                                             <Setter Property="AllowDrop" Value="True"/>
+                                            <Setter Property="Draggable" Value="True"/>
                                         </Style>
                                     </VirtualizingStackPanel.Resources>
                                 </VirtualizingStackPanel>

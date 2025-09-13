@@ -23,6 +23,22 @@ public partial class CustomSongElement : UserControl
 
     private CustomSongElementInfo? Info { get; set; }
 
+    public bool Draggable
+    {
+        get { return (bool)GetValue(DraggableProperty); }
+        set { SetValue(DraggableProperty, value); }
+    }
+    public static readonly DependencyProperty DraggableProperty =
+        DependencyProperty.Register("Draggable", typeof(bool), typeof(CustomSongElement), new PropertyMetadata(false));
+
+    public bool HoverEffects
+    {
+        get { return (bool)GetValue(HoverEffectsProperty); }
+        set { SetValue(HoverEffectsProperty, value); }
+    }
+    public static readonly DependencyProperty HoverEffectsProperty =
+        DependencyProperty.Register("HoverEffects", typeof(bool), typeof(CustomSongElement), new PropertyMetadata(true));
+
     public CustomSongElement()
     {
         InitializeComponent();
@@ -89,9 +105,9 @@ public partial class CustomSongElement : UserControl
         }
     }
 
-    private void PlayAsNextSongMenuItemClick(object sender, RoutedEventArgs e)
+    private void MakeFirstInQueueMenuItemClick(object sender, RoutedEventArgs e)
     {
-        MainWindow.Instance.SetPrioritySong(Info!.Song);
+        MainWindow.Instance.MoveSongToTopOfQueue(Info);
     }
 
     private void PlayButtonClick(object sender, RoutedEventArgs e)
@@ -99,18 +115,20 @@ public partial class CustomSongElement : UserControl
         MainWindow.Instance.PlaySong(Info!.Song.FilePath, Info.Collection);
     }
 
-    private void CustomSongElementPreviewMouseMove(object sender, MouseEventArgs e)
+    private void DragHandlePreviewMouseMove(object sender, MouseEventArgs e)
     {
         if (e.LeftButton != MouseButtonState.Pressed) return;
-        //MessageBox.Show(sender.GetType().FullName);
-        if (sender is CustomSongElement cse)
-        {
-            DragDrop.DoDragDrop(cse, cse.DataContext, DragDropEffects.Move);
-        }
+        DragDrop.DoDragDrop(this, this.DataContext, DragDropEffects.Move);
     }
 
     private void CustomSongElementDrop(object sender, DragEventArgs e)
     {
         MainWindow.Instance.QueueDropEvent(sender, e);
+    }
+
+    public void SetSongInfo(CustomSongElementInfo info)
+    {
+        Info = info;
+        DataContext = Info;
     }
 }

@@ -85,8 +85,6 @@ public partial class MainWindow : Window
     public Song? currentSong = null;
     private CustomSongElement.CustomSongElementInfo? currentSongElementInfo = null;
     private ListView? currentSongElementInfoListView = null;
-    private int currentSongIndex = -1;
-    private Song? prioritySong = null;
     private PlaylistElement? currentlySelectedPlaylistElement;
     private CollectionElement? currentlySelectedAlbumElement;
     private CollectionElement? currentlySelectedArtistElement;
@@ -1312,6 +1310,7 @@ public partial class MainWindow : Window
         }
         CurrentSongTitleLabel.Content = title;
         CurrentSongArtistAlbumLabel.Content = artist;
+        QueueCurrentSongCSE.SetSongInfo(new(song, songCollection) { IsPlaying = true });
 
         mediaPlayer.Open(new Uri(songFile));
         mediaPlayer.Play();
@@ -1320,7 +1319,13 @@ public partial class MainWindow : Window
         {
             currentCollection = songCollection;
             PopulateSongQueueFromSongAndCollection(song, currentCollection);
-            currentSongIndex = 0;
+        }
+        else if (currentCollection == songCollection)
+        {
+            int songIndex = QueueSongs.IndexOf(new(song, songCollection));
+            if (songIndex != -1)
+                // Move the current song to the end of the queue
+                QueueSongs.Move(songIndex, QueueSongs.Count - 1);
         }
         currentSong = song;
         ProgressSlider.Value = 0;
@@ -1362,35 +1367,30 @@ public partial class MainWindow : Window
         {
             PopulateSongQueueFromCollection(currentCollection);
         }
-        currentSongIndex--;
-        if (currentSongIndex < 0) currentSongIndex = QueueSongs.Count - 1;
-        PlaySong(QueueSongs[currentSongIndex].Song.FilePath, currentCollection);
+        // Move the last song in the queue (which is the current one) to the beginning
+        QueueSongs.Move(QueueSongs.Count - 1, 0);
+        // Then play the new last song in the queue
+        PlaySong(QueueSongs[^1].Song.FilePath, currentCollection);
     }
 
     public void NextSongInPlaylist()
     {
-        if (prioritySong is not null)
-        {
-            PlaySong(prioritySong?.FilePath!, currentCollection ?? allSongsPlaylist);
-            prioritySong = null;
-            return;
-        }
-
         if (currentCollection is null) return;
         if (QueueSongs.Count == 0)
         {
             PopulateSongQueueFromCollection(currentCollection);
         }
-        currentSongIndex++;
-        if (currentSongIndex >= QueueSongs.Count) currentSongIndex = 0;
-        PlaySong(QueueSongs[currentSongIndex].Song.FilePath, currentCollection);
+
+        // Move the first song in the queue to the end
+        QueueSongs.Move(0, QueueSongs.Count - 1);
+        // Then play the new last song in the queue
+        PlaySong(QueueSongs[^1].Song.FilePath, currentCollection);
     }
 
     private void PopulateSongQueueFromCollection(SongCollection collection)
     {
         QueueSongs.Clear();
         //QueueSongs.EnsureCapacity(collection.Songs.Count);
-        currentSongIndex = -1;
         Song[] qSongs = collection.Songs.Values.ToArray();
         random.Shuffle(qSongs);
         for (int i = 0; i < qSongs.Length; i++)
@@ -1405,20 +1405,20 @@ public partial class MainWindow : Window
     {
         QueueSongs.Clear();
         //songQueue.EnsureCapacity(collection.Songs.Count);
-        currentSongIndex = -1;
         Song[] qSongs = (from s in collection.Songs.Values.ToArray() where !s.Equals(song) select s).ToArray();
         random.Shuffle(qSongs);
 
-        var scsei = AllSongs?.Where(csei => csei.Song == song).FirstOrDefault();
-        if (scsei is not null)
-        {
-            QueueSongs.Add(scsei);
-        }
         for (int i = 0; i < qSongs.Length; i++)
         {
             var songCsei = AllSongs?.Where(csei => csei.Song == qSongs[i]).FirstOrDefault();
             if (songCsei is null) continue;
             QueueSongs.Add(songCsei);
+        }
+        // Add the specified song at the end because it's technically currently playing
+        var thisSongElementInfo = AllSongs?.Where(csei => csei.Song == song).FirstOrDefault();
+        if (thisSongElementInfo is not null)
+        {
+            QueueSongs.Add(thisSongElementInfo);
         }
     }
 
@@ -1442,12 +1442,6 @@ public partial class MainWindow : Window
         GC.Collect();
 
         if (currentSong is null) return;
-        if (prioritySong is not null)
-        {
-            PlaySong(prioritySong.FilePath, currentCollection);
-            prioritySong = null;
-            return;
-        }
         if ((bool)LoopToggleButton.IsChecked!)
         {
             PlaySong(currentSong.FilePath, currentCollection!);
@@ -1701,9 +1695,12 @@ public partial class MainWindow : Window
         NextSongInPlaylist();
     }
 
-    public void SetPrioritySong(Song song)
+    public void MoveSongToTopOfQueue(CustomSongElement.CustomSongElementInfo? info)
     {
-        prioritySong = song;
+        if (info is null) return;
+        int songIndex = QueueSongs.IndexOf(info);
+        if (songIndex != -1)
+            QueueSongs.Move(songIndex, 0);
     }
 
     public void BackFromMiniplayer()
