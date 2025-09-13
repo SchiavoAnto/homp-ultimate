@@ -26,6 +26,7 @@
                 <Button x:Name="PlaylistsTabButton" Style="{StaticResource TabButton}" Content="Playlists" Click="SwitchToPlaylistsView"/>
                 <Button x:Name="AlbumsTabButton" Style="{StaticResource TabButton}" Content="Albums" Click="SwitchToAlbumsView"/>
                 <Button x:Name="ArtistsTabButton" Style="{StaticResource TabButton}" Content="Artists" Click="SwitchToArtistsView"/>
+                <Button x:Name="QueueTabButton" Style="{StaticResource TabButton}" Content="Queue" Click="SwitchToQueueView"/>
                 <Button x:Name="SearchResultsTabButton" Style="{StaticResource TabButton}" Content="Search results" Click="SwitchToSearchResultsView"/>
                 <Button x:Name="SettingsTabButton" Style="{StaticResource TabButton}" Content="Settings" Click="SwitchToSettingsView"/>
             </StackPanel>
@@ -481,6 +482,76 @@
                 <Grid x:Name="ArtistsViewLoadingOverlay" VerticalAlignment="Center">
                     <StackPanel HorizontalAlignment="Center" Height="Auto">
                         <Label x:Name="ArtistsViewLoadingOverlayLabel" Foreground="WhiteSmoke" FontSize="14">Loading artists...</Label>
+                        <local:LoadingSpinner Width="30" Height="30"/>
+                    </StackPanel>
+                </Grid>
+            </Grid>
+            <Grid x:Name="QueueView" Grid.Column="0" Visibility="Collapsed">
+                <Grid x:Name="QueueViewContent" Visibility="Collapsed">
+                    <Grid.RowDefinitions>
+                        <RowDefinition Height="Auto"/>
+                        <RowDefinition Height="Auto"/>
+                        <RowDefinition Height="Auto"/>
+                        <RowDefinition Height="Auto"/>
+                        <RowDefinition Height="*"/>
+                    </Grid.RowDefinitions>
+                    <Label Grid.Row="0" Content="Queue" Foreground="WhiteSmoke" FontSize="18" FontWeight="Bold"/>
+                    <Label Grid.Row="1" Content="Current song" Foreground="WhiteSmoke" FontSize="12" FontWeight="Bold"/>
+                    <local:CustomSongElement x:Name="QueueCurrentSongCSE" Grid.Row="2" HoverEffects="False"/>
+                    <Label Grid.Row="3" Content="Upcoming songs" Foreground="WhiteSmoke" FontSize="12" FontWeight="Bold"/>
+                    <ListView x:Name="QueueListView" Grid.Row="4" ItemsSource="{Binding QueueSongs}">
+                        <ListView.Style>
+                            <Style TargetType="ListView">
+                                <Setter Property="Template">
+                                    <Setter.Value>
+                                        <ControlTemplate TargetType="{x:Type ListView}">
+                                            <ScrollViewer CanContentScroll="True" HorizontalScrollBarVisibility="Disabled">
+                                                <!--Set to false to make it scroll like before. Loses virtualization.-->
+                                                <ItemsPresenter/>
+                                            </ScrollViewer>
+                                        </ControlTemplate>
+                                    </Setter.Value>
+                                </Setter>
+                            </Style>
+                        </ListView.Style>
+                        <ListView.ItemContainerStyle>
+                            <Style TargetType="{x:Type ListViewItem}">
+                                <Setter Property="Background" Value="Transparent"/>
+                                <Setter Property="BorderBrush" Value="Transparent"/>
+                                <Setter Property="BorderThickness" Value="0"/>
+                                <Setter Property="VerticalContentAlignment" Value="Center"/>
+                                <Setter Property="Template">
+                                    <Setter.Value>
+                                        <ControlTemplate TargetType="{x:Type ListViewItem}">
+                                            <ContentPresenter/>
+                                        </ControlTemplate>
+                                    </Setter.Value>
+                                </Setter>
+                            </Style>
+                        </ListView.ItemContainerStyle>
+                        <ListView.ItemsPanel>
+                            <ItemsPanelTemplate>
+                                <VirtualizingStackPanel Background="#252525" VirtualizingPanel.VirtualizationMode="Recycling" VirtualizingPanel.ScrollUnit="Pixel">
+                                    <VirtualizingStackPanel.Resources>
+                                        <Style TargetType="{x:Type local:CustomSongElement}">
+                                            <Setter Property="Margin" Value="0,5,0,0"/>
+                                            <Setter Property="AllowDrop" Value="True"/>
+                                            <Setter Property="Draggable" Value="True"/>
+                                        </Style>
+                                    </VirtualizingStackPanel.Resources>
+                                </VirtualizingStackPanel>
+                            </ItemsPanelTemplate>
+                        </ListView.ItemsPanel>
+                        <ListView.ItemTemplate>
+                            <DataTemplate>
+                                <local:CustomSongElement DataContext="{Binding}" Tag="{Binding}"/>
+                            </DataTemplate>
+                        </ListView.ItemTemplate>
+                    </ListView>
+                </Grid>
+                <Grid x:Name="QueueViewLoadingOverlay" VerticalAlignment="Center">
+                    <StackPanel HorizontalAlignment="Center" Height="Auto">
+                        <Label x:Name="QueueViewLoadingOverlayLabel" Foreground="WhiteSmoke" FontSize="14">Waiting for songs...</Label>
                         <local:LoadingSpinner Width="30" Height="30"/>
                     </StackPanel>
                 </Grid>

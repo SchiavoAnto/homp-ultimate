@@ -4,13 +4,25 @@
              xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006" 
              xmlns:d="http://schemas.microsoft.com/expression/blend/2008" 
              xmlns:local="clr-namespace:CustomMediaPlayerUltimate.Elements"
-             mc:Ignorable="d" 
+             mc:Ignorable="d" Drop="CustomSongElementDrop"
              Height="40" d:DesignWidth="200" Loaded="CustomSongElementLoaded" MouseDoubleClick="CustomSongElementDoubleClick">
     <Grid x:Name="GridContainer" Style="{StaticResource CustomSongElement}">
         <Grid.ColumnDefinitions>
             <ColumnDefinition Width="Auto"/>
             <ColumnDefinition Width="*"/>
             <ColumnDefinition Width="Auto"/>
+            <ColumnDefinition>
+                <ColumnDefinition.Style>
+                    <Style TargetType="ColumnDefinition">
+                        <Setter Property="Width" Value="0"/>
+                        <Style.Triggers>
+                            <DataTrigger Binding="{Binding RelativeSource={RelativeSource AncestorLevel=1, AncestorType=local:CustomSongElement}, Path=Draggable}" Value="True">
+                                <Setter Property="Width" Value="16"/>
+                            </DataTrigger>
+                        </Style.Triggers>
+                    </Style>
+                </ColumnDefinition.Style>
+            </ColumnDefinition>
         </Grid.ColumnDefinitions>
         <Grid Grid.Column="0">
             <Image x:Name="SongCoverImage" Width="36" Height="36" Margin="2,0,0,0" RenderOptions.BitmapScalingMode="HighQuality" Source="{Binding Song.Cover}"/>
@@ -32,9 +44,13 @@
                         <Style TargetType="Rectangle">
                             <Setter Property="Opacity" Value="0"/>
                             <Style.Triggers>
-                                <DataTrigger Binding="{Binding IsMouseOver, ElementName=GridContainer}" Value="True">
+                                <MultiDataTrigger>
+                                    <MultiDataTrigger.Conditions>
+                                        <Condition Binding="{Binding IsMouseOver, ElementName=GridContainer}" Value="True"/>
+                                        <Condition Binding="{Binding RelativeSource={RelativeSource AncestorLevel=1, AncestorType=local:CustomSongElement}, Path=HoverEffects}" Value="True"/>
+                                    </MultiDataTrigger.Conditions>
                                     <Setter Property="Opacity" Value="0.65"/>
-                                </DataTrigger>
+                                </MultiDataTrigger>
                             </Style.Triggers>
                         </Style>
                     </Rectangle.Style>
@@ -45,10 +61,14 @@
                             <Setter Property="Opacity" Value="0"/>
                             <Setter Property="IsHitTestVisible" Value="False"/>
                             <Style.Triggers>
-                                <DataTrigger Binding="{Binding IsMouseOver, ElementName=GridContainer}" Value="True">
+                                <MultiDataTrigger>
+                                    <MultiDataTrigger.Conditions>
+                                        <Condition Binding="{Binding IsMouseOver, ElementName=GridContainer}" Value="True"/>
+                                        <Condition Binding="{Binding RelativeSource={RelativeSource AncestorLevel=1, AncestorType=local:CustomSongElement}, Path=HoverEffects}" Value="True"/>
+                                    </MultiDataTrigger.Conditions>
                                     <Setter Property="Opacity" Value="1"/>
                                     <Setter Property="IsHitTestVisible" Value="True"/>
-                                </DataTrigger>
+                                </MultiDataTrigger>
                             </Style.Triggers>
                         </Style>
                     </Button.Style>
@@ -70,12 +90,30 @@
             <TextBlock x:Name="SongArtistLabel" Grid.Row="2" VerticalAlignment="Center" Foreground="LightGray" Padding="0" FontSize="11" TextTrimming="CharacterEllipsis" Text="{Binding Song.Artist}"/>
         </Grid>
         <Label x:Name="SongDurationLabel" Grid.Column="2" VerticalAlignment="Center" Foreground="LightGray" FontSize="11" Margin="16,0,0,0" Content="{Binding Song.DurationString}"/>
+        <Grid x:Name="DragHandle" Grid.Column="3" Margin="2,0,2,0">
+            <Grid.Style>
+                <Style TargetType="Grid">
+                    <Setter Property="Visibility" Value="Collapsed"/>
+                    <Style.Triggers>
+                        <DataTrigger Binding="{Binding RelativeSource={RelativeSource AncestorLevel=1, AncestorType=local:CustomSongElement}, Path=Draggable}" Value="True">
+                            <Setter Property="Visibility" Value="Visible"/>
+                        </DataTrigger>
+                    </Style.Triggers>
+                </Style>
+            </Grid.Style>
+            <StackPanel Orientation="Vertical" VerticalAlignment="Center" IsHitTestVisible="False">
+                <Rectangle HorizontalAlignment="Stretch" Height="1" Margin="1" Stroke="DimGray" IsHitTestVisible="False"/>
+                <Rectangle HorizontalAlignment="Stretch" Height="1" Margin="1" Stroke="DimGray" IsHitTestVisible="False"/>
+                <Rectangle HorizontalAlignment="Stretch" Height="1" Margin="1" Stroke="DimGray" IsHitTestVisible="False"/>
+            </StackPanel>
+            <Rectangle Fill="Transparent" IsHitTestVisible="True" Cursor="SizeNS" PreviewMouseMove="DragHandlePreviewMouseMove"/>
+        </Grid>
 
         <Grid.ContextMenu>
             <ContextMenu>
                 <ContextMenu.Items>
                     <MenuItem Header="Play" Click="PlayMenuItemClick"/>
-                    <MenuItem Header="Play as next song" Click="PlayAsNextSongMenuItemClick"/>
+                    <MenuItem Header="Make first in queue" Click="MakeFirstInQueueMenuItemClick"/>
                     <Separator/>
                     <MenuItem Header="Edit lyrics..." Click="EditLyricsMenuItemClick"/>
                     <Separator/>
