@@ -1711,6 +1711,14 @@ public partial class MainWindow : Window
             QueueSongs.Move(songIndex, 0);
     }
 
+    public void MoveSongToBottomOfQueue(CustomSongElement.CustomSongElementInfo? info)
+    {
+        if (info is null) return;
+        int songIndex = QueueSongs.IndexOf(info);
+        if (songIndex != -1)
+            QueueSongs.Move(songIndex, QueueSongs.Count - 1);
+    }
+
     public void DeleteSong(Song song)
     {
         if (MessageBox.Show($"Are you sure you want to delete song '{song.Artist} - {song.Title}'? This cannot be undone.", "HOMP", MessageBoxButton.YesNo) == MessageBoxResult.Yes)

@@ -110,6 +110,11 @@ public partial class CustomSongElement : UserControl
         MainWindow.Instance.MoveSongToTopOfQueue(Info);
     }
 
+    private void MakeLastInQueueMenuItemClick(object sender, RoutedEventArgs e)
+    {
+        MainWindow.Instance.MoveSongToBottomOfQueue(Info);
+    }
+
     private void DeleteMenuItemClick(object sender, RoutedEventArgs e)
     {
         MainWindow.Instance.DeleteSong(Info!.Song);
