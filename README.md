@@ -49,11 +49,6 @@ This means that:
 A special case is the 'Search results' page, where HOMP respects the 'Use search results as collection source' option.  
 If this option is active and playback is started from a song in the search results, then all of the songs in the search results are used as source.  
 
-**3. Play as next song**  
-HOMP does not support manual queue management and the only option to force a song to get played after the current one is to right-click on it and click 'Play as next song'.  
-This only plays that single song and does not change the collection source.  
-This means that when the song that was forced to be played ends, HOMP returns to standard behaviour and resumes playing songs from the collection that was playing before.  
-
 ## Running HOMP  
 
 HOMP uses WPF and .NET 8.0.  
