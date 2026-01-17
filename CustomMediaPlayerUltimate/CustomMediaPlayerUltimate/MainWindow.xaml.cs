@@ -1707,16 +1707,32 @@ public partial class MainWindow : Window
     {
         if (info is null) return;
         int songIndex = QueueSongs.IndexOf(info);
-        if (songIndex != -1)
-            QueueSongs.Move(songIndex, 0);
+        // if the song is not found or is the first in the queue
+        if (songIndex == -1 || songIndex == 0) return;
+        QueueSongs.Move(songIndex, 0);
     }
 
     public void MoveSongToBottomOfQueue(CustomSongElement.CustomSongElementInfo? info)
     {
         if (info is null) return;
         int songIndex = QueueSongs.IndexOf(info);
-        if (songIndex != -1)
-            QueueSongs.Move(songIndex, QueueSongs.Count - 1);
+        // if the song is not found or is the last in the queue
+        if (songIndex == -1 || songIndex == QueueSongs.Count - 1) return;
+        QueueSongs.Move(songIndex, QueueSongs.Count - 1);
+    }
+
+    public void JumpQueueToSong(CustomSongElement.CustomSongElementInfo? info)
+    {
+        if (info is null) return;
+        int songIndex = QueueSongs.IndexOf(info);
+        // if the song is not found or is the first in the queue
+        if (songIndex == -1 || songIndex == 0) return;
+        int ii = 0;
+        for (int i = songIndex - 1; i >= 0; i--, ii++)
+        {
+            int inIndex = QueueSongs.Count - 1 - ii;
+            QueueSongs.Move(i, inIndex);
+        }
     }
 
     public void DeleteSong(Song song)

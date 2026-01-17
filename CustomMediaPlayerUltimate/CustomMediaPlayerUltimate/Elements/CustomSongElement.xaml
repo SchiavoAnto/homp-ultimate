@@ -124,6 +124,7 @@
                     <MenuItem Header="Play" Click="PlayMenuItemClick"/>
                     <MenuItem Header="Make first in queue" Click="MakeFirstInQueueMenuItemClick"/>
                     <MenuItem Header="Make last in queue" Click="MakeLastInQueueMenuItemClick"/>
+                    <MenuItem Header="Jump to this song" Click="JumpToThisSongMenuItemClick"/>
                     <Separator/>
                     <MenuItem Header="Edit lyrics..." Click="EditLyricsMenuItemClick"/>
                     <Separator/>
