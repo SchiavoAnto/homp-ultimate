@@ -1788,9 +1788,9 @@ public partial class MainWindow : Window
                     CustomSongElement.CustomSongElementInfo? searchSong = SearchSongs.FirstOrDefault(e => e.Song.FilePath == song.FilePath);
                     if (searchSong is not null)
                         SearchSongs.Remove(searchSong);
-                    int queueIndex = QueueSongs.IndexOf(new(song, currentCollection!));
-                    if (queueIndex != -1)
-                        QueueSongs.RemoveAt(queueIndex);
+                    CustomSongElement.CustomSongElementInfo? queueSong = QueueSongs.FirstOrDefault(e => e.Song.FilePath == song.FilePath);
+                    if (queueSong is not null)
+                        QueueSongs.Remove(queueSong);
                     Logger.Log($"Song '{song.FilePath}' deleted.");
                     return;
                 }
