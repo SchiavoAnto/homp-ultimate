@@ -1330,7 +1330,11 @@ public partial class MainWindow : Window
         }
         else if (currentCollection == songCollection)
         {
-            int songIndex = QueueSongs.IndexOf(new(song, songCollection));
+            // +1 and -1 to make it so that -1 is returned if not found
+            int songIndex = QueueSongs.Select((csei, index) => new { csei, index })
+                    .Where(pair => pair.csei.Song.FilePath == song.FilePath)
+                    .Select(pair => pair.index + 1)
+                    .FirstOrDefault() - 1;
             if (songIndex != -1)
                 // Move the current song to the end of the queue
                 QueueSongs.Move(songIndex, QueueSongs.Count - 1);
