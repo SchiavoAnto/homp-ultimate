@@ -105,12 +105,12 @@ public partial class MainWindow : Window
 
     private static readonly DoubleAnimation TabSelectionPositionAnimation = new()
     {
-        Duration = new(TimeSpan.FromMilliseconds(200)),
+        Duration = new(TimeSpan.FromMilliseconds(100)),
         AutoReverse = false,
     };
     private static readonly DoubleAnimation TabSelectionSizeAnimation = new()
     {
-        Duration = new(TimeSpan.FromMilliseconds(200)),
+        Duration = new(TimeSpan.FromMilliseconds(100)),
         AutoReverse = false,
     };
 
