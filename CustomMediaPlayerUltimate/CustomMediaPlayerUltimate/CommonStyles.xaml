@@ -110,7 +110,6 @@
                 <Setter Property="Foreground" Value="WhiteSmoke"/>
             </Trigger>
             <Trigger Property="Tag" Value="Focused">
-                <Setter Property="BorderBrush" Value="#00AAAA"/>
                 <Setter Property="Foreground" Value="WhiteSmoke"/>
             </Trigger>
         </Style.Triggers>

@@ -1,8 +1,13 @@
 ﻿using System;
 using System.Linq;
 using TagLib.Id3v2;
+using System.Windows;
+using System.Windows.Media;
+using System.Windows.Shapes;
+using System.Windows.Controls;
 using System.Collections.Generic;
 using System.Windows.Media.Imaging;
+using System.Windows.Media.Animation;
 using CustomMediaPlayerUltimate.DataStructures;
 
 namespace CustomMediaPlayerUltimate;
@@ -55,5 +60,34 @@ internal class Utils
     public static string Pluralize(int number, string singular, string plural)
     {
         return $"{number} {(number == 1 ? singular : plural)}";
+    }
+
+    public static Point GetRelativePosition(Control control)
+    {
+        UIElement? container = VisualTreeHelper.GetParent(control) as UIElement;
+        if (container is null) return new Point(0f, 0f);
+        Point relativeLocation = control.TranslatePoint(new Point(0, 0), container);
+        return relativeLocation;
+    }
+
+    public static void SetTabItemPosition(Rectangle rect, Control control)
+    {
+        Point loc = GetRelativePosition(control);
+        rect.SetValue(Canvas.LeftProperty, loc.X + 10);
+    }
+
+    public static void AnimateTabPosition(Control target, Rectangle indicator, DoubleAnimation animation)
+    {
+        Point position = GetRelativePosition(target);
+        animation.From = (double)indicator.GetValue(Canvas.LeftProperty);
+        animation.To = position.X + 10;
+        indicator.BeginAnimation(Canvas.LeftProperty, animation);
+    }
+
+    public static void AnimateTabSize(Control target, Rectangle indicator, ScaleTransform transform, DoubleAnimation animation)
+    {
+        animation.From = transform.ScaleX;
+        animation.To = target.ActualWidth;
+        transform.BeginAnimation(ScaleTransform.ScaleXProperty, animation);
     }
 }

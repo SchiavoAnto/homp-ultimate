@@ -21,15 +21,24 @@
                 <ColumnDefinition Width="*"/>
                 <ColumnDefinition Width="Auto"/>
             </Grid.ColumnDefinitions>
-            <StackPanel Grid.Column="0" Orientation="Horizontal" Margin="10">
-                <Button x:Name="AllSongsTabButton" Style="{StaticResource TabButton}" Content="All songs" Click="SwitchToAllSongsView" Tag="Focused"/>
-                <Button x:Name="PlaylistsTabButton" Style="{StaticResource TabButton}" Content="Playlists" Click="SwitchToPlaylistsView"/>
-                <Button x:Name="AlbumsTabButton" Style="{StaticResource TabButton}" Content="Albums" Click="SwitchToAlbumsView"/>
-                <Button x:Name="ArtistsTabButton" Style="{StaticResource TabButton}" Content="Artists" Click="SwitchToArtistsView"/>
-                <Button x:Name="QueueTabButton" Style="{StaticResource TabButton}" Content="Queue" Click="SwitchToQueueView"/>
-                <Button x:Name="SearchResultsTabButton" Style="{StaticResource TabButton}" Content="Search results" Click="SwitchToSearchResultsView"/>
-                <Button x:Name="SettingsTabButton" Style="{StaticResource TabButton}" Content="Settings" Click="SwitchToSettingsView"/>
-            </StackPanel>
+            <Grid Grid.Column="0">
+                <StackPanel Orientation="Horizontal" Margin="10">
+                    <Button x:Name="AllSongsTabButton" Style="{StaticResource TabButton}" Content="All songs" Click="SwitchToAllSongsView" Tag="Focused"/>
+                    <Button x:Name="PlaylistsTabButton" Style="{StaticResource TabButton}" Content="Playlists" Click="SwitchToPlaylistsView"/>
+                    <Button x:Name="AlbumsTabButton" Style="{StaticResource TabButton}" Content="Albums" Click="SwitchToAlbumsView"/>
+                    <Button x:Name="ArtistsTabButton" Style="{StaticResource TabButton}" Content="Artists" Click="SwitchToArtistsView"/>
+                    <Button x:Name="QueueTabButton" Style="{StaticResource TabButton}" Content="Queue" Click="SwitchToQueueView"/>
+                    <Button x:Name="SearchResultsTabButton" Style="{StaticResource TabButton}" Content="Search results" Click="SwitchToSearchResultsView"/>
+                    <Button x:Name="SettingsTabButton" Style="{StaticResource TabButton}" Content="Settings" Click="SwitchToSettingsView"/>
+                </StackPanel>
+                <Canvas>
+                    <Rectangle x:Name="SelectedTabIndicator" Canvas.Bottom="10" Canvas.Left="10" Width="1" Height="2" Fill="#00AAAA">
+                        <Rectangle.RenderTransform>
+                            <ScaleTransform x:Name="SelectedTabIndicatorScale" ScaleX="1"/>
+                        </Rectangle.RenderTransform>
+                    </Rectangle>
+                </Canvas>
+            </Grid>
 
             <Grid Grid.Column="2" Margin="10">
                 <TextBox x:Name="SearchInputTextBox" Width="200" Grid.Column="3" IsEnabled="False" KeyUp="SearchInputTextBoxKeyUp"/>

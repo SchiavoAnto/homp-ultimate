@@ -12,6 +12,7 @@ using System.Windows.Threading;
 using System.Collections.Generic;
 using System.Collections.Specialized;
 using System.Collections.ObjectModel;
+using System.Windows.Media.Animation;
 using CustomMediaPlayerUltimate.Elements;
 using CustomMediaPlayerUltimate.DataStructures;
 
@@ -102,6 +103,17 @@ public partial class MainWindow : Window
     private Dictionary<string, SongCollection> albums = new Dictionary<string, SongCollection>();
     private Dictionary<string, SongCollection> artists = new Dictionary<string, SongCollection>();
 
+    private static readonly DoubleAnimation TabSelectionPositionAnimation = new()
+    {
+        Duration = new(TimeSpan.FromMilliseconds(200)),
+        AutoReverse = false,
+    };
+    private static readonly DoubleAnimation TabSelectionSizeAnimation = new()
+    {
+        Duration = new(TimeSpan.FromMilliseconds(200)),
+        AutoReverse = false,
+    };
+
     public MainWindow()
     {
         InitializeComponent();
@@ -122,6 +134,8 @@ public partial class MainWindow : Window
 
     public async void OnWindowLoaded(object sender, RoutedEventArgs e)
     {
+        SelectedTabIndicatorScale.ScaleX = AllSongsTabButton.ActualWidth;
+
         EnsureFolders();
         dbExists = File.Exists(Database.DB_PATH);
         Logger.Log($"Database file found: {dbExists}");
@@ -279,6 +293,8 @@ public partial class MainWindow : Window
         HideAllViews();
         AllSongsView.Visibility = Visibility.Visible;
         AllSongsTabButton.Tag = "Focused";
+        Utils.AnimateTabPosition(AllSongsTabButton, SelectedTabIndicator, TabSelectionSizeAnimation);
+        Utils.AnimateTabSize(AllSongsTabButton, SelectedTabIndicator, SelectedTabIndicatorScale, TabSelectionSizeAnimation);
     }
 
     private void SwitchToPlaylistsView(object sender, RoutedEventArgs e)
@@ -286,6 +302,8 @@ public partial class MainWindow : Window
         HideAllViews();
         PlaylistsView.Visibility = Visibility.Visible;
         PlaylistsTabButton.Tag = "Focused";
+        Utils.AnimateTabPosition(PlaylistsTabButton, SelectedTabIndicator, TabSelectionSizeAnimation);
+        Utils.AnimateTabSize(PlaylistsTabButton, SelectedTabIndicator, SelectedTabIndicatorScale, TabSelectionSizeAnimation);
     }
 
     private void SwitchToAlbumsView(object sender, RoutedEventArgs e)
@@ -293,6 +311,8 @@ public partial class MainWindow : Window
         HideAllViews();
         AlbumsView.Visibility = Visibility.Visible;
         AlbumsTabButton.Tag = "Focused";
+        Utils.AnimateTabPosition(AlbumsTabButton, SelectedTabIndicator, TabSelectionSizeAnimation);
+        Utils.AnimateTabSize(AlbumsTabButton, SelectedTabIndicator, SelectedTabIndicatorScale, TabSelectionSizeAnimation);
     }
 
     private void SwitchToArtistsView(object sender, RoutedEventArgs e)
@@ -300,6 +320,8 @@ public partial class MainWindow : Window
         HideAllViews();
         ArtistsView.Visibility = Visibility.Visible;
         ArtistsTabButton.Tag = "Focused";
+        Utils.AnimateTabPosition(ArtistsTabButton, SelectedTabIndicator, TabSelectionSizeAnimation);
+        Utils.AnimateTabSize(ArtistsTabButton, SelectedTabIndicator, SelectedTabIndicatorScale, TabSelectionSizeAnimation);
     }
 
     private void SwitchToQueueView(object sender, RoutedEventArgs e)
@@ -307,6 +329,8 @@ public partial class MainWindow : Window
         HideAllViews();
         QueueView.Visibility = Visibility.Visible;
         QueueTabButton.Tag = "Focused";
+        Utils.AnimateTabPosition(QueueTabButton, SelectedTabIndicator, TabSelectionSizeAnimation);
+        Utils.AnimateTabSize(QueueTabButton, SelectedTabIndicator, SelectedTabIndicatorScale, TabSelectionSizeAnimation);
     }
 
     private void SwitchToSearchResultsView(object sender, RoutedEventArgs e)
@@ -314,6 +338,8 @@ public partial class MainWindow : Window
         HideAllViews();
         SearchResultsView.Visibility = Visibility.Visible;
         SearchResultsTabButton.Tag = "Focused";
+        Utils.AnimateTabPosition(SearchResultsTabButton, SelectedTabIndicator, TabSelectionSizeAnimation);
+        Utils.AnimateTabSize(SearchResultsTabButton, SelectedTabIndicator, SelectedTabIndicatorScale, TabSelectionSizeAnimation);
     }
 
     private void SwitchToSettingsView(object sender, RoutedEventArgs e)
@@ -321,6 +347,8 @@ public partial class MainWindow : Window
         HideAllViews();
         SettingsView.Visibility = Visibility.Visible;
         SettingsTabButton.Tag = "Focused";
+        Utils.AnimateTabPosition(SettingsTabButton, SelectedTabIndicator, TabSelectionSizeAnimation);
+        Utils.AnimateTabSize(SettingsTabButton, SelectedTabIndicator, SelectedTabIndicatorScale, TabSelectionSizeAnimation);
     }
 
     private void PlayPauseButtonClick(object sender, RoutedEventArgs e)
